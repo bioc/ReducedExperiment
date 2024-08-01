@@ -27,5 +27,5 @@ wave2_se <- normalize_se(
     group = "case_control"
 )
 
-saveRDS(wave1_se, "inst/extdata/wave1.rds")
-saveRDS(wave2_se, "inst/extdata/wave2.rds")
+saveRDS(wave1_se, "inst/extdata/wave1.rds", compress = "gzip")
+saveRDS(wave2_se, "inst/extdata/wave2.rds", compress = "gzip")
