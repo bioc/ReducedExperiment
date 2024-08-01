@@ -15,7 +15,7 @@ name: build-test-deploy
 ## "/nocache" in the commit message.
 env:
   has_testthat: 'true'
-  run_bioc: 'false'
+  run_bioc: 'true'
   run_pkgdown: 'true'
   run_docker: 'true'
   cache-version: 'cache-v1'
