@@ -11,7 +11,7 @@ ModularExperiment(
   reduced = new("matrix"),
   scale = TRUE,
   center = TRUE,
-  loadings = numeric(),
+  loadings = NULL,
   assignments = character(),
   dendrogram = NULL,
   threshold = NULL,
@@ -54,8 +54,41 @@ construction.}
 \item{...}{Additional arguments to be passed to
 \link[ReducedExperiment]{ReducedExperiment}.}
 }
+\value{
+Constructor method returns a
+\link[ReducedExperiment]{ModularExperiment} object.
+}
 \description{
 A container inheriting from \link[ReducedExperiment]{ReducedExperiment}, that
 contains one or more data matrices, to which module analysis has been applied
 to identify a reduced set of features.
+}
+\examples{
+# Create randomised data with the following dimensions
+i <- 300 # Number of features
+j <- 100 # Number of samples
+k <- 10 # Number of modules
+
+# In this case we use random assay data and reduced data (i.e., module
+# eigengenes). We also randomly assign each feature to a module. In practice,
+# we would identify modules and eigengenes using a method like WGCNA applied
+# to the analysis of assay data (e.g., gene expression data) from some study.
+rand_assay_data <- ReducedExperiment:::.makeRandomData(i, j, "gene", "sample")
+rand_reduced_data <- ReducedExperiment:::.makeRandomData(j, k, "sample", "module")
+rand_assignments <- paste0("gene_", seq_len(i))
+names(rand_assignments) <- paste0("module_", round(stats::runif(i, 1, k), 0))
+
+me <- ModularExperiment(
+    assays = list("normal" = rand_assay_data),
+    reduced = rand_reduced_data,
+    assignments = rand_assignments
+)
+
+me
+
+}
+\seealso{
+\code{\link[=ReducedExperiment]{ReducedExperiment()}},
+\code{\link[=FactorisedExperiment]{FactorisedExperiment()}},
+\code{\link[=identify_modules]{identify_modules()}}
 }

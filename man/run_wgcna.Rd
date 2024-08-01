@@ -84,7 +84,7 @@ genes to modules.}
 Runs WGCNA. Largely a wrapper for the \link[WGCNA]{blockwiseModules}
 function. Additionally applies \link[WGCNA]{pickSoftThreshold} to
 aid in the selection of the soft thresholding power, reformats data
-into a format convenientg for creating a
+into a format convenient for creating a
 \link[ReducedExperiment]{ModularExperiment} object and changes module names
 from colours to numbers (default).
 }
@@ -104,4 +104,21 @@ automatically based on the output of \link[WGCNA]{pickSoftThreshold}. We
 recommend that users avoid relying on the automatic threshold detection
 and instead consider the best soft thresholding power carefully, for instance
 using the plots described in the \code{WGCNA} tutorials.
+}
+\examples{
+# Get the airway data as a SummarizedExperiment (with a subset of features)
+set.seed(2)
+airway_se <- ReducedExperiment:::.get_airway_data(n_features = 500)
+
+# Identify modules using the airway expression matrix
+WGCNA::disableWGCNAThreads()
+wgcna_res <- run_wgcna(assay(airway_se, "normal"), verbose = 0, powers = 5)
+
+# We find three modules (module_0 indicates unclustered genes)
+table(names(wgcna_res$assignments))
+
+}
+\seealso{
+\code{\link[WGCNA:blockwiseModules]{WGCNA::blockwiseModules()}},
+\code{\link[WGCNA:pickSoftThreshold]{WGCNA::pickSoftThreshold()}}
 }

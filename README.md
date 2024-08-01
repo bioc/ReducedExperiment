@@ -55,6 +55,10 @@ And the development version from
 devtools::install_github("jackgisby/ReducedExperiment")
 ```
 
+The development version of the package is also available as a container
+on
+[DockerHub](https://hub.docker.com/repository/docker/jackgisby/reducedexperiment/).
+
 ## Usage
 
 `ReducedExperiment` objects are derived from `SummarizedExperiment`
@@ -169,7 +173,7 @@ print(citation("ReducedExperiment"), bibtex = TRUE)
 #>   doi:10.18129/B9.bioc.ReducedExperiment
 #>   <https://doi.org/10.18129/B9.bioc.ReducedExperiment>,
 #>   https://github.com/jackgisby/ReducedExperiment/ReducedExperiment - R
-#>   package version 0.1.3,
+#>   package version 0.99.0,
 #>   <http://www.bioconductor.org/packages/ReducedExperiment>.
 #> 
 #> A BibTeX entry for LaTeX users is
@@ -179,7 +183,7 @@ print(citation("ReducedExperiment"), bibtex = TRUE)
 #>     author = {{jackgisby}},
 #>     year = {2024},
 #>     url = {http://www.bioconductor.org/packages/ReducedExperiment},
-#>     note = {https://github.com/jackgisby/ReducedExperiment/ReducedExperiment - R package version 0.1.3},
+#>     note = {https://github.com/jackgisby/ReducedExperiment/ReducedExperiment - R package version 0.99.0},
 #>     doi = {10.18129/B9.bioc.ReducedExperiment},
 #>   }
 ```

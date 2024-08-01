@@ -108,11 +108,12 @@ vignette, we will mainly use the first cohort, whereas the second cohort
 will be used as a validation set.
 
 ```{r load_data}
-# TODO: Implement data loading best practices and document
-wave1_se <- readRDS(system.file("extdata", "wave1.rds",
+wave1_se <- readRDS(system.file(
+    "extdata", "wave1.rds",
     package = "ReducedExperiment"
 ))
-wave2_se <- readRDS(system.file("extdata", "wave2.rds",
+wave2_se <- readRDS(system.file(
+    "extdata", "wave2.rds",
     package = "ReducedExperiment"
 ))
 
@@ -151,6 +152,7 @@ stability_res <- estimate_stability(
 
 plot_stability(stability_res, plot_path = "tempOutput/stability.png")
 ```
+![](../inst/stability.png)
 
 Now we run the factor analysis with these components. We additionally set a 
 stability threshold of 0.25 to remove components with low stability. This

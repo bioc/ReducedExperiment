@@ -52,3 +52,77 @@ and "summaries" containing the results of running \code{summary} on the models.
 Runs either standard linear or linear mixed models between reduced
 components (e.g., factors or modules) and sample-level information.
 }
+\details{
+Multiple testing adjustment is performed separately for each term in the
+model across all factors.
+In other words, p-values are adjusted for the number of factors, but not
+the number of model terms. If you are testing a large number of terms,
+you could consider applying a custom adjustment method or using
+penalised regression.
+}
+\examples{
+# Create FactorisedExperiment with random data (100 features, 50 samples,
+# 10 factors)
+set.seed(1)
+fe <- ReducedExperiment:::.createRandomisedFactorisedExperiment(100, 50, 10)
+fe
+
+# Create a sample-level variable describing some sort of treatment
+colData(fe)$treated <- c(rep("control", 25), rep("treatment", 25))
+colData(fe)$treated <- factor(colData(fe)$treated, c("control", "treatment"))
+
+# Increase the value of factor 1 for the treated samples, simulating some
+# kind of treatment-related effect picked up by factor analysis
+reduced(fe)[, 1][colData(fe)$treated == "treatment"] <-
+    reduced(fe)[, 1][colData(fe)$treated == "treatment"] +
+    rnorm(25, mean = 1.5, sd = 0.1)
+
+# Create a sample-level variable describing a covariate we want to adjust for
+# We will make the treated patients slightly older on average
+colData(fe)$age <- 0
+colData(fe)$age[colData(fe)$treated == "control"] <- rnorm(25, mean = 35, sd = 8)
+colData(fe)$age[colData(fe)$treated == "treatment"] <- rnorm(25, mean = 40, sd = 8)
+
+# Associate the factors with sample-level variable in the colData
+lm_res <- associate_components(
+    fe,
+    formula = "~ treated + age", # Our model formula
+    method = "lm", # Use a linear model
+    adj_method = "BH" # Adjust our p-values with Benjamini-Hochberg
+)
+
+# We see that treatment is significantly associated with factor 1 (adjusted
+# p-value < 0.05) and is higher in the treated patients. Age is not
+# significantly associated with factor 1, but there is a slight positive
+# relationship
+print(head(lm_res$summaries[
+    ,
+    c("term", "component", "estimate", "stderr", "pvalue", "adj_pvalue")
+]))
+
+# But what if these aren't 50 independent patients, but rather 25 patients
+# sampled before and after treatment? We can account for this using a
+# linear mixed model, which can account for repeated measures and paired
+# designs
+
+# First we add in this information
+colData(fe)$patient_id <- c(paste0("patient_", 1:25), paste0("patient_", 1:25))
+
+# Then we run the linear mixed model with a random intercept for patient
+lmm_res <- associate_components(
+    fe,
+    formula = "~ treated + age + (1 | patient_id)", # Add a random intercept
+    method = "lmer", # Use a linear mixed model
+    adj_method = "BH"
+)
+
+# And we can check our results again
+print(head(lmm_res$summaries[
+    ,
+    c("term", "component", "estimate", "stderr", "pvalue", "adj_pvalue")
+]))
+
+}
+\seealso{
+\code{\link[stats:lm]{stats::lm()}}, \code{\link[car:Anova]{car::Anova()}}, \code{\link[lmerTest:lmer]{lmerTest::lmer()}}
+}

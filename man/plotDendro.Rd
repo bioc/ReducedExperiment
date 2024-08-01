@@ -46,7 +46,30 @@ colours by \code{color_func}.}
 \item{...}{Additional arguments to be passed to
 \link[WGCNA]{plotDendroAndColors}.}
 }
+\value{
+A plot produced by \link[WGCNA]{plotDendroAndColors}.
+}
 \description{
 Gets the dendrogram and plots it using
 \link[WGCNA]{plotDendroAndColors}.
+}
+\examples{
+# Create ModularExperiment with random data (100 features, 50 samples,
+# 10 modules)
+me <- ReducedExperiment:::.createRandomisedModularExperiment(100, 50, 10)
+me
+
+# The dendrogram is usually produced during module discovery, but we can
+# assign any dendrogram to the slot. Let's do hierarchical clustering on the
+# features in our object and assign it
+dendrogram(me) <- hclust(dist(assay(me)))
+dendrogram(me)
+
+# Plot the dendrogram - modules are random in this instance, but in general
+# features within a module should cluster together
+plotDendro(me)
+
+}
+\seealso{
+\code{\link[WGCNA:plotDendroAndColors]{WGCNA::plotDendroAndColors()}}
 }

@@ -40,19 +40,48 @@
 #' @param ... Additional arguments to be passed to
 #' \link[ReducedExperiment]{ReducedExperiment}.
 #'
+#' @returns Constructor method returns a
+#' \link[ReducedExperiment]{ModularExperiment} object.
+#'
+#' @seealso [ReducedExperiment::ReducedExperiment()],
+#' [ReducedExperiment::FactorisedExperiment()],
+#' [ReducedExperiment::identify_modules()]
+#'
+#' @examples
+#' # Create randomised data with the following dimensions
+#' i <- 300 # Number of features
+#' j <- 100 # Number of samples
+#' k <- 10 # Number of modules
+#'
+#' # In this case we use random assay data and reduced data (i.e., module
+#' # eigengenes). We also randomly assign each feature to a module. In practice,
+#' # we would identify modules and eigengenes using a method like WGCNA applied
+#' # to the analysis of assay data (e.g., gene expression data) from some study.
+#' rand_assay_data <- ReducedExperiment:::.makeRandomData(i, j, "gene", "sample")
+#' rand_reduced_data <- ReducedExperiment:::.makeRandomData(j, k, "sample", "module")
+#' rand_assignments <- paste0("gene_", seq_len(i))
+#' names(rand_assignments) <- paste0("module_", round(stats::runif(i, 1, k), 0))
+#'
+#' me <- ModularExperiment(
+#'     assays = list("normal" = rand_assay_data),
+#'     reduced = rand_reduced_data,
+#'     assignments = rand_assignments
+#' )
+#'
+#' me
+#'
 #' @import SummarizedExperiment
 #'
 #' @rdname modular_experiment
 #' @export
-ModularExperiment <- function(
-        reduced = new("matrix"),
-        scale = TRUE,
-        center = TRUE,
-        loadings = numeric(),
-        assignments = character(),
-        dendrogram = NULL,
-        threshold = NULL,
-        ...) {
+ModularExperiment <- function(reduced = new("matrix"),
+    scale = TRUE,
+    center = TRUE,
+    loadings = NULL,
+    assignments = character(),
+    dendrogram = NULL,
+    threshold = NULL,
+    ...) {
     re <- ReducedExperiment(
         reduced = reduced,
         scale = scale,
@@ -84,12 +113,14 @@ S4Vectors::setValidity2("ModularExperiment", function(object) {
     }
 
     # Loadings
-    if (obj_dims[1] != length(loadings(object))) {
-        msg <- c(msg, "Loadings have invalid length")
-    }
+    if (!is.null(loadings(object))) {
+        if (obj_dims[1] != length(loadings(object))) {
+            msg <- c(msg, "Loadings have invalid length")
+        }
 
-    if (!all(names(loadings(object)) == rownames(object))) {
-        msg <- c(msg, "Loadings have incompatible names (rownames)")
+        if (!all(names(loadings(object)) == rownames(object))) {
+            msg <- c(msg, "Loadings have incompatible names (rownames)")
+        }
     }
 
     return(if (is.null(msg)) TRUE else msg)
@@ -97,8 +128,10 @@ S4Vectors::setValidity2("ModularExperiment", function(object) {
 
 #' Get and set module feature assignments
 #'
+#' @description
 #' Retrieves a vector of features (usually genes) named by the modules
-#' they belong to.
+#' they belong to. Assignment can be used to modify all or part of the
+#' vector.
 #'
 #' @param object \link[ReducedExperiment]{ModularExperiment} object.
 #'
@@ -106,6 +139,29 @@ S4Vectors::setValidity2("ModularExperiment", function(object) {
 #' for each module containing a list of features.
 #'
 #' @param value New value to replace existing assignments.
+#'
+#' @returns A vector with values representing features and names representing
+#' feature assignments (i.e., modules).
+#'
+#' @examples
+#' # Create ModularExperiment with random data (100 features, 50 samples,
+#' # 10 modules)
+#' me <- ReducedExperiment:::.createRandomisedModularExperiment(100, 50, 10)
+#' me
+#'
+#' # Assignment of features to groups/modules
+#' assignments(me)
+#'
+#' # We can reassign a feature to a new module if we like:
+#' names(assignments(me))[6] <- "new_module"
+#' assignments(me)[1:10]
+#'
+#' # We shouldn't, however, attempt to change the feature names here:
+#' # assignments(me)[5] <- "modified_gene_name"
+#'
+#' # Instead, we should change the object's feature names as so:
+#' featureNames(me)[5] <- "modified_gene_name"
+#' assignments(me)[1:10]
 #'
 #' @rdname module_assignments
 #' @name assignments
@@ -135,6 +191,7 @@ setMethod("assignments", "ModularExperiment", function(
 #' @export
 setReplaceMethod("assignments", "ModularExperiment", function(object, value) {
     object@assignments <- value
+
     validObject(object)
     return(object)
 })
@@ -160,19 +217,32 @@ setReplaceMethod("assignments", "ModularExperiment", function(object, value) {
 #'
 #' @param value New value to replace existing loadings.
 #'
-#' @details
+#' @returns
 #' #' If `object` is a \link[ReducedExperiment]{FactorisedExperiment}, the
 #' loadings matrix will be returned, with features as rows and reduced
-#' components as columns.
-#'
-#' If `object` is a \link[ReducedExperiment]{ModularExperiment}, the loadings
+#' components as columns. If `object` is a
+#' \link[ReducedExperiment]{ModularExperiment}, the loadings
 #' will be returned as a vector, with a value for each feature (usually genes).
 #'
+#' @details
 #' When available, the module loadings provide the values of the rotation matrix
 #' (usually generated by \link[stats]{prcomp}) used to calculate the
 #' sample-level module vectors available in the `reduced` slot. Normally, these
 #' loadings are calculated for each module separately, so their values are
 #' not comparable across modules.
+#'
+#' @examples
+#' # Create ModularExperiment with random data (100 features, 50 samples,
+#' # 10 modules)
+#' me <- ReducedExperiment:::.createRandomisedModularExperiment(100, 50, 10)
+#' me
+#'
+#' # Retrieve the loadings
+#' loadings(me)[1:10]
+#'
+#' # Change a loading
+#' loadings(me)[9] <- 8
+#' loadings(me)[1:10]
 #'
 #' @rdname loadings
 #' @name loadings
@@ -182,11 +252,16 @@ NULL
 
 #' @rdname loadings
 #' @export
-setMethod("loadings", "ModularExperiment", function(
-        object,
-        scale_loadings = FALSE,
-        center_loadings = FALSE,
-        abs_loadings = FALSE) {
+setMethod("loadings", "ModularExperiment", function(object,
+    scale_loadings = FALSE,
+    center_loadings = FALSE,
+    abs_loadings = FALSE) {
+    # Return them if the loadings are NULL
+    if (is.null(object@loadings)) {
+        return(object@loadings)
+    }
+
+    # Else perform relevant operations on the loadings before returning
     l <- scale(
         object@loadings,
         scale = scale_loadings,
@@ -273,6 +348,28 @@ setMethod("nModules", "ModularExperiment", function(object) {
 #' @param object \link[ReducedExperiment]{ModularExperiment} object.
 #'
 #' @param value New value to replace existing dendrogram.
+#'
+#' @returns Returns a dendrogram describing relationships between genes.
+#' Usually produced through hierarchical clustering using the
+#' \link[WGCNA]{blockwiseModules} function.
+#'
+#' @examples
+#' # Create ModularExperiment with random data (100 features, 50 samples,
+#' # 10 modules)
+#' me <- ReducedExperiment:::.createRandomisedModularExperiment(100, 50, 10)
+#' me
+#'
+#' # The dendrogram is usually produced during module discovery, but we can
+#' # assign any dendrogram to the slot. Let's do hierarchical clustering on the
+#' # features in our object and assign it
+#' dendrogram(me) <- hclust(dist(assay(me)))
+#' dendrogram(me)
+#'
+#' # Can use default plotting approach
+#' plot(dendrogram(me))
+#'
+#' # Or class method that calls WGCNA::plotDendroAndColors
+#' plotDendro(me)
 #'
 #' @rdname module_dendrogram
 #' @name dendrogram
@@ -425,6 +522,26 @@ setMethod("runEnrich", c("ModularExperiment"), function(
 #' @param ... Additional arguments to be passed to
 #' \link[WGCNA]{plotDendroAndColors}.
 #'
+#' @returns A plot produced by \link[WGCNA]{plotDendroAndColors}.
+#'
+#' @seealso [WGCNA::plotDendroAndColors()]
+#'
+#' @examples
+#' # Create ModularExperiment with random data (100 features, 50 samples,
+#' # 10 modules)
+#' me <- ReducedExperiment:::.createRandomisedModularExperiment(100, 50, 10)
+#' me
+#'
+#' # The dendrogram is usually produced during module discovery, but we can
+#' # assign any dendrogram to the slot. Let's do hierarchical clustering on the
+#' # features in our object and assign it
+#' dendrogram(me) <- hclust(dist(assay(me)))
+#' dendrogram(me)
+#'
+#' # Plot the dendrogram - modules are random in this instance, but in general
+#' # features within a module should cluster together
+#' plotDendro(me)
+#'
 #' @rdname plotDendro
 #' @name plotDendro
 #' @export plotDendro
@@ -455,7 +572,7 @@ setMethod(
     }
 )
 
-#' Project new data using pre-defined factors
+#' Calculate eigengenes for new data
 #'
 #' @description
 #' Calculates eigengenes for modules in new data. If in `project` mode,
@@ -523,6 +640,29 @@ setMethod(
 #'
 #' @seealso \code{\link[ReducedExperiment]{projectData}},
 #' \code{\link[WGCNA]{moduleEigengenes}}
+#'
+#' @examples
+#' # Create ModularExperiment with random data (100 features, 50 samples,
+#' # 10 modules)
+#' me_1 <- ReducedExperiment:::.createRandomisedModularExperiment(100, 50, 10)
+#' me_1
+#'
+#' # Generate a new dataset with the same features (100 rows) but different
+#' # samples/observations (20 columns)
+#' X_2 <- ReducedExperiment:::.makeRandomData(100, 20, "gene", "sample")
+#'
+#' # We can use the projection approach to calculate the eigengenes for
+#' # the modules identified in dataset 1 for the samples in dataset 2
+#' # This approach is based on the module loadings
+#' me_2_project <- calcEigengenes(me_1, X_2, project = TRUE)
+#' me_2_project[1:5, 1:5]
+#'
+#' # Alternatively, we can calculate eigengenes from scratch in the second
+#' # dataset. This still uses the modules identified in the first dataset (me_1)
+#' # but does not make use of the loadings. This approach is similar to
+#' # that applied by WGCNA::moduleEigengenes.
+#' me_2_eig <- calcEigengenes(me_1, X_2, project = FALSE)
+#' me_2_eig[1:5, 1:5]
 #'
 #' @rdname calcEigengenes
 #' @name calcEigengenes
@@ -643,6 +783,11 @@ setMethod("predict", c("ModularExperiment"), function(object, newdata, ...) {
 
 #' Get correlation of features with module eigengenes
 #'
+#' Provides a wrapper around \link[WGCNA]{signedKME}. Provides a measure
+#' of module centrality/connectivity of each feature. Essentially just
+#' calculates correlation (Pearson's r) of each feature with the module
+#' eigengene, i.e., the column of `reduced` to which the feature belongs.
+#'
 #' @param object \link[ReducedExperiment]{ModularExperiment} object.
 #'
 #' @param assay_name The name of the assay to be used for calculation of
@@ -652,9 +797,22 @@ setMethod("predict", c("ModularExperiment"), function(object, newdata, ...) {
 #' feature ID. Setting this to "rownames" (default) instead uses
 #' `rownames(object)`.
 #'
-#' Results indicate correlation (r) and squared correlation (rsq) with the
-#' module eigengene. Feature ranks within each module are also returned based
-#' on these statistics.
+#' @returns Returns a `data.frame` with columns for `feature`,
+#' `r` (signed correlation with the eigengene),
+#' `rsq` (squared correlation with the eigengene),
+#' `rank_r` (feature rank based on `r`) and
+#' `rank_rsq` (feature rank based on rsq).
+#'
+#' @seealso [WGCNA::signedKME()]
+#'
+#' @examples
+#' # Create ModularExperiment with random data (100 features, 50 samples,
+#' # 10 modules)
+#' me <- ReducedExperiment:::.createRandomisedModularExperiment(100, 50, 10)
+#' me
+#'
+#' # Calculate centrality of each feature for the corresponding module
+#' getCentrality(me)
 #'
 #' @rdname getCentrality
 #' @name getCentrality

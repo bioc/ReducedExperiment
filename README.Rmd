@@ -59,6 +59,8 @@ And the development version from [GitHub](https://github.com/jackgisby/ReducedEx
 devtools::install_github("jackgisby/ReducedExperiment")
 ```
 
+The development version of the package is also available as a container on [DockerHub](https://hub.docker.com/repository/docker/jackgisby/reducedexperiment/).  
+
 ## Usage
 
 `ReducedExperiment` objects are derived from `SummarizedExperiment` objects, with

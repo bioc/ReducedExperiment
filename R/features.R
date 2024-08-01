@@ -233,7 +233,11 @@ get_msigdb_t2g <- function(
 #' fe <- estimate_factors(X, nc = 5)
 #'
 #' # Get the genes highly aligned with each factor
-#' aligned_features <- getAlignedFeatures(fe, format = "data.frame", proportional_threshold = 0.3)
+#' aligned_features <- getAlignedFeatures(
+#'     fe,
+#'     format = "data.frame",
+#'     proportional_threshold = 0.3
+#' )
 #'
 #' # Identify overlap between common features for each factor
 #' common_features <- get_common_features(aligned_features)
@@ -318,7 +322,11 @@ get_common_features <- function(factor_features) {
 #' fe <- estimate_factors(X, nc = 5)
 #'
 #' # Get the genes highly aligned with each factor
-#' aligned_features <- getAlignedFeatures(fe, format = "data.frame", proportional_threshold = 0.3)
+#' aligned_features <- getAlignedFeatures(
+#'     fe,
+#'     format = "data.frame",
+#'     proportional_threshold = 0.3
+#' )
 #'
 #' # Identify overlap between common features for each factor
 #' common_features <- get_common_features(aligned_features)
@@ -397,17 +405,20 @@ plot_common_features <- function(common_features,
 #' "module_0" (ReducedExperiment) or "grey" (WGCNA).
 #'
 #' @param goldName The name to be used for the "gold" module (which is made up
-#' of a random sample of all network genes). Passed to
+#' of a random sample of all network genes). See
 #' \link[WGCNA]{modulePreservation}.
 #'
 #' @param networkType A string referring to the type of WGCNA network used for
 #' the reference and test datasets. One of"unsigned", "signed" or
-#' "signed hybrid". See \link[WGCNA]{adjacency}. Passed to
+#' "signed hybrid". See \link[WGCNA]{adjacency}. See
 #' \link[WGCNA]{modulePreservation}.
 #'
 #' @param corFnc A string referring to the function to be used to calculate
-#' correlation. One of "cor" or "bicor". Passed to
+#' correlation. One of "cor" or "bicor". See
 #' \link[WGCNA]{modulePreservation}.
+#'
+#' @param savePermutedStatistics If TRUE, saves the permutation statistics
+#' as a .RData file. See \link[WGCNA]{modulePreservation}.
 #'
 #' @param ... Additional arguments to be passed to
 #' \link[WGCNA]{modulePreservation}.
@@ -432,16 +443,16 @@ plot_common_features <- function(common_features,
 #' plot_module_preservation(mp)
 #'
 #' @export
-module_preservation <- function(
-        reference_dataset, test_dataset,
-        reference_assay_name = "normal",
-        test_assay_name = "normal",
-        module_assignments = NULL,
-        greyName = "module_0",
-        goldName = "random",
-        networkType = "signed",
-        corFnc = "cor",
-        ...) {
+module_preservation <- function(reference_dataset, test_dataset,
+    reference_assay_name = "normal",
+    test_assay_name = "normal",
+    module_assignments = NULL,
+    greyName = "module_0",
+    goldName = "random",
+    networkType = "signed",
+    corFnc = "cor",
+    savePermutedStatistics = FALSE,
+    ...) {
     if (inherits(reference_dataset, "ModularExperiment")) {
         module_assignments <- assignments(reference_dataset)
     } else if (is.null(module_assignments)) {
@@ -479,6 +490,7 @@ module_preservation <- function(
         corFnc = corFnc,
         goldName = goldName,
         greyName = greyName,
+        savePermutedStatistics = savePermutedStatistics,
         ...
     ))
 }

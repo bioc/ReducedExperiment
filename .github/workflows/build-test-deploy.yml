@@ -15,7 +15,7 @@ name: build-test-deploy
 ## "/nocache" in the commit message.
 env:
   has_testthat: 'true'
-  run_bioc: 'false'
+  run_bioc: 'true'
   run_pkgdown: 'true'
   run_docker: 'true'
   cache-version: 'cache-v1'
@@ -345,6 +345,7 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           context: .
+          file: ./inst/docker/Dockerfile
           push: true
           tags: >
             ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.CONT_IMG_NAME }}:latest,

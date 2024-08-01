@@ -6,7 +6,7 @@
 \alias{calcEigengenes,ModularExperiment,data.frame-method}
 \alias{calcEigengenes,ModularExperiment,SummarizedExperiment-method}
 \alias{predict,ModularExperiment-method}
-\title{Project new data using pre-defined factors}
+\title{Calculate eigengenes for new data}
 \usage{
 \S4method{calcEigengenes}{ModularExperiment,matrix}(
   object,
@@ -111,6 +111,30 @@ Calculates eigengenes for modules in new data. If in \code{project} mode,
 functions in a similar fashion to the \code{predict} method of
 \link[stats]{prcomp}. Else, eigengenes are calculated from scratch using PCA,
 in a similar manner to the \link[WGCNA]{moduleEigengenes} function.
+}
+\examples{
+# Create ModularExperiment with random data (100 features, 50 samples,
+# 10 modules)
+me_1 <- ReducedExperiment:::.createRandomisedModularExperiment(100, 50, 10)
+me_1
+
+# Generate a new dataset with the same features (100 rows) but different
+# samples/observations (20 columns)
+X_2 <- ReducedExperiment:::.makeRandomData(100, 20, "gene", "sample")
+
+# We can use the projection approach to calculate the eigengenes for
+# the modules identified in dataset 1 for the samples in dataset 2
+# This approach is based on the module loadings
+me_2_project <- calcEigengenes(me_1, X_2, project = TRUE)
+me_2_project[1:5, 1:5]
+
+# Alternatively, we can calculate eigengenes from scratch in the second
+# dataset. This still uses the modules identified in the first dataset (me_1)
+# but does not make use of the loadings. This approach is similar to
+# that applied by WGCNA::moduleEigengenes.
+me_2_eig <- calcEigengenes(me_1, X_2, project = FALSE)
+me_2_eig[1:5, 1:5]
+
 }
 \seealso{
 \code{\link[ReducedExperiment]{projectData}},
