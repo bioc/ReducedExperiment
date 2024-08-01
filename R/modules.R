@@ -220,8 +220,10 @@ identify_modules <- function(
 #'
 #' # Identify modules using the airway expression matrix
 #' WGCNA::disableWGCNAThreads()
-#' airway_me <- run_wgcna(assay(airway_se), verbose = 0, powers = 5)
-#' airway_me
+#' wgcna_res <- run_wgcna(assay(airway_se, "normal"), verbose = 0, powers = 5)
+#'
+#' # We find three modules (module_0 indicates unclustered genes)
+#' table(names(wgcna_res$assignments))
 #'
 #' @export
 run_wgcna <- function(
