@@ -151,6 +151,7 @@ stability_res <- estimate_stability(
 
 plot_stability(stability_res, plot_path = "tempOutput/stability.png")
 ```
+![](../inst/stability.png)
 
 Now we run the factor analysis with these components. We additionally set a 
 stability threshold of 0.25 to remove components with low stability. This
