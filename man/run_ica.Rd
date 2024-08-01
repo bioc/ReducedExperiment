@@ -122,8 +122,8 @@ successfully calculated.}
 
 In short, the stability-based algorithm consists of:
 \itemize{
-\item Running ICA multiple times with either random initialisation or bootstrap
-resampling of the input data.
+\item Running ICA multiple times with either random initialisation or
+bootstrap resampling of the input data.
 \item Clustering the resulting factors across all runs based on the
 signature matrix.
 \item Calculating intra- (aics) and extra- (aecs) cluster

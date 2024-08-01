@@ -16,6 +16,30 @@
 
 \item{value}{New value to replace existing dendrogram.}
 }
+\value{
+Returns a dendrogram describing relationships between genes.
+Usually produced through hierarchical clustering using the
+\link[WGCNA]{blockwiseModules} function.
+}
 \description{
 Get the dendrogram stored in a ModularExperiment
+}
+\examples{
+# Create ModularExperiment with random data (100 features, 50 samples,
+# 10 modules)
+me <- ReducedExperiment:::.createRandomisedModularExperiment(100, 50, 10)
+me
+
+# The dendrogram is usually produced during module discovery, but we can
+# assign any dendrogram to the slot. Let's do hierarchical clustering on the
+# features in our object and assign it
+dendrogram(me) <- hclust(dist(assay(me)))
+dendrogram(me)
+
+# Can use default plotting approach
+plot(dendrogram(me))
+
+# Or class method that calls WGCNA::plotDendroAndColors
+plotDendro(me)
+
 }

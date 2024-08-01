@@ -34,6 +34,8 @@
 #' `stability` slots may also be filled depending on the arguments given
 #' to `estimate_factors`.
 #'
+#' @seealso [ReducedExperiment::run_ica()], [ica::ica()]
+#'
 #' @examples
 #' # Get a random matrix with rnorm, with 100 rows (features)
 #' # and 20 columns (observations)
@@ -210,14 +212,14 @@ estimate_factors <- function(
 #'
 #' In short, the stability-based algorithm consists of:
 #' \itemize{
-#'  \item Running ICA multiple times with either random initialisation or bootstrap
-#' resampling of the input data.
+#'  \item Running ICA multiple times with either random initialisation or
+#'  bootstrap resampling of the input data.
 #'  \item Clustering the resulting factors across all runs based on the
-#' signature matrix.
+#'  signature matrix.
 #'  \item Calculating intra- (aics) and extra- (aecs) cluster
-#' stability, and defining the final cluster stability as `aics - aecs`.
+#'  stability, and defining the final cluster stability as `aics - aecs`.
 #'  \item Calculating the cluster centrotype as the factor with the highest
-#' intra-cluster stability.
+#'  intra-cluster stability.
 #'  \item Optionally removing factors below a specified stability threshold
 #' (`stability_threshold`).
 #' }
@@ -520,11 +522,19 @@ run_ica <- function(X, nc, use_stability = FALSE, resample = FALSE,
 #' X <- ReducedExperiment:::.makeRandomData(200, 100, "feature", "obs")
 #'
 #' # Estimate stability across 10 to 30 components
-#' stab_res_1 <- estimate_stability(X, min_components = 10, max_components = 30)
+#' stab_res_1 <- estimate_stability(
+#'     X,
+#'     min_components = 10,
+#'     max_components = 30
+#' )
 #'
 #' # Convert the data matrix to a SummarizedExperiment, then estimate stability
 #' se <- SummarizedExperiment(assays = list("normal" = X))
-#' stab_res_2 <- estimate_stability(se, min_components = 10, max_components = 30)
+#' stab_res_2 <- estimate_stability(
+#'     se,
+#'     min_components = 10,
+#'     max_components = 30
+#' )
 #'
 #' # Plot the stability
 #' plot_stability(stab_res_1)

@@ -65,3 +65,6 @@ fe_2 <- estimate_factors(se, nc = 5)
 fe_2
 
 }
+\seealso{
+\code{\link[=run_ica]{run_ica()}}, \code{\link[ica:ica]{ica::ica()}}
+}

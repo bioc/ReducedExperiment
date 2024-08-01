@@ -233,7 +233,11 @@ get_msigdb_t2g <- function(
 #' fe <- estimate_factors(X, nc = 5)
 #'
 #' # Get the genes highly aligned with each factor
-#' aligned_features <- getAlignedFeatures(fe, format = "data.frame", proportional_threshold = 0.3)
+#' aligned_features <- getAlignedFeatures(
+#'     fe,
+#'     format = "data.frame",
+#'     proportional_threshold = 0.3
+#' )
 #'
 #' # Identify overlap between common features for each factor
 #' common_features <- get_common_features(aligned_features)
@@ -318,7 +322,11 @@ get_common_features <- function(factor_features) {
 #' fe <- estimate_factors(X, nc = 5)
 #'
 #' # Get the genes highly aligned with each factor
-#' aligned_features <- getAlignedFeatures(fe, format = "data.frame", proportional_threshold = 0.3)
+#' aligned_features <- getAlignedFeatures(
+#'     fe,
+#'     format = "data.frame",
+#'     proportional_threshold = 0.3
+#' )
 #'
 #' # Identify overlap between common features for each factor
 #' common_features <- get_common_features(aligned_features)

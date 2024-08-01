@@ -30,7 +30,32 @@ name of the assay to be subject to WGCNA.}
 \item{...}{Additional arguments to be passed to
 \link{ReducedExperiment}\link{run_wgcna}.}
 }
+\value{
+A \link{ReducedExperiment}\link{ModularExperiment} is returned
+containing the input data (i.e., the original data matrix in addition to
+other slots if a \link{SummarizedExperiment}\link{SummarizedExperiment} was used
+as input). Additionally contains the results of module analysis, stored in
+the \code{reduced} and \code{assignments} slots. The \code{center_X}, \code{scale_X},
+\code{loadings}, \code{threshold} and \code{dendrogram} slots may also be filled depending
+on the arguments given to \code{identify_modules}.
+}
 \description{
 Performs Weighted gene correlation network analysis (WGCNA).
 Calls \link{ReducedExperiment}\link{run_wgcna} to perform the analysis.
+}
+\examples{
+# Get the airway data as a SummarizedExperiment (with a subset of features)
+set.seed(2)
+airway_se <- ReducedExperiment:::.get_airway_data(n_features = 500)
+
+# Identify modules in the airway data
+WGCNA::disableWGCNAThreads()
+me_1 <- identify_modules(airway_se, verbose = 0, powers = 5)
+me_1
+
+}
+\seealso{
+\code{\link[=run_wgcna]{run_wgcna()}},
+\code{\link[WGCNA:blockwiseModules]{WGCNA::blockwiseModules()}},
+\code{\link[WGCNA:pickSoftThreshold]{WGCNA::pickSoftThreshold()}}
 }

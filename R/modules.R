@@ -20,6 +20,28 @@
 #' @param ... Additional arguments to be passed to
 #' \link{ReducedExperiment}[run_wgcna].
 #'
+#' @returns A \link{ReducedExperiment}[ModularExperiment] is returned
+#' containing the input data (i.e., the original data matrix in addition to
+#' other slots if a \link{SummarizedExperiment}[SummarizedExperiment] was used
+#' as input). Additionally contains the results of module analysis, stored in
+#' the `reduced` and `assignments` slots. The `center_X`, `scale_X`,
+#' `loadings`, `threshold` and `dendrogram` slots may also be filled depending
+#' on the arguments given to `identify_modules`.
+#'
+#' @examples
+#' # Get the airway data as a SummarizedExperiment (with a subset of features)
+#' set.seed(2)
+#' airway_se <- ReducedExperiment:::.get_airway_data(n_features = 500)
+#'
+#' # Identify modules in the airway data
+#' WGCNA::disableWGCNAThreads()
+#' me_1 <- identify_modules(airway_se, verbose = 0, powers = 5)
+#' me_1
+#'
+#' @seealso [ReducedExperiment::run_wgcna()],
+#'     [WGCNA::blockwiseModules()],
+#'     [WGCNA::pickSoftThreshold()]
+#'
 #' @export
 identify_modules <- function(
         X,
@@ -108,7 +130,7 @@ identify_modules <- function(
 #' Runs WGCNA. Largely a wrapper for the \link[WGCNA]{blockwiseModules}
 #' function. Additionally applies \link[WGCNA]{pickSoftThreshold} to
 #' aid in the selection of the soft thresholding power, reformats data
-#' into a format convenientg for creating a
+#' into a format convenient for creating a
 #' \link[ReducedExperiment]{ModularExperiment} object and changes module names
 #' from colours to numbers (default).
 #'
@@ -187,6 +209,19 @@ identify_modules <- function(
 #'  \item{"assignments"}{A named vector representing the assignments of
 #'  genes to modules.}
 #' }
+#'
+#' @seealso [WGCNA::blockwiseModules()],
+#'     [WGCNA::pickSoftThreshold()]
+#'
+#' @examples
+#' # Get the airway data as a SummarizedExperiment (with a subset of features)
+#' set.seed(2)
+#' airway_se <- ReducedExperiment:::.get_airway_data(n_features = 500)
+#'
+#' # Identify modules using the airway expression matrix
+#' WGCNA::disableWGCNAThreads()
+#' airway_me <- run_wgcna(assay(airway_se), verbose = 0, powers = 5)
+#' airway_me
 #'
 #' @export
 run_wgcna <- function(

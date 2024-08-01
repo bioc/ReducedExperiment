@@ -19,7 +19,33 @@ for each module containing a list of features.}
 
 \item{value}{New value to replace existing assignments.}
 }
+\value{
+A vector with values representing features and names representing
+feature assignments (i.e., modules).
+}
 \description{
 Retrieves a vector of features (usually genes) named by the modules
-they belong to.
+they belong to. Assignment can be used to modify all or part of the
+vector.
+}
+\examples{
+# Create ModularExperiment with random data (100 features, 50 samples,
+# 10 modules)
+me <- ReducedExperiment:::.createRandomisedModularExperiment(100, 50, 10)
+me
+
+# Assignment of features to groups/modules
+assignments(me)
+
+# We can reassign a feature to a new module if we like:
+names(assignments(me))[6] <- "new_module"
+assignments(me)[1:10]
+
+# We shouldn't, however, attempt to change the feature names here:
+# assignments(me)[5] <- "modified_gene_name"
+
+# Instead, we should change the object's feature names as so:
+featureNames(me)[5] <- "modified_gene_name"
+assignments(me)[1:10]
+
 }

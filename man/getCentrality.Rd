@@ -15,12 +15,31 @@ module centrality.}
 
 \item{feature_id_col}{The column in \code{rowData(object)} that will be used as a
 feature ID. Setting this to "rownames" (default) instead uses
-\code{rownames(object)}.
-
-Results indicate correlation (r) and squared correlation (rsq) with the
-module eigengene. Feature ranks within each module are also returned based
-on these statistics.}
+\code{rownames(object)}.}
+}
+\value{
+Returns a \code{data.frame} with columns for \code{feature},
+\code{r} (signed correlation with the eigengene),
+\code{rsq} (squared correlation with the eigengene),
+\code{rank_r} (feature rank based on \code{r}) and
+\code{rank_rsq} (feature rank based on rsq).
 }
 \description{
-Get correlation of features with module eigengenes
+Provides a wrapper around \link[WGCNA]{signedKME}. Provides a measure
+of module centrality/connectivity of each feature. Essentially just
+calculates correlation (Pearson's r) of each feature with the module
+eigengene, i.e., the column of \code{reduced} to which the feature belongs.
+}
+\examples{
+# Create ModularExperiment with random data (100 features, 50 samples,
+# 10 modules)
+me <- ReducedExperiment:::.createRandomisedModularExperiment(100, 50, 10)
+me
+
+# Calculate centrality of each feature for the corresponding module
+getCentrality(me)
+
+}
+\seealso{
+\code{\link[WGCNA:signedKME]{WGCNA::signedKME()}}
 }
