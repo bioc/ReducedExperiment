@@ -17,3 +17,4 @@ biomart_out <- biomaRt::getBM(
 
 head(biomart_out)
 write.csv(biomart_out, "inst/extdata/biomart_out.csv", row.names = FALSE)
+saveRDS(biomart_out, "inst/extdata/biomart_out.rds")
