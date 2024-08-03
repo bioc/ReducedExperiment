@@ -451,12 +451,14 @@ NULL
 #'
 #' @param k Slicing by reduced dimensions.
 #'
+#' @param value Value to be used to replace part of the object.
+#'
 #' @param drop Included for consistency with other slicing methods.
 #'
 #' @param ... Additional arguments to be passed to the parent method.
 #'
-#' @returns A \link[ReducedExperiment]{ReducedExperiment} object sliced by
-#' rows (`i`), columns (`j`) and components (`k`).
+#' @returns A \link[ReducedExperiment]{ReducedExperiment} object, potentially
+#' sliced by rows (`i`), columns (`j`) and components (`k`).
 #'
 #' @examples
 #' # Create randomised data with the following dimensions
@@ -475,7 +477,12 @@ NULL
 #'
 #' # Slice our object by rows (1:50), columns (1:20) and components (1:5)
 #' # re[i, j, k, ...]
-#' re[1:50, 1:20, 1:5]
+#' sliced_re <- re[1:50, 1:20, 1:5]
+#' sliced_re
+#'
+#' # We can also assign our subsetted object back to the original
+#' re[1:50, 1:20, 1:5] <- sliced_re
+#' re
 #'
 #' @rdname slice
 #' @name slice
@@ -484,72 +491,175 @@ NULL
 #' @rdname slice
 #' @export
 setMethod(
-    "[", c("ReducedExperiment", "ANY", "ANY", "ANY"),
+    "[", signature(x = "ReducedExperiment"),
     function(x, i, j, k, ..., drop = FALSE) {
-        object <- x
 
-        if (1L != length(drop) || (!missing(drop) && drop)) {
-            warning("'drop' ignored '[,", class(object), ",ANY,ANY-method'")
-        }
-
-        red <- object@reduced
-        center <- object@center
-        scale <- object@scale
-
-        if (!missing(i)) {
-            if (is.character(i)) {
-                fmt <- paste0(
-                    "<", class(object),
-                    ">[i,] index out of bounds: %s"
-                )
-                i <- SummarizedExperiment:::.SummarizedExperiment.charbound(
-                    i, rownames(object), fmt
-                )
-            }
-            i <- as.vector(i)
-            if (!is.logical(center)) center <- center[i, drop = FALSE]
-            if (!is.logical(scale)) scale <- scale[i, drop = FALSE]
-        }
-
-        if (!missing(j)) {
-            if (is.character(j)) {
-                fmt <- paste0(
-                    "<", class(object),
-                    ">[,j] index out of bounds: %s"
-                )
-                j <- SummarizedExperiment:::.SummarizedExperiment.charbound(
-                    j, colnames(object), fmt
-                )
-            }
-            j <- as.vector(j)
-            red <- red[j, , drop = FALSE]
-        }
-
-        if (!missing(k)) {
-            if (is.character(k)) {
-                fmt <- paste0(
-                    "<", class(object),
-                    ">[k,] index out of bounds: %s"
-                )
-                k <- SummarizedExperiment:::.SummarizedExperiment.charbound(
-                    k, componentNames(object), fmt
-                )
-            }
-
-            k <- as.vector(k)
-            red <- red[, k, drop = FALSE]
-        }
-
-        out <- callNextMethod(object, i, j, ...)
-        BiocGenerics:::replaceSlots(
-            out,
-            reduced = red,
-            center = center,
-            scale = scale,
-            check = FALSE
-        )
+    if (1L != length(drop) || (!missing(drop) && drop)) {
+        warning("'drop' ignored '[,", class(object), ",ANY,ANY-method'")
     }
-)
+
+    object <- x
+    red <- object@reduced
+    center <- object@center
+    scale <- object@scale
+
+    if (!missing(i)) {
+        if (is.character(i)) {
+            fmt <- paste0(
+                "<", class(object),
+                ">[i,] index out of bounds: %s"
+            )
+            i <- SummarizedExperiment:::.SummarizedExperiment.charbound(
+                i, rownames(object), fmt
+            )
+        }
+        i <- as.vector(i)
+        if (!is.logical(center)) center <- center[i, drop = FALSE]
+        if (!is.logical(scale)) scale <- scale[i, drop = FALSE]
+    }
+
+    if (!missing(j)) {
+        if (is.character(j)) {
+            fmt <- paste0(
+                "<", class(object),
+                ">[,j] index out of bounds: %s"
+            )
+            j <- SummarizedExperiment:::.SummarizedExperiment.charbound(
+                j, colnames(object), fmt
+            )
+        }
+        j <- as.vector(j)
+        red <- red[j, , drop = FALSE]
+    }
+
+    if (!missing(k)) {
+        if (is.character(k)) {
+            fmt <- paste0(
+                "<", class(object),
+                ">[k,] index out of bounds: %s"
+            )
+            k <- SummarizedExperiment:::.SummarizedExperiment.charbound(
+                k, componentNames(object), fmt
+            )
+        }
+
+        k <- as.vector(k)
+        red <- red[, k, drop = FALSE]
+    }
+
+    out <- callNextMethod(object, i = i, j = j, ..., drop = drop)
+    BiocGenerics:::replaceSlots(
+        out,
+        reduced = red,
+        center = center,
+        scale = scale,
+        check = FALSE
+    )
+})
+
+#' @rdname slice
+#' @export
+setReplaceMethod("[",
+    signature(x = "ReducedExperiment", value = "ReducedExperiment"),
+    function(x, i, j, k, ..., value) {
+
+    if (missing(i) & missing(j) & missing(k)) return(value)
+
+    object <- x
+    red <- object@reduced
+    center <- object@center
+    scale <- object@scale
+
+    if (!missing(i)) {
+        if (is.character(i)) {
+            fmt <- paste0(
+                "<", class(object),
+                ">[i,] index out of bounds: %s"
+            )
+            i <- SummarizedExperiment:::.SummarizedExperiment.charbound(
+                i, rownames(object), fmt
+            )
+        }
+        i <- as.vector(i)
+
+        # Setting new values for center/scale is challenging if the types do
+        # not match up - raise a warning in this case
+        if (!is.logical(center)) {
+            if (is.logical(value@center)) {
+                warning(
+                    "Original object contains a vector indicating the values",
+                    "used to center the data, whereas newdata does not.",
+                    "Setting value to that of newdata: ", value@center
+                )
+            } else {
+                center[i] <- value@center
+            }
+        }
+        if (!is.logical(scale)) {
+            if (is.logical(value@scale)) {
+                warning(
+                    "Original object contains a vector indicating the values",
+                    "used to scale the data, whereas newdata does not.",
+                    "Setting value to that of newdata: ", value@scale
+                )
+            } else {
+                scale[i] <- value@scale
+            }
+        }
+    } else {
+        i <- seq_len(nrow(object))
+    }
+
+    if (!missing(j)) {
+        if (is.character(j)) {
+            fmt <- paste0(
+                "<", class(object),
+                ">[,j] index out of bounds: %s"
+            )
+            j <- SummarizedExperiment:::.SummarizedExperiment.charbound(
+                j, colnames(object), fmt
+            )
+        }
+        j <- as.vector(j)
+
+    } else {
+        j <- seq_len(ncol(object))
+    }
+
+    if (!missing(k)) {
+        if (is.character(k)) {
+            fmt <- paste0(
+                "<", class(object),
+                ">[k,] index out of bounds: %s"
+            )
+            k <- SummarizedExperiment:::.SummarizedExperiment.charbound(
+                k, componentNames(object), fmt
+            )
+        }
+
+        k <- as.vector(k)
+    } else {
+        k <- seq_len(nComponents(object))
+    }
+
+    red[j, k] <- value@reduced
+
+    out <- callNextMethod(object, i, j, ..., value = value)
+    out <- BiocGenerics:::replaceSlots(
+        out,
+        reduced = red,
+        center = center,
+        scale = scale,
+        check = FALSE
+    )
+
+    # Ensure names are consistent
+    featureNames(out) <- rownames(out)
+    sampleNames(out) <- rownames(out@reduced)
+    componentNames(out) <- colnames(out@reduced)
+
+    return(out)
+})
 
 #' Combine ReducedExperiment objects by columns
 #'

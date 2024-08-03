@@ -22,6 +22,7 @@ test_that("Build and subset", {
 
     # Subset and re-test
     rrs_subset <- rrs[5:10, 50:90, 1:2]
+    expect_true(validObject(rrs_subset))
     expect_equal(dim(rrs_subset), c("Features" = 6, "Samples" = 41, "Components" = 2))
     expect_equal(nComponents(rrs_subset), c("Components" = 2))
     expect_equal(nSamples(rrs_subset), c("Samples" = 41))
@@ -42,6 +43,17 @@ test_that("Build and subset", {
     expect_equal(reduced(rrs_empy), matrix(0, 0, 0), check.attributes = FALSE)
     expect_equal(rrs_empy@scale, TRUE)
     expect_equal(rrs_empy@center, TRUE)
+
+    # Subset with characters
+    expect_equal(
+        dimnames(rrs[5:10, 50:90, 1:2]),
+        dimnames(rrs[paste0("gene_", 5:10), paste0("sample_", 50:90), paste0("factor_", 1:2)])
+    )
+
+    # TODO: Test subset replacement
+    rrs[5:10, 50:90, 1:2] <- rrs_subset
+    expect_true(validObject(rrs_subset))
+
 })
 
 test_that("Access and replace reduced data", {

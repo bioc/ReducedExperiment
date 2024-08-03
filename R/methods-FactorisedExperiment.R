@@ -313,12 +313,12 @@ setMethod("cbind", "FactorisedExperiment", function(..., deparse.level = 1) {
         return(identical(re@loadings, args[[1]]@loadings) &
             identical(re@stability, args[[1]]@stability))
     },
-    FUN.VALUE = FALSE
+        FUN.VALUE = FALSE
     )
 
     if (!all(loadings_stability_equal)) {
         stop(
-            "Row bind expects loadings and stability slots are equal. ",
+            "Column bind expects loadings and stability slots are equal. ",
             "Set check_duplicate_slots to FALSE to ignore these slots."
         )
     }
