@@ -22,7 +22,6 @@ test_that("Build and subset", {
 
     # Subset and re-test
     rrs_subset <- rrs[5:10, 50:90, 1:2]
-    expect_true(validObject(rrs_subset))
     expect_equal(dim(rrs_subset), c("Features" = 6, "Samples" = 41, "Components" = 2))
     expect_equal(nComponents(rrs_subset), c("Components" = 2))
     expect_equal(nSamples(rrs_subset), c("Samples" = 41))
@@ -36,6 +35,7 @@ test_that("Build and subset", {
 
     rownames(rrs_subset) <- paste0("123_", rownames(rrs_subset))
     expect_equal(rownames(rrs_subset)[1], "123_gene_5")
+    expect_true(validObject(rrs_subset))
 
     # Now test an empty object
     rrs_empy <- ReducedExperiment()
@@ -43,6 +43,7 @@ test_that("Build and subset", {
     expect_equal(reduced(rrs_empy), matrix(0, 0, 0), check.attributes = FALSE)
     expect_equal(rrs_empy@scale, TRUE)
     expect_equal(rrs_empy@center, TRUE)
+    expect_true(validObject(rrs_subset))
 
     # Subset with characters
     expect_equal(
@@ -51,9 +52,11 @@ test_that("Build and subset", {
     )
 
     # TODO: Test subset replacement
-    rrs[5:10, 50:90, 1:2] <- rrs_subset
-    expect_true(validObject(rrs_subset))
+    rrs[5:10, 50:90, 1:2] <- rrs[paste0("gene_", 5:10), paste0("sample_", 50:90), paste0("factor_", 1:2)]
+    expect_true(validObject(rrs))
 
+    rrs[paste0("gene_", 5:10), paste0("sample_", 50:90), paste0("factor_", 1:2)] <- rrs[5:10, 50:90, 1:2]
+    expect_true(validObject(rrs))
 })
 
 test_that("Access and replace reduced data", {
