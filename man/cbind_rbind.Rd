@@ -3,16 +3,25 @@
 %   R/methods-ModularExperiment.R, R/methods-ReducedExperiment.R
 \name{cbind,FactorisedExperiment-method}
 \alias{cbind,FactorisedExperiment-method}
+\alias{rbind,FactorisedExperiment-method}
 \alias{cbind,ModularExperiment-method}
-\alias{cbind}
+\alias{rbind,ModularExperiment-method}
+\alias{cbind_rbind}
 \alias{cbind,ReducedExperiment-method}
-\title{Combine ReducedExperiment objects by columns}
+\alias{rbind,ReducedExperiment-method}
+\title{Combine ReducedExperiment objects by columns or rows}
 \usage{
 \S4method{cbind}{FactorisedExperiment}(..., deparse.level = 1)
 
+\S4method{rbind}{FactorisedExperiment}(..., deparse.level = 1)
+
 \S4method{cbind}{ModularExperiment}(..., deparse.level = 1)
 
+\S4method{rbind}{ModularExperiment}(..., deparse.level = 1)
+
 \S4method{cbind}{ReducedExperiment}(..., deparse.level = 1)
+
+\S4method{rbind}{ReducedExperiment}(..., deparse.level = 1)
 }
 \arguments{
 \item{...}{A series of \link[ReducedExperiment]{ReducedExperiment} objects
@@ -28,16 +37,23 @@ containing all of the columns in the objects passed to \code{cbind}.
 }
 \description{
 Combines \link[ReducedExperiment]{ReducedExperiment} objects by columns
-(samples). This method assumes that objects have identical features and
+(samples) or rows (features).
+}
+\details{
+cbind assumes that objects have identical features and
 components (i.e., factors or modules). If they are not, an error is returned.
 
 So, this means that the feature-level slots should be equivalent, for example
-the assay rownames and the rownames of the factor \code{loadings} available in
-\link[ReducedExperiment]{FactorisedExperiment} objects. The component slots
+the assay rownames and values of the \code{loadings} available in
+\link[ReducedExperiment]{FactorisedExperiment} and
+\link[ReducedExperiment]{ModularExperiment}objects. The component slots
 should also be equivalent, such as the column names of the \code{reduced} matrix
 or the column names of the aformentioned factor \code{loadings} matrix.
-}
-\details{
+
+rbind assumes that objects have identical samples and components. If they
+are not, an error is returned. This means that the sample-level slots
+should be equivalent, including for example the assay column names a
+
 The \link[SummarizedExperiment]{SummarizedExperiment} package includes
 separate methods for \code{cbind}
 (\link[SummarizedExperiment]{cbind,SummarizedExperiment-method}) and
@@ -63,11 +79,26 @@ re_2 <- ReducedExperiment:::.createRandomisedReducedExperiment(i, 30, k)
 # Make a new object with 80 columns
 cbind(re_1, re_2)
 
-# We can apply combineRows to `ReducedExperiment` objects but the resulting
-# object will be a `SummarizedExperiment`
-combineRows(re_1, re_2)
+# Create randomised containers with different numbers of features
+j <- 100 # Number of samples
+k <- 10 # Number of components (i.e., factors/modules)
+
+# Same features and components, different samples (30 vs. 50 columns)
+re_3 <- ReducedExperiment:::.createRandomisedReducedExperiment(200, j, k)
+re_4 <- ReducedExperiment:::.createRandomisedReducedExperiment(150, j, k)
+reduced(re_3) <- reduced(re_4) # rbind assumes identical reduced data
+
+# Make a new object with 80 columns
+rbind(re_3, re_4)
+
+# We can apply combineRows and combineCols to `ReducedExperiment` objects
+# but the resulting object will be a `SummarizedExperiment`
+combineCols(re_1, re_2)
+combineRows(re_3, re_4)
 
 }
 \seealso{
-\code{\link[base:cbind]{base::cbind()}}, \link[SummarizedExperiment]{cbind,SummarizedExperiment-method}
+\code{\link[base:cbind]{base::cbind()}}, \code{\link[base:cbind]{base::rbind()}},
+\link[SummarizedExperiment]{cbind,SummarizedExperiment-method},
+\link[SummarizedExperiment]{rbind,SummarizedExperiment-method}
 }

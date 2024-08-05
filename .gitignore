@@ -41,6 +41,9 @@ vignettes/tempOutput
 # R Environment Variables
 .Renviron
 
+# R project
+*.Rproj
+
 # pkgdown site
 docs/
 

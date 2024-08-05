@@ -7,7 +7,7 @@
 \S4method{dim}{ReducedExperiment}(x)
 }
 \arguments{
-\item{x}{\link[ReducedExperiment]{ReducedExperiment} object.}
+\item{x}{A \link[ReducedExperiment]{ReducedExperiment} object.}
 }
 \value{
 Returns a named vector containing the dimensions of the samples,

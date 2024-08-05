@@ -323,8 +323,8 @@ setReplaceMethod(
     }
 )
 
-# Same features, different samples
-#' @rdname cbind
+# Same features/compnames, different samples
+#' @rdname cbind_rbind
 #' @export
 setMethod("cbind", "FactorisedExperiment", function(..., deparse.level = 1) {
     args <- list(...)
@@ -337,15 +337,39 @@ setMethod("cbind", "FactorisedExperiment", function(..., deparse.level = 1) {
     )
 
     if (!all(loadings_stability_equal)) {
-        stop(
-            "Column bind expects loadings and stability slots are equal. ",
-            "Set check_duplicate_slots to FALSE to ignore these slots."
-        )
+        stop("Column bind expects loadings and stability slots are equal")
+    } else {
+        args[["deparse.level"]] <- deparse.level
+        return(do.call(callNextMethod, args))
     }
+})
 
-    args[["deparse.level"]] <- deparse.level
+# Same samples/compnames, different features
+#' @rdname cbind_rbind
+#' @export
+setMethod("rbind", "FactorisedExperiment", function(..., deparse.level = 1) {
+    args <- list(...)
 
-    return(do.call(callNextMethod, args))
+    stability_equal <- vapply(args, function(re) {
+        return(identical(re@stability, args[[1]]@stability))
+    },
+    FUN.VALUE = FALSE
+    )
+
+    if (!all(stability_equal)) {
+        stop("Row bind expects stability slots are equal")
+    } else {
+        loadings_slot <- do.call(rbind, lapply(args, loadings))
+
+        args[[1]] <- BiocGenerics:::replaceSlots(
+            args[[1]],
+            loadings = loadings_slot,
+            check = FALSE
+        )
+
+        args[["deparse.level"]] <- deparse.level
+        return(do.call(callNextMethod, args))
+    }
 })
 
 #' Project new data using pre-defined factors

@@ -51,12 +51,30 @@ test_that("Build and subset", {
         dimnames(rrs[paste0("gene_", 5:10), paste0("sample_", 50:90), paste0("factor_", 1:2)])
     )
 
-    # TODO: Test subset replacement
+    # Test subset replacement
     rrs[5:10, 50:90, 1:2] <- rrs[paste0("gene_", 5:10), paste0("sample_", 50:90), paste0("factor_", 1:2)]
     expect_true(validObject(rrs))
 
     rrs[paste0("gene_", 5:10), paste0("sample_", 50:90), paste0("factor_", 1:2)] <- rrs[5:10, 50:90, 1:2]
     expect_true(validObject(rrs))
+
+    # Check changes to subsetted object are reflected after allocation
+    rrs_subset <- rrs[5:10, 50:90, 1:2]
+    rownames(rrs_subset)[3] <- "renamed_feature"
+    colnames(rrs_subset)[2] <- "renamed_sample"
+    componentNames(rrs_subset)[1] <- "renamed_comp"
+    rownames(rrs)[7] <- "renamed_feature"
+    colnames(rrs)[51] <- "renamed_sample"
+    componentNames(rrs)[1] <- "renamed_comp"
+
+    reduced(rrs_subset)["renamed_sample", "renamed_comp"] <- 10
+    rrs_subset@scale["renamed_feature"] <- 8
+
+    rrs[5:10, 50:90, 1:2] <- rrs_subset
+    expect_true(validObject(rrs))
+    expect_true(validObject(rrs_subset))
+    expect_equal(reduced(rrs)["renamed_sample", "renamed_comp"], 10)
+    expect_true(rrs_subset@scale["renamed_feature"] == 8)
 })
 
 test_that("Access and replace reduced data", {
@@ -108,7 +126,7 @@ test_that("Access and replace component names", {
 
 test_that("Access and replace sample names", {
     set.seed(1)
-    rrs <- .createRandomisedReducedExperiment(i = 300, j = 100, k = 10)
+    rrs <- ReducedExperiment:::.createRandomisedReducedExperiment(i = 300, j = 100, k = 10)
 
     expect_equal(sampleNames(rrs), paste0("sample_", 1:100))
     expect_equal(rownames(colData(rrs)), paste0("sample_", 1:100))
@@ -124,7 +142,7 @@ test_that("Access and replace sample names", {
 
 test_that("Access and replace feature names", {
     set.seed(1)
-    rrs <- .createRandomisedReducedExperiment(i = 300, j = 100, k = 10)
+    rrs <- ReducedExperiment:::.createRandomisedReducedExperiment(i = 300, j = 100, k = 10)
 
     rrs@scale <- setNames(1:300, featureNames(rrs))
     rrs@center <- setNames(1:300, featureNames(rrs))
@@ -176,12 +194,12 @@ test_that("Access and replace scale/center", {
     })())
 })
 
-test_that("Combine ReducedExperiments with cbind", {
+test_that("Combine ReducedExperiments with cbind and rbind", {
     set.seed(1)
-    rrs_a <- .createRandomisedReducedExperiment(i = 300, j = 100, k = 10)
+    rrs_a <- ReducedExperiment:::.createRandomisedReducedExperiment(i = 300, j = 100, k = 10)
 
     set.seed(2)
-    rrs_b <- .createRandomisedReducedExperiment(i = 300, j = 100, k = 10)
+    rrs_b <- ReducedExperiment:::.createRandomisedReducedExperiment(i = 300, j = 100, k = 10)
 
     # Objects should be cbind-able due to matching names
     rrs_a_a <- cbind(rrs_a, rrs_a)
@@ -191,24 +209,59 @@ test_that("Combine ReducedExperiments with cbind", {
 
     expect_equal(dim(rrs_a_b), c("Features" = 300, "Samples" = 200, "Components" = 10))
 
+    # Not rbindable when non-matching reduced
+    rrs_a_a <- rbind(rrs_a, rrs_a)
+    expect_true(validObject(rrs_a_a))
+    expect_error(rbind(rrs_a, rrs_b))
+
+    reduced(rrs_b) <- reduced(rrs_a)
+    rrs_a_b <- rbind(rrs_a, rrs_b)
+    expect_true(validObject(rrs_a_b))
+
+    expect_equal(dim(rrs_a_b), c("Features" = 600, "Samples" = 100, "Components" = 10))
+
     # Add scaling information to rrs_b but not a
     rrs_b@scale <- 1:300
     names(rrs_b@scale) <- rownames(rrs_b)
     expect_true(validObject(rrs_b))
 
-    # Should fail due to non-matching scaling slots
+    # Both should fail due to non-matching scaling slot types
     expect_error(cbind(rrs_a, rrs_b))
+    expect_error(rbind(rrs_a, rrs_b))
 
     # Add scaling information to rrs_a and it should work again
     rrs_a@scale <- rrs_b@scale
     expect_no_error(cbind(rrs_a, rrs_b))
+    expect_no_error(rbind(rrs_a, rrs_b))
+
+    # rbind works with non-matching information if matching types
+    rrs_b@scale <- 1:300 * 2
+    names(rrs_b@scale) <- rownames(rrs_b)
+    expect_true(validObject(rrs_b))
+    expect_error(cbind(rrs_a, rrs_b))
+    expect_no_error(rbind(rrs_a, rrs_b))
+
+    rrs_a@scale <- rrs_b@scale <- TRUE
 
     # Same with centering
     rrs_b@center <- 1:300
     names(rrs_b@center) <- rownames(rrs_b)
     expect_true(validObject(rrs_b))
     expect_error(cbind(rrs_a, rrs_b))
+    expect_error(rbind(rrs_a, rrs_b))
 
     rrs_a@center <- rrs_b@center
     expect_no_error(cbind(rrs_a, rrs_b))
+    expect_no_error(rbind(rrs_a, rrs_b))
+
+    rrs_b@center <- 1:300 * 2
+    names(rrs_b@center) <- rownames(rrs_b)
+    expect_true(validObject(rrs_b))
+    expect_error(cbind(rrs_a, rrs_b))
+    expect_no_error(rbind(rrs_a, rrs_b))
+
+    # Both should fail with non-matching comp-names
+    componentNames(rrs_b)[5] <- "new_name"
+    expect_error(cbind(rrs_a, rrs_b))
+    expect_error(rbind(rrs_a, rrs_b))
 })
