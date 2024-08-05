@@ -3,16 +3,25 @@
 %   R/methods-ModularExperiment.R, R/methods-ReducedExperiment.R
 \name{[,FactorisedExperiment,ANY,ANY,ANY-method}
 \alias{[,FactorisedExperiment,ANY,ANY,ANY-method}
+\alias{[<-,FactorisedExperiment,ANY,ANY,FactorisedExperiment-method}
 \alias{[,ModularExperiment,ANY,ANY,ANY-method}
+\alias{[<-,ModularExperiment,ANY,ANY,ModularExperiment-method}
 \alias{slice}
 \alias{[,ReducedExperiment,ANY,ANY,ANY-method}
+\alias{[<-,ReducedExperiment,ANY,ANY,ReducedExperiment-method}
 \title{Extract and replace parts of ReducedExperiment objects}
 \usage{
 \S4method{[}{FactorisedExperiment,ANY,ANY,ANY}(x, i, j, k, ..., drop = FALSE)
 
+\S4method{[}{FactorisedExperiment,ANY,ANY,FactorisedExperiment}(x, i, j, k, ...) <- value
+
 \S4method{[}{ModularExperiment,ANY,ANY,ANY}(x, i, j, k, ..., drop = FALSE)
 
+\S4method{[}{ModularExperiment,ANY,ANY,ModularExperiment}(x, i, j, k, ...) <- value
+
 \S4method{[}{ReducedExperiment,ANY,ANY,ANY}(x, i, j, k, ..., drop = FALSE)
+
+\S4method{[}{ReducedExperiment,ANY,ANY,ReducedExperiment}(x, i, j, k, ...) <- value
 }
 \arguments{
 \item{x}{\link[ReducedExperiment]{ReducedExperiment} object.}
@@ -26,10 +35,12 @@
 \item{...}{Additional arguments to be passed to the parent method.}
 
 \item{drop}{Included for consistency with other slicing methods.}
+
+\item{value}{Value to be used to replace part of the object.}
 }
 \value{
-A \link[ReducedExperiment]{ReducedExperiment} object sliced by
-rows (\code{i}), columns (\code{j}) and components (\code{k}).
+A \link[ReducedExperiment]{ReducedExperiment} object, potentially
+sliced by rows (\code{i}), columns (\code{j}) and components (\code{k}).
 }
 \description{
 Method permits slicing of \link[ReducedExperiment]{ReducedExperiment}
@@ -52,6 +63,11 @@ re <- ReducedExperiment(
 
 # Slice our object by rows (1:50), columns (1:20) and components (1:5)
 # re[i, j, k, ...]
-re[1:50, 1:20, 1:5]
+sliced_re <- re[1:50, 1:20, 1:5]
+sliced_re
+
+# We can also assign our subsetted object back to the original
+re[1:50, 1:20, 1:5] <- sliced_re
+re
 
 }

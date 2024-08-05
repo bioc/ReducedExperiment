@@ -63,9 +63,9 @@ rowData(airway_fe)
 # For this example we run `getGeneIDs` using a preloaded biomart query
 # (`biomart_out`) to avoid actually querying ensembl during testing
 # Note: do not use this file for your actual data
-biomart_out <- read.csv(system.file(
+biomart_out <- readRDS(system.file(
     "extdata",
-    "biomart_out.csv",
+    "biomart_out.rds",
     package = "ReducedExperiment"
 ))
 airway_fe <- getGeneIDs(airway_fe, biomart_out = biomart_out)

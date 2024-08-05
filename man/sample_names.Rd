@@ -5,14 +5,17 @@
 \alias{sampleNames<-}
 \alias{sampleNames,ReducedExperiment-method}
 \alias{sampleNames<-,ReducedExperiment-method}
+\alias{colnames<-,ReducedExperiment-method}
 \title{Get sample names}
 \usage{
-\S4method{sampleNames}{ReducedExperiment}(object)
+\S4method{sampleNames}{ReducedExperiment}(x)
 
-\S4method{sampleNames}{ReducedExperiment}(object) <- value
+\S4method{sampleNames}{ReducedExperiment}(x) <- value
+
+\S4method{colnames}{ReducedExperiment}(x) <- value
 }
 \arguments{
-\item{object}{\link[ReducedExperiment]{ReducedExperiment} object.}
+\item{x}{\link[ReducedExperiment]{ReducedExperiment} object.}
 
 \item{value}{New value to replace existing names.}
 }

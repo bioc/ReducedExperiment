@@ -1,9 +1,8 @@
-## Workflow partially based on the output of: biocthis::use_bioc_github_action()
+## Workflow partially based on
+## - The output of: biocthis::use_bioc_github_action()
+## - The workflow: https://github.com/r-lib/actions/tree/v2/examples
 
-on:
-  push:
-  pull_request:
-
+on: push
 name: build-test-deploy
 
 ## These environment variables control whether to run GitHub Actions (GHA) code

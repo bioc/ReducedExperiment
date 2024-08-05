@@ -45,11 +45,11 @@ setGeneric(
 
 setGeneric(
     "sampleNames",
-    function(object) standardGeneric("sampleNames")
+    function(x) standardGeneric("sampleNames")
 )
 setGeneric(
     "sampleNames<-",
-    function(object, value) standardGeneric("sampleNames<-")
+    function(x, value) standardGeneric("sampleNames<-")
 )
 
 setGeneric(

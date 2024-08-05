@@ -266,31 +266,12 @@ setMethod(
         stab <- object@stability
 
         if (!missing(i)) {
-            if (is.character(i)) {
-                fmt <- paste0(
-                    "<", class(object),
-                    ">[i,] index out of bounds: %s"
-                )
-                i <- SummarizedExperiment:::.SummarizedExperiment.charbound(
-                    i, rownames(object), fmt
-                )
-            }
-            i <- as.vector(i)
+            i <- .process_char_index(class(object), rownames(object), i, "i")
             lod <- lod[i, , drop = FALSE]
         }
 
         if (!missing(k)) {
-            if (is.character(k)) {
-                fmt <- paste0(
-                    "<", class(object),
-                    ">[k,] index out of bounds: %s"
-                )
-                k <- SummarizedExperiment:::.SummarizedExperiment.charbound(
-                    k, componentNames(object), fmt
-                )
-            }
-
-            k <- as.vector(k)
+            k <- .process_char_index(class(object), componentNames(object), k, "k")
             lod <- lod[, k, drop = FALSE]
             stab <- stab[k, drop = FALSE]
         }
@@ -303,8 +284,47 @@ setMethod(
     }
 )
 
-# Same features, different samples
-#' @rdname cbind
+#' @rdname slice
+#' @export
+setReplaceMethod(
+    "[",
+    signature(x = "FactorisedExperiment", value = "FactorisedExperiment"),
+    function(x, i, j, k, ..., value) {
+        if (missing(i) & missing(j) & missing(k)) {
+            return(value)
+        }
+
+        object <- x
+        lod <- object@loadings
+        stab <- object@stability
+
+        if (!missing(i)) {
+            i <- .process_char_index(class(object), rownames(object), i, "i")
+        } else {
+            i <- seq_len(nrow(object))
+        }
+
+        if (!missing(k)) {
+            k <- .process_char_index(class(object), componentNames(object), k, "k")
+        } else {
+            k <- seq_len(nComponents(object))
+        }
+
+        stab[k] <- value@stability
+        lod[i, k] <- value@loadings
+
+        out <- callNextMethod(object, i, j, k, ..., value = value)
+        BiocGenerics:::replaceSlots(
+            out,
+            loadings = lod,
+            stability = stab,
+            check = FALSE
+        )
+    }
+)
+
+# Same features/compnames, different samples
+#' @rdname cbind_rbind
 #' @export
 setMethod("cbind", "FactorisedExperiment", function(..., deparse.level = 1) {
     args <- list(...)
@@ -317,15 +337,39 @@ setMethod("cbind", "FactorisedExperiment", function(..., deparse.level = 1) {
     )
 
     if (!all(loadings_stability_equal)) {
-        stop(
-            "Row bind expects loadings and stability slots are equal. ",
-            "Set check_duplicate_slots to FALSE to ignore these slots."
-        )
+        stop("Column bind expects loadings and stability slots are equal")
+    } else {
+        args[["deparse.level"]] <- deparse.level
+        return(do.call(callNextMethod, args))
     }
+})
 
-    args[["deparse.level"]] <- deparse.level
+# Same samples/compnames, different features
+#' @rdname cbind_rbind
+#' @export
+setMethod("rbind", "FactorisedExperiment", function(..., deparse.level = 1) {
+    args <- list(...)
 
-    return(do.call(callNextMethod, args))
+    stability_equal <- vapply(args, function(re) {
+        return(identical(re@stability, args[[1]]@stability))
+    },
+    FUN.VALUE = FALSE
+    )
+
+    if (!all(stability_equal)) {
+        stop("Row bind expects stability slots are equal")
+    } else {
+        loadings_slot <- do.call(rbind, lapply(args, loadings))
+
+        args[[1]] <- BiocGenerics:::replaceSlots(
+            args[[1]],
+            loadings = loadings_slot,
+            check = FALSE
+        )
+
+        args[["deparse.level"]] <- deparse.level
+        return(do.call(callNextMethod, args))
+    }
 })
 
 #' Project new data using pre-defined factors

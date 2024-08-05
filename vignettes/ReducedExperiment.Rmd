@@ -32,10 +32,10 @@ theme_set(theme_bw())
 ```
 
 ```{r install_package, eval=FALSE}
-# if (!requireNamespace("BiocManager", quietly = TRUE))  {
-#     install.packages("BiocManager")
-# }
-#
+if (!requireNamespace("BiocManager", quietly = TRUE)) {
+    install.packages("BiocManager")
+}
+
 # BiocManager::install("ReducedExperiment")
 
 devtools::install_github("jackgisby/ReducedExperiment")
@@ -99,13 +99,13 @@ repository: https://zenodo.org/records/6497251
 
 The data were normalised with edgeR's TMM method and transformed to log-counts
 per million. Genes with low counts were removed before further filtering to
-select high-variance genes. For the purposes of this example, only ~2000
-genes were retained.
+select high-variance genes. For the purposes of this example, only 500
+genes were retained and we downsampled the patients.
 
 The COVID-19 data are split up into two cohorts, one for the first wave of
 COVID-19 (early-mid 2020) and another for the second (early 2021). In this
 vignette, we will mainly use the first cohort, whereas the second cohort
-will be used as a validation set.
+will be used as a validation dataset.
 
 ```{r load_data}
 wave1_se <- readRDS(system.file(
@@ -116,9 +116,6 @@ wave2_se <- readRDS(system.file(
     "extdata", "wave2.rds",
     package = "ReducedExperiment"
 ))
-
-assay(wave1_se, "normal") <- assay(wave1_se, "cpm")
-assay(wave2_se, "normal") <- assay(wave2_se, "cpm")
 
 wave1_se
 ```
@@ -137,22 +134,37 @@ The component estimation procedure is based on the maximally stable
 transcriptome dimension approach, described here:
 https://bmcgenomics.biomedcentral.com/articles/10.1186/s12864-017-4112-9
 
-We can see the stability of the factors as a function of the number of 
-components. We ideally want to pick the maximal number of components with
-acceptable stability. There is an apparent elbow in the first curve between 
-30-40 components, so we move forward with 35 components.
+Using this method, we can plot the stability of the factors as a function of 
+the number of 
+components. The plot on the left shows a line for each run. We perform
+ICA for a sequence of components from 10 to 60, increasing the number of
+components by two each time. So, we run ICA for 10, 12, 14, etc. components
+and each of these runs produces a line in the plot. The plot on the right 
+displays a single line displaying stability averaged over the runs. 
 
-```{r estimate_stability, eval=FALSE}
+We ideally want to pick the maximal number of components with
+acceptable stability. Between 30-40 components, the component stability appears
+to drop off, so we move forward with 35 components.
+
+```{r estimate_stability, message=FALSE, warning=FALSE}
 stability_res <- estimate_stability(
     wave1_se,
-    n_runs = 30,
+    n_runs = 10,
     min_components = 10, max_components = 60, by = 2,
-    mean_stability_threshold = 0.85
+    mean_stability_threshold = 0.85,
+    verbose = FALSE
 )
 
-plot_stability(stability_res, plot_path = "tempOutput/stability.png")
+stability_plot <- plot_stability(stability_res)
+print(stability_plot$combined_plot)
 ```
-![](../inst/stability.png)
+
+These plots were made for a small test dataset. For standard datasets with
+thousands of genes, you might see a stability profile more like the one
+plotted below. You'll commonly observe an elbow in the stability plot on the
+left, which in this case appears around 30-40 components.
+
+![Stability plot for the full dataset](https://raw.githubusercontent.com/jackgisby/ReducedExperiment/devel/inst/stability.png)
 
 Now we run the factor analysis with these components. We additionally set a 
 stability threshold of 0.25 to remove components with low stability. This
@@ -205,27 +217,37 @@ https://bmcbioinformatics.biomedcentral.com/articles/10.1186/1471-2105-9-559
 
 The ReducedExperiment package provides wrapper functions for running 
 such an analysis, before packaging them into a ModularExperiment
-class.
+class. Since for this example we've filtered out most of the genes that were in
+the original dataset, we allow for the identification of smaller modules of 
+genes (10).
 
 The dendrogram is also stored in this object, allowing us to plot the clusters
 of genes that are identified.
 
 ```{r}
 WGCNA::disableWGCNAThreads()
-wave1_me <- identify_modules(wave1_se, verbose = 0, powers = 1:30)
+wave1_me <- identify_modules(
+    wave1_se,
+    verbose = 0,
+    powers = 10,
+    minModuleSize = 10
+)
 
 plotDendro(wave1_me)
 ```
 
-In this case we only identify 10 modules, far fewer than that identified in the
+In this case we only identify 8 modules (module_0 is not a module itself,
+but rather represents the unclustered genes, and is coloured in gray in
+the plot above). Far more modules were identified in the
 original paper: https://www.nature.com/articles/s41467-022-35454-4#Fig4
 
-This is likely because we are only using a subset of genes and we have 
-allowed the `identify_modules` to automatically select the soft thresholding
-power. In general, it is recommended more careful consider the parameters used
-to generate modules, which can be aided by functions in the WGCNA package that
-allow for the creating of diagnostic plots. For now, however, we will move 
-forward with our 10 modules.
+This is likely because we are only using a subset of samples and genes,
+and we've used a different soft thresholding power. While `identify_modules`
+can suggest a soft thresholding power automatically, it is generally recommended 
+that the user carefully consider the parameters used
+to generate modules (e.g., by considering the output of 
+WGCNA::pickSoftThreshold). For now, however, we will move 
+forward with our 8 modules.
 
 ```{r print_me}
 wave1_me
@@ -261,7 +283,7 @@ associated with disease outcomes. We can do this with the
 available in the `SummarizedExperiment` container.
 
 ```{r show_coldata}
-colData(wave1_se)
+colData(wave1_se)[, c("sample_id", "individual_id", "case_control", "sex", "calc_age")]
 ```
 
 In this case, we will focus on the `case_control` variable, indicating whether
@@ -272,28 +294,28 @@ we use the "lmer" method (i.e., a linear mixed model) and include a random
 intercept for the individual in the model formula.
 
 ```{r associate_components}
-f <- "~ case_control + sex + calc_age + ethnicity + (1|individual_id)"
+f <- "~ case_control + sex + calc_age"
 
-associations_me <- associate_components(wave1_me, method = "lmer", formula = f)
-associations_fe <- associate_components(wave1_fe, method = "lmer", formula = f)
+associations_me <- associate_components(wave1_me, method = "lm", formula = f)
+associations_fe <- associate_components(wave1_fe, method = "lm", formula = f)
 ```
 
-Below is a table for the associations of factors with our `case_control` 
+Below is a table for the significant associations between the factors and the `case_control` 
 variable, encoding COVID-19 infection status.
 
 ```{r associate_table}
 associations_fe$summaries[
-    associations_fe$summaries$term == "case_controlPOSITIVE",
+    associations_fe$summaries$term == "case_controlPOSITIVE" &
+        associations_fe$summaries$adj_pvalue < 0.05,
+    c("term", "component", "estimate", "stderr", "adj_pvalue")
 ]
 ```
 
 We can plot out these results. In the plot below, factors that are "upregulated"
 in COVID-19 patients are shown in red, whereas "downregulated" factors are 
 in blue. The vertical line indicates significance (i.e., adjusted p-values
-less than 0.05).
-
-We can see a number of factors that are significantly downregulated in COVID-19
-patients. Factor 7, on the other hand, is up-regulated in COVID-19.
+less than 0.05). There are a number of factors that are significantly up- or 
+down-regulated in COVID-19.
 
 ```{r plot_factor_associations}
 ggplot(
@@ -313,7 +335,7 @@ ggplot(
 ```
 
 A similar plot for our modules shows significant upregulation of modules 1,
-8, 2 and 9, along with down-regulation of 3 modules.
+2, 7 and 8, along with down-regulation of modules 3 and 5.
 
 ```{r plot_module_associations}
 ggplot(
@@ -343,7 +365,7 @@ the module assignments in the ModularExperiment object. We can also
 identify the genes that are highly aligned with each factor, as follows:
 ```{r factor_alignments}
 aligned_features <- getAlignedFeatures(wave1_fe, format = "data.frame")
-head(aligned_features)
+head(aligned_features[, c("component", "feature", "value")])
 ```
 
 This shows the value of the loadings for the genes most highly associated with 
@@ -356,18 +378,20 @@ default, we run gene set enrichment analysis for the factors, whereas we use
 a simple overrepresentation analysis for the modules.
 
 ```{r run_enrich, message=FALSE, warning=FALSE}
-factor_enrich <- runEnrich(wave1_fe, as_dataframe = TRUE)
+# We run GSEA for module 5 only as an example
+factor_enrich <- runEnrich(wave1_fe[, , 5], as_dataframe = TRUE)
+
+# We run overrepresentation analysis for all the modules
 module_enrich <- runEnrich(wave1_me, as_dataframe = TRUE)
 ```
 
 We can again plot summaries of these results. For instance, we see that 
-factor 2, that was downregulated in COVID-19 patients, and is enriched for 
-pathways related to IL4, -13 and -18 signaling and platelet activation..
+factor 5 is enriched for the pathway
+"WP_NETWORK_MAP_OF_SARSCOV2_SIGNALING_PATHWAY".
 
 ```{r example_factor_enrichment}
 ggplot(
-    factor_enrich[factor_enrich$component == "factor_2" &
-        factor_enrich$p.adjust < 0.05, ],
+    factor_enrich[1:5, ],
     aes(
         -log10(p.adjust),
         reorder(substr(ID, 1, 45), -log10(p.adjust)),
@@ -378,23 +402,23 @@ ggplot(
     xlab("-log10(p-value)") +
     ylab("Pathway name (ordered by p-value)") +
     geom_vline(xintercept = -log10(0.05)) +
-    scale_fill_gradient2(low = "#3A3A98", high = "#832424")
+    scale_fill_gradient2(low = "#3A3A98", high = "#832424") +
+    expand_limits(x = 0)
 ```
 
 Module 1 was upregulated in COVID-19 patients, and we see that it is
-enriched for pathways related to histone-encoding genes (as was noted
-in the original publication) in addition to cytokine pathways and terms related
-to cell replication.
+primarily enriched for pathways related to complement.
 
 ```{r example_module_enrichment}
 ggplot(
-    module_enrich[module_enrich$component == "module_2" &
-        module_enrich$p.adjust < 0.05, ][1:15, ],
+    module_enrich[module_enrich$component == "module_1" & module_enrich$p.adjust < 0.05, ][1:15, ],
     aes(-log10(p.adjust), reorder(substr(ID, 1, 45), -log10(p.adjust)))
 ) +
     geom_point(pch = 21, size = 3) +
     xlab("-log10(p-value)") +
-    ylab("Pathway name (ordered by p-value)")
+    ylab("Pathway name (ordered by p-value)") +
+    expand_limits(x = 0) +
+    geom_vline(xintercept = -log10(0.05))
 ```
 
 # Projecting factors and modules into new datasets
@@ -440,11 +464,14 @@ wave1_me
 
 While we will avoid directly comparing the dimensionally-reduced data from
 the two cohorts, we can calculate associations between the factors and modules
-and COVID-19 status, as we did in the original cohort.
+and COVID-19 status, as we did in the original cohort. In this dataset
+there are multiple samples for each patient, so we use a linear mixed model
+(`method = "lmer"`) rather than a standard linear model (`method = "lm"`). We
+also add a random intercept for the patient ID in the model formula.
 
 ```{r replicating_associations}
-replication_me <- associate_components(wave2_me, method = "lmer", formula = f)
-replication_fe <- associate_components(wave2_fe, method = "lmer", formula = f)
+replication_me <- associate_components(wave2_me, method = "lmer", formula = paste0(f, " + (1|individual_id)"))
+replication_fe <- associate_components(wave2_fe, method = "lmer", formula = paste0(f, " + (1|individual_id)"))
 ```
 
 While there are differences in the most significantly associated modules
@@ -452,8 +479,8 @@ between the wave 1 and 2 cohorts, the results are broadly similar. Modules 1, 8,
 2 and 9 remain positively associated with COVID-19 status, whereas modules 0, 5
 and 4 remain negatively associated. 
 
-It's worth noting, however, that module 0 is not truly a module in itself, but
-rather represents all of the unclustered genes.
+upregulation of modules 1, 2, 7 and 8 remain positively associated with COVID-19 
+status, and modules 3 and 5 are still downregulated.
 
 ```{r plotting_replicated_associations}
 ggplot(
@@ -470,7 +497,8 @@ ggplot(
     xlab("-log10(p-value)") +
     ylab("Module name (ordered by p-value)") +
     geom_vline(xintercept = -log10(0.05)) +
-    scale_fill_gradient2(low = "#3A3A98", high = "#832424")
+    scale_fill_gradient2(low = "#3A3A98", high = "#832424") +
+    expand_limits(x = 0)
 ```
 
 And, as we see in the following chunk, the estimated associations between
@@ -478,7 +506,7 @@ the modules and COVID-19 status (positive vs. negative) have a strong positive
 correlation. 
 
 Differences in the estimated associations between modules and COVID-19 status
-can be explained by differences in the cohorts. For instance, different 
+may be explained by differences in the cohorts. For instance, different 
 SARS-CoV-2 variants were in prevalent at the time the cohorts were sampled, and 
 there were more treatments available for the 2021 (wave 2) cohort.
 

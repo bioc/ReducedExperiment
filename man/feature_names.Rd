@@ -13,6 +13,7 @@
 \alias{featureNames,ReducedExperiment-method}
 \alias{names<-,ReducedExperiment-method}
 \alias{rownames<-,ReducedExperiment-method}
+\alias{ROWNAMES<-,ReducedExperiment-method}
 \alias{featureNames<-,ReducedExperiment-method}
 \title{Get feature names}
 \usage{
@@ -33,6 +34,8 @@
 \S4method{names}{ReducedExperiment}(x) <- value
 
 \S4method{rownames}{ReducedExperiment}(x) <- value
+
+\S4method{ROWNAMES}{ReducedExperiment}(x) <- value
 
 \S4method{featureNames}{ReducedExperiment}(x) <- value
 }

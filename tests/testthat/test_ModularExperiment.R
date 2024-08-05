@@ -32,6 +32,38 @@ test_that("Build and subset", {
     expect_equal(dim(rrs_empy), c("Features" = 0, "Samples" = 0, "Components" = 0))
     expect_equal(reduced(rrs_empy), matrix(0, 0, 0), check.attributes = FALSE)
     expect_equal(assignments(rrs_empy), character())
+
+    # Subset with characters
+    expect_equal(
+        dimnames(rrs[5:10, 50:90, 1:2]),
+        dimnames(rrs[paste0("gene_", 5:10), paste0("sample_", 50:90), paste0("module_", 1:2)])
+    )
+
+    # Test subset replacement
+    rrs[5:10, 50:90, 1:2] <- rrs[paste0("gene_", 5:10), paste0("sample_", 50:90), paste0("module_", 1:2)]
+    expect_true(validObject(rrs))
+
+    rrs[paste0("gene_", 5:10), paste0("sample_", 50:90), paste0("module_", 1:2)] <- rrs[5:10, 50:90, 1:2]
+    expect_true(validObject(rrs))
+
+    rrs_subset <- rrs[5:10, 50:90, 1:2]
+    rownames(rrs_subset)[3] <- "renamed_feature"
+    colnames(rrs_subset)[2] <- "renamed_sample"
+    componentNames(rrs_subset)[1] <- "renamed_comp"
+    rownames(rrs)[7] <- "renamed_feature"
+    colnames(rrs)[51] <- "renamed_sample"
+    componentNames(rrs)[1] <- "renamed_comp"
+
+    reduced(rrs_subset)["renamed_sample", "renamed_comp"] <- 10
+    names(assignments(rrs_subset))[which(assignments(rrs_subset) == "renamed_feature")] <- "renamed_module"
+    loadings(rrs_subset)["renamed_feature"] <- 50
+
+    rrs[5:10, 50:90, 1:2] <- rrs_subset
+    expect_true(validObject(rrs))
+    expect_true(validObject(rrs_subset))
+    expect_equal(reduced(rrs)["renamed_sample", "renamed_comp"], 10)
+    expect_true(names(assignments(rrs))[which(assignments(rrs) == "renamed_feature")] == "renamed_module")
+    expect_true(loadings(rrs)["renamed_feature"] == 50)
 })
 
 test_that("Access and replace assignments", {
@@ -169,24 +201,32 @@ test_that("Eigengene calculation / projection / prediction", {
     }
 })
 
-test_that("Combine ModularExperiments with cbind", {
+test_that("Combine ModularExperiments with cbind and rbind", {
     set.seed(1)
-    rrs_a <- .createRandomisedModularExperiment(i = 300, j = 100, k = 10)
+    rrs_a <- ReducedExperiment:::.createRandomisedModularExperiment(i = 300, j = 100, k = 10)
 
     set.seed(2)
-    rrs_b <- .createRandomisedModularExperiment(i = 300, j = 100, k = 10)
+    rrs_b <- ReducedExperiment:::.createRandomisedModularExperiment(i = 300, j = 100, k = 10)
 
-    # Objects should be cbind-able due to matching names
+    # Objects should be bind-able due to matching names
     rrs_a_a <- cbind(rrs_a, rrs_a)
     expect_true(validObject(rrs_a_a))
+    rrs_a_a <- rbind(rrs_a, rrs_a)
+    expect_true(validObject(rrs_a_a))
 
-    # This should fail because of non-matching loadings/assignments
+    # This should fail because of non-matching loadings/assignments and reduced data
     expect_error(cbind(rrs_a, rrs_b))
+    expect_error(rbind(rrs_a, rrs_b))
 
     # Should succeed when loadings are equivalent
     loadings(rrs_b) <- loadings(rrs_a)
     assignments(rrs_b) <- assignments(rrs_a)
-    expect_no_error(cbind(rrs_a, rrs_b))
+    expect_true(validObject(cbind(rrs_a, rrs_b)))
+    expect_error(rbind(rrs_a, rrs_b))
+
+    # Should succeed when reduced data are equivalent
+    reduced(rrs_b) <- reduced(rrs_a)
+    expect_true(validObject(rbind(rrs_a, rrs_b)))
 })
 
 test_that("Get module hub genes", {

@@ -411,17 +411,7 @@ setMethod(
         lod <- object@loadings
 
         if (!missing(i)) {
-            if (is.character(i)) {
-                fmt <- paste0(
-                    "<", class(object),
-                    ">[i,] index out of bounds: %s"
-                )
-                i <- SummarizedExperiment:::.SummarizedExperiment.charbound(
-                    i, rownames(object), fmt
-                )
-            }
-
-            i <- as.vector(i)
+            i <- .process_char_index(class(object), rownames(object), i, "i")
             assignments <- assignments[i, drop = FALSE]
             lod <- lod[i, drop = FALSE]
         }
@@ -436,8 +426,41 @@ setMethod(
     }
 )
 
-# Same features, different samples
-#' @rdname cbind
+#' @rdname slice
+#' @export
+setReplaceMethod(
+    "[",
+    signature(x = "ModularExperiment", value = "ModularExperiment"),
+    function(x, i, j, k, ..., value) {
+        if (missing(i) & missing(j) & missing(k)) {
+            return(value)
+        }
+
+        object <- x
+        assignments <- object@assignments
+        lod <- object@loadings
+
+        if (!missing(i)) {
+            i <- .process_char_index(class(object), rownames(object), i, "i")
+        } else {
+            i <- seq_len(nrow(object))
+        }
+
+        names(assignments)[i] <- names(value@assignments)
+        lod[i] <- value@loadings
+
+        out <- callNextMethod(object, i, j, k, ..., value = value)
+        BiocGenerics:::replaceSlots(
+            out,
+            loadings = lod,
+            assignments = assignments,
+            check = FALSE
+        )
+    }
+)
+
+# Same features/compnames, different samples
+#' @rdname cbind_rbind
 #' @export
 setMethod("cbind", "ModularExperiment", function(..., deparse.level = 1) {
     args <- list(...)
@@ -450,8 +473,28 @@ setMethod("cbind", "ModularExperiment", function(..., deparse.level = 1) {
     )
 
     if (!all(loadings_assignments_equal)) {
-        stop("Row bind expects loadings and assignments slots are equal")
+        stop("Column bind expects loadings and assignments slots are equal")
     }
+
+    args[["deparse.level"]] <- deparse.level
+
+    return(do.call(callNextMethod, args))
+})
+
+#' @rdname cbind_rbind
+#' @export
+setMethod("rbind", "ModularExperiment", function(..., deparse.level = 1) {
+    args <- list(...)
+
+    loadings_slot <- do.call(c, lapply(args, loadings))
+    assignments_slot <- do.call(c, lapply(args, assignments))
+
+    args[[1]] <- BiocGenerics:::replaceSlots(
+        args[[1]],
+        loadings = loadings_slot,
+        assignments = assignments_slot,
+        check = FALSE
+    )
 
     args[["deparse.level"]] <- deparse.level
 
