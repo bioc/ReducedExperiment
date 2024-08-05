@@ -33,7 +33,7 @@ test_that("Build and subset", {
     expect_equal(names(rrs_subset@scale), featureNames(rrs_subset))
     expect_equal(names(rrs_subset@center), featureNames(rrs_subset))
 
-    rownames(rrs_subset) <- paste0("123_", rownames(rrs_subset))
+    names(rrs_subset) <- paste0("123_", rownames(rrs_subset))
     expect_equal(rownames(rrs_subset)[1], "123_gene_5")
     expect_true(validObject(rrs_subset))
 

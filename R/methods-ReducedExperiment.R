@@ -318,6 +318,14 @@ setReplaceMethod("rownames", "ReducedExperiment", function(x, value) {
 })
 
 #' @rdname feature_names
+#' @import S4Vectors
+#' @export
+setReplaceMethod("ROWNAMES", "ReducedExperiment", function(x, value) {
+    names(x) <- value
+    return(x)
+})
+
+#' @rdname feature_names
 #' @export
 setReplaceMethod("featureNames", "ReducedExperiment", function(x, value) {
     names(x) <- value
@@ -328,7 +336,7 @@ setReplaceMethod("featureNames", "ReducedExperiment", function(x, value) {
 #'
 #' Retrieves sample names (colnames).
 #'
-#' @param object \link[ReducedExperiment]{ReducedExperiment} object.
+#' @param x \link[ReducedExperiment]{ReducedExperiment} object.
 #'
 #' @param value New value to replace existing names.
 #' @returns A vector containing the names of the features.
@@ -362,16 +370,23 @@ NULL
 
 #' @rdname sample_names
 #' @export
-setMethod("sampleNames", "ReducedExperiment", function(object) {
-    return(colnames(object))
+setMethod("sampleNames", "ReducedExperiment", function(x) {
+    return(colnames(x))
 })
 
 #' @rdname sample_names
 #' @export
-setReplaceMethod("sampleNames", "ReducedExperiment", function(object, value) {
-    rownames(object@reduced) <- colnames(object) <- value
-    validObject(object)
-    return(object)
+setReplaceMethod("sampleNames", "ReducedExperiment", function(x, value) {
+    rownames(x@reduced) <- value
+    rownames(colData(x)) <- value
+    return(x)
+})
+
+#' @rdname sample_names
+#' @export
+setReplaceMethod("colnames", "ReducedExperiment", function(x, value) {
+    sampleNames(x) <- value
+    return(x)
 })
 
 #' Prints a summary of a ReducedExperiment object
