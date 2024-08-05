@@ -6,7 +6,7 @@ test_that("Build and subset", {
     k <- 10
 
     set.seed(1)
-    rrs <- .createRandomisedReducedExperiment(i = i, j = j, k = k)
+    rrs <- ReducedExperiment:::.createRandomisedReducedExperiment(i = i, j = j, k = k)
 
     # Test reduced experiment
     expect_equal(dim(rrs), c("Features" = i, "Samples" = j, "Components" = k))

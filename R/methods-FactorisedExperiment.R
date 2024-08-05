@@ -266,31 +266,12 @@ setMethod(
         stab <- object@stability
 
         if (!missing(i)) {
-            if (is.character(i)) {
-                fmt <- paste0(
-                    "<", class(object),
-                    ">[i,] index out of bounds: %s"
-                )
-                i <- SummarizedExperiment:::.SummarizedExperiment.charbound(
-                    i, rownames(object), fmt
-                )
-            }
-            i <- as.vector(i)
+            i <- .process_char_index(class(object), rownames(object), i, "i")
             lod <- lod[i, , drop = FALSE]
         }
 
         if (!missing(k)) {
-            if (is.character(k)) {
-                fmt <- paste0(
-                    "<", class(object),
-                    ">[k,] index out of bounds: %s"
-                )
-                k <- SummarizedExperiment:::.SummarizedExperiment.charbound(
-                    k, componentNames(object), fmt
-                )
-            }
-
-            k <- as.vector(k)
+            k <- .process_char_index(class(object), componentNames(object), k, "k")
             lod <- lod[, k, drop = FALSE]
             stab <- stab[k, drop = FALSE]
         }
@@ -298,6 +279,45 @@ setMethod(
         out <- callNextMethod(object, i, j, k, ...)
         BiocGenerics:::replaceSlots(out,
             loadings = lod, stability = stab,
+            check = FALSE
+        )
+    }
+)
+
+#' @rdname slice
+#' @export
+setReplaceMethod(
+    "[",
+    signature(x = "FactorisedExperiment", value = "FactorisedExperiment"),
+    function(x, i, j, k, ..., value) {
+        if (missing(i) & missing(j) & missing(k)) {
+            return(value)
+        }
+
+        object <- x
+        lod <- object@loadings
+        stab <- object@stability
+
+        if (!missing(i)) {
+            i <- .process_char_index(class(object), rownames(object), i, "i")
+        } else {
+            i <- seq_len(nrow(object))
+        }
+
+        if (!missing(k)) {
+            k <- .process_char_index(class(object), componentNames(object), k, "k")
+        } else {
+            k <- seq_len(nComponents(object))
+        }
+
+        stab[k] <- value@stability
+        lod[i, k] <- value@loadings
+
+        out <- callNextMethod(object, i, j, k, ..., value = value)
+        BiocGenerics:::replaceSlots(
+            out,
+            loadings = lod,
+            stability = stab,
             check = FALSE
         )
     }
@@ -313,7 +333,7 @@ setMethod("cbind", "FactorisedExperiment", function(..., deparse.level = 1) {
         return(identical(re@loadings, args[[1]]@loadings) &
             identical(re@stability, args[[1]]@stability))
     },
-        FUN.VALUE = FALSE
+    FUN.VALUE = FALSE
     )
 
     if (!all(loadings_stability_equal)) {

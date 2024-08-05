@@ -50,7 +50,7 @@ Suggests:
     BiocStyle,
     airway
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.1
 VignetteBuilder: knitr
 URL: https://github.com/jackgisby/ReducedExperiment
 BugReports: https://github.com/jackgisby/ReducedExperiment/issues

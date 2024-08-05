@@ -411,22 +411,45 @@ setMethod(
         lod <- object@loadings
 
         if (!missing(i)) {
-            if (is.character(i)) {
-                fmt <- paste0(
-                    "<", class(object),
-                    ">[i,] index out of bounds: %s"
-                )
-                i <- SummarizedExperiment:::.SummarizedExperiment.charbound(
-                    i, rownames(object), fmt
-                )
-            }
-
-            i <- as.vector(i)
+            i <- .process_char_index(class(object), rownames(object), i, "i")
             assignments <- assignments[i, drop = FALSE]
             lod <- lod[i, drop = FALSE]
         }
 
         out <- callNextMethod(object, i, j, k, ...)
+        BiocGenerics:::replaceSlots(
+            out,
+            loadings = lod,
+            assignments = assignments,
+            check = FALSE
+        )
+    }
+)
+
+#' @rdname slice
+#' @export
+setReplaceMethod(
+    "[",
+    signature(x = "ModularExperiment", value = "ModularExperiment"),
+    function(x, i, j, k, ..., value) {
+        if (missing(i) & missing(j) & missing(k)) {
+            return(value)
+        }
+
+        object <- x
+        assignments <- object@assignments
+        lod <- object@loadings
+
+        if (!missing(i)) {
+            i <- .process_char_index(class(object), rownames(object), i, "i")
+        } else {
+            i <- seq_len(nrow(object))
+        }
+
+        assignments[i] <- value@assignments
+        lod[i] <- value@loadings
+
+        out <- callNextMethod(object, i, j, k, ..., value = value)
         BiocGenerics:::replaceSlots(
             out,
             loadings = lod,

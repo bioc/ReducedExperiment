@@ -77,19 +77,12 @@ The `SummarizedExperiment` objects are convenient
 because, when we slice the rows or columns of the expression matrix, the 
 metadata for the rows and columns are sliced accordingly.
 
-```{r load_se, eval=requireNamespace('SummarizedExperiment'), include=FALSE}
-library(SummarizedExperiment)
+```{r show_se, eval=requireNamespace('SummarizedExperiment'), message=FALSE, warning=FALSE}
+library("SummarizedExperiment")
 
 se <- readRDS(system.file("extdata", "wave1.rds",
     package = "ReducedExperiment"
 ))
-
-assay(se, "normal") <- assay(se, "cpm")
-assay(se, "cpm") <- NULL
-```
-
-```{r show_se, eval=requireNamespace('SummarizedExperiment'), message=FALSE, warning=FALSE}
-library("SummarizedExperiment")
 
 se
 ```

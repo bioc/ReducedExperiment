@@ -79,18 +79,22 @@ and columns are sliced accordingly.
 ``` r
 library("SummarizedExperiment")
 
+se <- readRDS(system.file("extdata", "wave1.rds",
+    package = "ReducedExperiment"
+))
+
 se
 #> class: SummarizedExperiment 
-#> dim: 2184 234 
+#> dim: 500 83 
 #> metadata(0):
 #> assays(1): normal
-#> rownames(2184): ENSG00000002587 ENSG00000002726 ... ENSG00000288600
-#>   ENSG00000288700
-#> rowData names(3): gencode_id ensembl_id gene_id
-#> colnames(234): C10_positive_18 C10_positive_21 ... C99_positive_13
-#>   C99_positive_16
-#> colData names(19): sample_id individual_id ...
-#>   time_from_first_positive_swab time_from_first_x
+#> rownames(500): ENSG00000004799 ENSG00000007038 ... ENSG00000287935
+#>   ENSG00000288049
+#> rowData names(2): ensembl_id gene_id
+#> colnames(83): C37_positive_9 C48_positive_4 ... C85_negative
+#>   C89_negative
+#> colData names(8): sample_id individual_id ... case_control
+#>   time_from_first_x
 ```
 
 The `SummarizedExperiment` has two dimensions, representing the features
@@ -106,16 +110,16 @@ fe <- estimate_factors(se, nc = 35)
 
 fe
 #> class: FactorisedExperiment 
-#> dim: 2184 234 35 
+#> dim: 500 83 35 
 #> metadata(0):
 #> assays(2): normal transformed
-#> rownames(2184): ENSG00000002587 ENSG00000002726 ... ENSG00000288600
-#>   ENSG00000288700
-#> rowData names(3): gencode_id ensembl_id gene_id
-#> colnames(234): C10_positive_18 C10_positive_21 ... C99_positive_13
-#>   C99_positive_16
-#> colData names(19): sample_id individual_id ...
-#>   time_from_first_positive_swab time_from_first_x
+#> rownames(500): ENSG00000004799 ENSG00000007038 ... ENSG00000287935
+#>   ENSG00000288049
+#> rowData names(2): ensembl_id gene_id
+#> colnames(83): C37_positive_9 C48_positive_4 ... C85_negative
+#>   C89_negative
+#> colData names(8): sample_id individual_id ... case_control
+#>   time_from_first_x
 #> 35 components
 ```
 

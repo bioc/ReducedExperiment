@@ -32,7 +32,7 @@ theme_set(theme_bw())
 ```
 
 ```{r install_package, eval=FALSE}
-if (!requireNamespace("BiocManager", quietly = TRUE))  {
+if (!requireNamespace("BiocManager", quietly = TRUE)) {
     install.packages("BiocManager")
 }
 
@@ -227,9 +227,9 @@ of genes that are identified.
 ```{r}
 WGCNA::disableWGCNAThreads()
 wave1_me <- identify_modules(
-    wave1_se, 
-    verbose = 0, 
-    powers = 10, 
+    wave1_se,
+    verbose = 0,
+    powers = 10,
     minModuleSize = 10
 )
 
@@ -306,7 +306,7 @@ variable, encoding COVID-19 infection status.
 ```{r associate_table}
 associations_fe$summaries[
     associations_fe$summaries$term == "case_controlPOSITIVE" &
-    associations_fe$summaries$adj_pvalue < 0.05,
+        associations_fe$summaries$adj_pvalue < 0.05,
     c("term", "component", "estimate", "stderr", "adj_pvalue")
 ]
 ```
@@ -378,9 +378,8 @@ default, we run gene set enrichment analysis for the factors, whereas we use
 a simple overrepresentation analysis for the modules.
 
 ```{r run_enrich, message=FALSE, warning=FALSE}
-
 # We run GSEA for module 5 only as an example
-factor_enrich <- runEnrich(wave1_fe[,,5], as_dataframe = TRUE)
+factor_enrich <- runEnrich(wave1_fe[, , 5], as_dataframe = TRUE)
 
 # We run overrepresentation analysis for all the modules
 module_enrich <- runEnrich(wave1_me, as_dataframe = TRUE)
@@ -392,7 +391,7 @@ factor 5 is enriched for the pathway
 
 ```{r example_factor_enrichment}
 ggplot(
-    factor_enrich[1:5,],
+    factor_enrich[1:5, ],
     aes(
         -log10(p.adjust),
         reorder(substr(ID, 1, 45), -log10(p.adjust)),
@@ -412,7 +411,7 @@ primarily enriched for pathways related to complement.
 
 ```{r example_module_enrichment}
 ggplot(
-    module_enrich[module_enrich$component == "module_1" & module_enrich$p.adjust < 0.05, ][1:15,],
+    module_enrich[module_enrich$component == "module_1" & module_enrich$p.adjust < 0.05, ][1:15, ],
     aes(-log10(p.adjust), reorder(substr(ID, 1, 45), -log10(p.adjust)))
 ) +
     geom_point(pch = 21, size = 3) +
