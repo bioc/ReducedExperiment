@@ -14,12 +14,12 @@ estimate_factors(
 )
 }
 \arguments{
-\item{X}{Either a \link{SummarizedExperiment}\link{SummarizedExperiment} object
+\item{X}{Either a \link\link{SummarizedExperiment} object
 or a matrix containing data to be subject to ICA. \code{X} should have rows as
 features and columns as samples.}
 
 \item{nc}{The number of components to be identified. See
-\link{ReducedExperiment}\link{estimate_stability} for a method to estimate the
+\link[ReducedExperiment]{estimate_stability} for a method to estimate the
 optimal number of components.}
 
 \item{center_X}{If TRUE, X is centered (i.e., features / rows are transformed
@@ -29,16 +29,16 @@ to have a mean of 0) prior to ICA. Generally recommended.}
 to have a standard deviation of 1) before ICA.}
 
 \item{assay_name}{If \code{X} is a
-\link{SummarizedExperiment}\link{SummarizedExperiment}, then this should be the
+\link[SummarizedExperiment]{SummarizedExperiment}, then this should be the
 name of the assay to be subject to ICA.}
 
 \item{...}{Additional arguments to be passed to
-\link{ReducedExperiment}\link{run_ica}.}
+\link\link[=run_ica]{ReducedExperiment}.}
 }
 \value{
-A \link{ReducedExperiment}\link{FactorisedExperiment} is returned
+A \link[ReducedExperiment]{FactorisedExperiment} is returned
 containing the input data (i.e., the original data matrix in addition to
-other slots if a \link{SummarizedExperiment}\link{SummarizedExperiment} was used
+other slots if a \link[SummarizedExperiment]{SummarizedExperiment} was used
 as input). Additionally contains the results of factor analysis, stored in
 the \code{reduced} and \code{loadings} slots. The \code{center_X}, \code{scale_X} and
 \code{stability} slots may also be filled depending on the arguments given
@@ -47,8 +47,8 @@ to \code{estimate_factors}.
 \description{
 Performs independent component analysis (ICA) and packages both the input
 data and subsequent results into a
-\link{ReducedExperiment}\link{FactorisedExperiment} container. Calls
-\link{ReducedExperiment}\link{run_ica} to perform the analysis.
+\link[ReducedExperiment]{FactorisedExperiment} container. Calls
+\link[ReducedExperiment]{run_ica} to perform the analysis.
 }
 \examples{
 # Get a random matrix with rnorm, with 100 rows (features)

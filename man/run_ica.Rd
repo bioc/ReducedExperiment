@@ -25,7 +25,7 @@ run_ica(
 \item{X}{A matrix with features as rows and columns as samples.}
 
 \item{nc}{The number of components to be identified. See
-\link{ReducedExperiment}\link{estimate_stability} for a method to estimate the
+\link\link[=estimate_stability]{ReducedExperiment} for a method to estimate the
 optimal number of components.}
 
 \item{use_stability}{Whether to use a stability-based approach to estimate
