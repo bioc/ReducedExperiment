@@ -2,15 +2,15 @@
 #'
 #' Performs independent component analysis (ICA) and packages both the input
 #' data and subsequent results into a
-#' \link{ReducedExperiment}[FactorisedExperiment] container. Calls
-#' \link{ReducedExperiment}[run_ica] to perform the analysis.
+#' \link[ReducedExperiment]{FactorisedExperiment} container. Calls
+#' \link[ReducedExperiment]{run_ica} to perform the analysis.
 #'
-#' @param X Either a \link{SummarizedExperiment}[SummarizedExperiment] object
+#' @param X Either a \link[SummarizedExperiment][SummarizedExperiment] object
 #' or a matrix containing data to be subject to ICA. `X` should have rows as
 #' features and columns as samples.
 #'
 #' @param nc The number of components to be identified. See
-#' \link{ReducedExperiment}[estimate_stability] for a method to estimate the
+#' \link[ReducedExperiment]{estimate_stability} for a method to estimate the
 #' optimal number of components.
 #'
 #' @param center_X If TRUE, X is centered (i.e., features / rows are transformed
@@ -20,15 +20,15 @@
 #' to have a standard deviation of 1) before ICA.
 #'
 #' @param assay_name If `X` is a
-#' \link{SummarizedExperiment}[SummarizedExperiment], then this should be the
+#' \link[SummarizedExperiment]{SummarizedExperiment}, then this should be the
 #' name of the assay to be subject to ICA.
 #'
 #' @param ... Additional arguments to be passed to
-#' \link{ReducedExperiment}[run_ica].
+#' \link[ReducedExperiment][run_ica].
 #'
-#' @returns A \link{ReducedExperiment}[FactorisedExperiment] is returned
+#' @returns A \link[ReducedExperiment]{FactorisedExperiment} is returned
 #' containing the input data (i.e., the original data matrix in addition to
-#' other slots if a \link{SummarizedExperiment}[SummarizedExperiment] was used
+#' other slots if a \link[SummarizedExperiment]{SummarizedExperiment} was used
 #' as input). Additionally contains the results of factor analysis, stored in
 #' the `reduced` and `loadings` slots. The `center_X`, `scale_X` and
 #' `stability` slots may also be filled depending on the arguments given
@@ -96,10 +96,10 @@ estimate_factors <- function(
 #' Creates a FactorisedExperiment from a SummarizedExperiment
 #'
 #' Helper function for transforming a
-#' \link{ReducedExperiment}[FactorisedExperiment] into a
-#' \link{SummarizedExperiment}[SummarizedExperiment]
+#' \link[ReducedExperiment][FactorisedExperiment] into a
+#' \link[SummarizedExperiment][SummarizedExperiment]
 #'
-#' @param se A \link{SummarizedExperiment}[SummarizedExperiment] object.
+#' @param se A \link[SummarizedExperiment][SummarizedExperiment] object.
 #'
 #' @param reduced Data to be passed to the `reduced` slot.
 #'
@@ -131,7 +131,7 @@ estimate_factors <- function(
 #' @param X A matrix with features as rows and columns as samples.
 #'
 #' @param nc The number of components to be identified. See
-#' \link{ReducedExperiment}[estimate_stability] for a method to estimate the
+#' \link[ReducedExperiment][estimate_stability] for a method to estimate the
 #' optimal number of components.
 #'
 #' @param use_stability Whether to use a stability-based approach to estimate
@@ -299,7 +299,7 @@ run_ica <- function(X, nc, use_stability = FALSE, resample = FALSE,
 
 #' Stability ICA method
 #'
-#' Function for running stabilised ICA. See \link{ReducedExperiment}[run_ica].
+#' Function for running stabilised ICA. See \link[ReducedExperiment][run_ica].
 #'
 #' @import ica
 #' @import BiocParallel
@@ -444,7 +444,7 @@ run_ica <- function(X, nc, use_stability = FALSE, resample = FALSE,
 #' Estimates the stability of factors over a range of component numbers to
 #' aid in the identification of the optimal factor number.
 #'
-#' @param X Either a \link{SummarizedExperiment}[SummarizedExperiment] object
+#' @param X Either a \link[SummarizedExperiment][SummarizedExperiment] object
 #' or a matrix containing data to be subject to ICA. `X` should have rows as
 #' features and columns as samples.
 #'
@@ -474,7 +474,7 @@ run_ica <- function(X, nc, use_stability = FALSE, resample = FALSE,
 #' to have a standard deviation of 1) before ICA.
 #'
 #' @param assay_name If `X` is a
-#' \link{SummarizedExperiment}[SummarizedExperiment], then this should be the
+#' \link[SummarizedExperiment][SummarizedExperiment], then this should be the
 #' name of the assay to be subject to ICA.
 #'
 #' @param BPPARAM A class containing parameters for parallel evaluation. Uses
@@ -488,7 +488,7 @@ run_ica <- function(X, nc, use_stability = FALSE, resample = FALSE,
 #' of components.
 #'
 #' @param ... Additional arguments to be passed to
-#' \link{ReducedExperiment}[run_ica].
+#' \link[ReducedExperiment][run_ica].
 #'
 #' @details
 #' Runs the stability-based ICA algorithm

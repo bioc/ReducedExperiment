@@ -1,15 +1,16 @@
 ---
 title: "ReducedExperiment"
 author: "Jack Gisby"
+package: ReducedExperiment
 date: "`r Sys.Date()`" 
 output:
     BiocStyle::html_document:
         number_sections: yes
         toc: true
 vignette: >
-    %\VignetteIndexEntry{ReducedExperiment}
+    %\VignetteIndexEntry{Vignette Title}
     %\VignetteEngine{knitr::rmarkdown}
-    %\VignetteEncoding{UTF-8} 
+    %\VignetteEncoding{UTF-8}  
 ---
 
 # Installation
