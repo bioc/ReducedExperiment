@@ -1,9 +1,9 @@
 #' Apply dimensionality reduction using WGCNA
 #'
 #' Performs Weighted gene correlation network analysis (WGCNA).
-#' Calls \link{ReducedExperiment}[run_wgcna] to perform the analysis.
+#' Calls \link[ReducedExperiment]{run_wgcna} to perform the analysis.
 #'
-#' @param X Either a \link{SummarizedExperiment}[SummarizedExperiment] object
+#' @param X Either a \link[SummarizedExperiment]{SummarizedExperiment} object
 #' or a matrix containing data to be subject to WGCNA. `X` should have rows as
 #' features and columns as samples.
 #'
@@ -14,15 +14,15 @@
 #' to have a standard deviation of 1) before WGCNA.
 #'
 #' @param assay_name If `X` is a
-#' \link{SummarizedExperiment}[SummarizedExperiment], then this should be the
+#' \link[SummarizedExperiment]{SummarizedExperiment}, then this should be the
 #' name of the assay to be subject to WGCNA.
 #'
 #' @param ... Additional arguments to be passed to
-#' \link{ReducedExperiment}[run_wgcna].
+#' \link[ReducedExperiment]{run_wgcna}.
 #'
-#' @returns A \link{ReducedExperiment}[ModularExperiment] is returned
+#' @returns A \link[ReducedExperiment]{ModularExperiment} is returned
 #' containing the input data (i.e., the original data matrix in addition to
-#' other slots if a \link{SummarizedExperiment}[SummarizedExperiment] was used
+#' other slots if a \link[SummarizedExperiment]{SummarizedExperiment} was used
 #' as input). Additionally contains the results of module analysis, stored in
 #' the `reduced` and `assignments` slots. The `center_X`, `scale_X`,
 #' `loadings`, `threshold` and `dendrogram` slots may also be filled depending
@@ -87,10 +87,10 @@ identify_modules <- function(X,
 #' Creates a ModularExperiment from a SummarizedExperiment
 #'
 #' Helper function for transforming a
-#' \link{ReducedExperiment}[ModularExperiment] into a
-#' \link{SummarizedExperiment}[SummarizedExperiment]
+#' \link[ReducedExperiment]{ModularExperiment} into a
+#' \link[SummarizedExperiment]{SummarizedExperiment}
 #'
-#' @param se A \link{SummarizedExperiment}[SummarizedExperiment] object.
+#' @param se A \link[SummarizedExperiment]{SummarizedExperiment} object.
 #'
 #' @param reduced Data to be passed to the `reduced` slot.
 #'

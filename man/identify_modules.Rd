@@ -13,7 +13,7 @@ identify_modules(
 )
 }
 \arguments{
-\item{X}{Either a \link{SummarizedExperiment}\link{SummarizedExperiment} object
+\item{X}{Either a \link[SummarizedExperiment]{SummarizedExperiment} object
 or a matrix containing data to be subject to WGCNA. \code{X} should have rows as
 features and columns as samples.}
 
@@ -24,16 +24,16 @@ to have a mean of 0) prior to WGCNA.}
 to have a standard deviation of 1) before WGCNA.}
 
 \item{assay_name}{If \code{X} is a
-\link{SummarizedExperiment}\link{SummarizedExperiment}, then this should be the
+\link[SummarizedExperiment]{SummarizedExperiment}, then this should be the
 name of the assay to be subject to WGCNA.}
 
 \item{...}{Additional arguments to be passed to
-\link{ReducedExperiment}\link{run_wgcna}.}
+\link[ReducedExperiment]{run_wgcna}.}
 }
 \value{
-A \link{ReducedExperiment}\link{ModularExperiment} is returned
+A \link[ReducedExperiment]{ModularExperiment} is returned
 containing the input data (i.e., the original data matrix in addition to
-other slots if a \link{SummarizedExperiment}\link{SummarizedExperiment} was used
+other slots if a \link[SummarizedExperiment]{SummarizedExperiment} was used
 as input). Additionally contains the results of module analysis, stored in
 the \code{reduced} and \code{assignments} slots. The \code{center_X}, \code{scale_X},
 \code{loadings}, \code{threshold} and \code{dendrogram} slots may also be filled depending
@@ -41,7 +41,7 @@ on the arguments given to \code{identify_modules}.
 }
 \description{
 Performs Weighted gene correlation network analysis (WGCNA).
-Calls \link{ReducedExperiment}\link{run_wgcna} to perform the analysis.
+Calls \link[ReducedExperiment]{run_wgcna} to perform the analysis.
 }
 \examples{
 # Get the airway data as a SummarizedExperiment (with a subset of features)

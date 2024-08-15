@@ -37,7 +37,7 @@ said pathway.
 \description{
 Gets pathways from the MSigDB database in the format required by
 \code{clusterProfiler} enrichment functions. May be used as input to
-\link{ReducedExperiment}\link{runEnrich}. By default, retrieves the C2
+\link[ReducedExperiment]{runEnrich}. By default, retrieves the C2
 canonical pathways.
 }
 \examples{

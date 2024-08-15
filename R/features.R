@@ -160,7 +160,7 @@ reduced_gsea <- function(S, database = "msigdb_c2_cp", TERM2GENE = NULL,
 #'
 #' Gets pathways from the MSigDB database in the format required by
 #' `clusterProfiler` enrichment functions. May be used as input to
-#' \link{ReducedExperiment}[runEnrich]. By default, retrieves the C2
+#' \link[ReducedExperiment]{runEnrich}. By default, retrieves the C2
 #' canonical pathways.
 #'
 #' @param species The species for which to obtain MSigDB pathways. See
