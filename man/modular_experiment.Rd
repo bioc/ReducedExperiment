@@ -92,3 +92,6 @@ me
 \code{\link[=FactorisedExperiment]{FactorisedExperiment()}},
 \code{\link[=identify_modules]{identify_modules()}}
 }
+\author{
+Jack Gisby
+}

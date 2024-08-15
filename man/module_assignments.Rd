@@ -49,3 +49,6 @@ featureNames(me)[5] <- "modified_gene_name"
 assignments(me)[1:10]
 
 }
+\author{
+Jack Gisby
+}

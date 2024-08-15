@@ -122,3 +122,6 @@ stab_res_2 <- estimate_stability(
 plot_stability(stab_res_1)
 
 }
+\author{
+Jack Gisby
+}

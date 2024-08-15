@@ -122,3 +122,6 @@ table(names(wgcna_res$assignments))
 \code{\link[WGCNA:blockwiseModules]{WGCNA::blockwiseModules()}},
 \code{\link[WGCNA:pickSoftThreshold]{WGCNA::pickSoftThreshold()}}
 }
+\author{
+Jack Gisby
+}

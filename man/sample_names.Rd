@@ -47,3 +47,6 @@ sampleNames(re)[80] <- "custom_feature_name"
 print(paste0("Sample data at [80]: ", sampleNames(re)[80]))
 
 }
+\author{
+Jack Gisby
+}

@@ -71,3 +71,6 @@ re[1:50, 1:20, 1:5] <- sliced_re
 re
 
 }
+\author{
+Jack Gisby
+}

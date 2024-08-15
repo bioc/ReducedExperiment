@@ -102,3 +102,6 @@ combineRows(re_3, re_4)
 \link[SummarizedExperiment]{cbind,SummarizedExperiment-method},
 \link[SummarizedExperiment]{rbind,SummarizedExperiment-method}
 }
+\author{
+Jack Gisby
+}

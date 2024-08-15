@@ -58,3 +58,6 @@ stab_res <- estimate_stability(X, min_components = 10, max_components = 30)
 plot_stability(stab_res)
 
 }
+\author{
+Jack Gisby
+}

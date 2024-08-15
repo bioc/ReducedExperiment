@@ -73,3 +73,6 @@ featureNames(re)[55] <- "custom_feature_name"
 print(paste0("Reduced data at position 55: ", featureNames(re)[55]))
 
 }
+\author{
+Jack Gisby
+}

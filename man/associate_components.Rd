@@ -126,3 +126,6 @@ print(head(lmm_res$summaries[
 \seealso{
 \code{\link[stats:lm]{stats::lm()}}, \code{\link[car:Anova]{car::Anova()}}, \code{\link[lmerTest:lmer]{lmerTest::lmer()}}
 }
+\author{
+Jack Gisby
+}

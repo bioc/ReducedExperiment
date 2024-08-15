@@ -3,6 +3,8 @@
 #' @importFrom lmerTest lmer
 #' @importFrom lme4 lmerControl
 #'
+#' @author Jack Gisby
+#'
 #' @noRd
 #' @keywords internal
 .single_lmer <- function(data, formula_string, REML = TRUE, ...) {
@@ -36,6 +38,8 @@
 }
 
 #' Helper function to run a linear model
+#'
+#' @author Jack Gisby
 #'
 #' @noRd
 #' @keywords internal
@@ -116,6 +120,8 @@
 #' penalised regression.
 #'
 #' @seealso [stats::lm()], [car::Anova()], [lmerTest::lmer()]
+#'
+#' @author Jack Gisby
 #'
 #' @examples
 #' # Create FactorisedExperiment with random data (100 features, 50 samples,
@@ -227,6 +233,8 @@ associate_components <- function(re,
 
 #' Adjusts the p-values of model results for multiple testing per-term
 #'
+#' @author Jack Gisby
+#'
 #' @noRd
 #' @keywords internal
 .adjust_by_term <- function(res, method = "BH") {
@@ -243,6 +251,8 @@ associate_components <- function(re,
 }
 
 #' Renames linear model result table column names
+#'
+#' @author Jack Gisby
 #'
 #' @noRd
 #' @keywords internal

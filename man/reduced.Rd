@@ -56,3 +56,6 @@ print(paste0("Reduced data at position (2, 2): ", reduced(re)[2, 2]))
 \seealso{
 \code{\link[=ReducedExperiment]{ReducedExperiment()}}
 }
+\author{
+Jack Gisby
+}

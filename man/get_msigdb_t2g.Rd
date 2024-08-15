@@ -52,3 +52,6 @@ pathways <- get_msigdb_t2g(
 head(pathways)
 
 }
+\author{
+Jack Gisby
+}

@@ -101,3 +101,6 @@ fe_2
 \seealso{
 \code{\link[ReducedExperiment]{calcEigengenes}}
 }
+\author{
+Jack Gisby
+}

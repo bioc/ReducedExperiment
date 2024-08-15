@@ -120,3 +120,6 @@ gsea_res <- runEnrich(
 head(gsea_res)
 
 }
+\author{
+Jack Gisby
+}

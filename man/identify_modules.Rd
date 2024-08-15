@@ -59,3 +59,6 @@ me_1
 \code{\link[WGCNA:blockwiseModules]{WGCNA::blockwiseModules()}},
 \code{\link[WGCNA:pickSoftThreshold]{WGCNA::pickSoftThreshold()}}
 }
+\author{
+Jack Gisby
+}

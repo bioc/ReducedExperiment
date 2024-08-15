@@ -28,6 +28,8 @@
 #' `loadings`, `threshold` and `dendrogram` slots may also be filled depending
 #' on the arguments given to `identify_modules`.
 #'
+#' @author Jack Gisby
+#'
 #' @examples
 #' # Get the airway data as a SummarizedExperiment (with a subset of features)
 #' set.seed(2)
@@ -103,6 +105,8 @@ identify_modules <- function(X,
 #' @param dendrogram Data to be passed to the `dendrogram` slot.
 #'
 #' @param threshold Data to be passed to the `threshold` slot.
+#'
+#' @author Jack Gisby
 #'
 #' @noRd
 #' @keywords internal
@@ -211,6 +215,8 @@ identify_modules <- function(X,
 #' @seealso [WGCNA::blockwiseModules()],
 #'     [WGCNA::pickSoftThreshold()]
 #'
+#' @author Jack Gisby
+#'
 #' @examples
 #' # Get the airway data as a SummarizedExperiment (with a subset of features)
 #' set.seed(2)
@@ -301,6 +307,8 @@ run_wgcna <- function(X, powers = 1:30, min_r_squared = 0.85,
 
 #' Based on a string, determine the WGCNA correlation function to use
 #'
+#' @author Jack Gisby
+#'
 #' @noRd
 #' @keywords internal
 .get_cor_fn <- function(corType) {
@@ -315,6 +323,8 @@ run_wgcna <- function(X, powers = 1:30, min_r_squared = 0.85,
 
 #' Raise warning if blockwise module detection is taking place
 #'
+#' @author Jack Gisby
+#'
 #' @noRd
 #' @keywords internal
 .max_block_size_check <- function(max_block_size, n_rows) {
@@ -327,6 +337,8 @@ run_wgcna <- function(X, powers = 1:30, min_r_squared = 0.85,
 }
 
 #' Wrapper around WGCNA::pickSoftThreshold
+#'
+#' @author Jack Gisby
 #'
 #' @noRd
 #' @keywords internal
@@ -374,6 +386,8 @@ run_wgcna <- function(X, powers = 1:30, min_r_squared = 0.85,
 
 #' Convert WGCNA colours to numbers
 #'
+#' @author Jack Gisby
+#'
 #' @noRd
 #' @keywords internal
 .colors2numbers <- function(colors) {
@@ -393,6 +407,8 @@ run_wgcna <- function(X, powers = 1:30, min_r_squared = 0.85,
 }
 
 #' Calculates eigengenes for new data based on module assignments
+#'
+#' @author Jack Gisby
 #'
 #' @noRd
 #' @keywords internal
@@ -435,6 +451,8 @@ run_wgcna <- function(X, powers = 1:30, min_r_squared = 0.85,
 }
 
 #' Calculates eigengenes for new data based on the original PCA rotation matrix
+#'
+#' @author Jack Gisby
 #'
 #' @noRd
 #' @keywords internal

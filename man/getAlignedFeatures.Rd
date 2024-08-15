@@ -70,3 +70,6 @@ head(getAlignedFeatures(fe, format = "data.frame"))
 \seealso{
 \code{\link[=get_common_features]{get_common_features()}}
 }
+\author{
+Jack Gisby
+}

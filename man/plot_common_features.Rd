@@ -51,3 +51,6 @@ plot_common_features(common_features)
 \code{\link[=get_common_features]{get_common_features()}},
 \code{\link[=getAlignedFeatures]{getAlignedFeatures()}}
 }
+\author{
+Jack Gisby
+}

@@ -43,3 +43,6 @@ plot(dendrogram(me))
 plotDendro(me)
 
 }
+\author{
+Jack Gisby
+}

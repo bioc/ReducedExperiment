@@ -47,6 +47,8 @@
 #' [ReducedExperiment::FactorisedExperiment()],
 #' [ReducedExperiment::identify_modules()]
 #'
+#' @author Jack Gisby
+#'
 #' @examples
 #' # Create randomised data with the following dimensions
 #' i <- 300 # Number of features
@@ -144,6 +146,8 @@ S4Vectors::setValidity2("ModularExperiment", function(object) {
 #' @returns A vector with values representing features and names representing
 #' feature assignments (i.e., modules).
 #'
+#' @author Jack Gisby
+#'
 #' @examples
 #' # Create ModularExperiment with random data (100 features, 50 samples,
 #' # 10 modules)
@@ -230,6 +234,8 @@ setReplaceMethod("assignments", "ModularExperiment", function(object, value) {
 #' sample-level module vectors available in the `reduced` slot. Normally, these
 #' loadings are calculated for each module separately, so their values are
 #' not comparable across modules.
+#'
+#' @author Jack Gisby
 #'
 #' @examples
 #' # Create ModularExperiment with random data (100 features, 50 samples,
@@ -370,6 +376,8 @@ setMethod("nModules", "ModularExperiment", function(object) {
 #'
 #' # Or class method that calls WGCNA::plotDendroAndColors
 #' plotDendro(me)
+#'
+#' @author Jack Gisby
 #'
 #' @rdname module_dendrogram
 #' @name dendrogram
@@ -568,6 +576,8 @@ setMethod("runEnrich", c("ModularExperiment"), function(object,
 #'
 #' @seealso [WGCNA::plotDendroAndColors()]
 #'
+#' @author Jack Gisby
+#'
 #' @examples
 #' # Create ModularExperiment with random data (100 features, 50 samples,
 #' # 10 modules)
@@ -682,6 +692,8 @@ setMethod(
 #' @seealso \code{\link[ReducedExperiment]{projectData}},
 #' \code{\link[WGCNA]{moduleEigengenes}}
 #'
+#' @author Jack Gisby
+#'
 #' @examples
 #' # Create ModularExperiment with random data (100 features, 50 samples,
 #' # 10 modules)
@@ -715,7 +727,7 @@ NULL
 setMethod("calcEigengenes", c("ModularExperiment", "matrix"), function(
         object,
         newdata,
-        project = TRUE,
+        project = FALSE,
         scale_reduced = TRUE,
         return_loadings = FALSE,
         scale_newdata = NULL,
@@ -771,7 +783,7 @@ setMethod("calcEigengenes", c("ModularExperiment", "matrix"), function(
 #' @export
 setMethod("calcEigengenes", c("ModularExperiment", "data.frame"), function(object,
     newdata,
-    project = TRUE,
+    project = FALSE,
     scale_reduced = TRUE,
     return_loadings = FALSE,
     scale_newdata = NULL,
@@ -792,7 +804,7 @@ setMethod(
     "calcEigengenes", c("ModularExperiment", "SummarizedExperiment"),
     function(object,
     newdata,
-    project = TRUE,
+    project = FALSE,
     scale_reduced = TRUE,
     assay_name = "normal",
     scale_newdata = NULL,
@@ -844,6 +856,8 @@ setMethod("predict", c("ModularExperiment"), function(object, newdata, ...) {
 #' `rank_rsq` (feature rank based on rsq).
 #'
 #' @seealso [WGCNA::signedKME()]
+#'
+#' @author Jack Gisby
 #'
 #' @examples
 #' # Create ModularExperiment with random data (100 features, 50 samples,

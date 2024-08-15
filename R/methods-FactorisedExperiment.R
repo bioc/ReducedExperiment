@@ -41,6 +41,8 @@
 #' [ReducedExperiment::ModularExperiment()],
 #' [ReducedExperiment::estimate_factors()]
 #'
+#' @author Jack Gisby
+#'
 #' @examples
 #' # Create randomised data with the following dimensions
 #' i <- 300 # Number of features
@@ -198,6 +200,8 @@ setReplaceMethod("rownames", "FactorisedExperiment", function(x, value) {
 #' \link[ReducedExperiment]{estimate_stability} help page.
 #'
 #' @seealso [ReducedExperiment::estimate_stability()]
+#'
+#' @author Jack Gisby
 #'
 #' @examples
 #' # Get a random matrix with rnorm, with 100 rows (features)
@@ -418,6 +422,8 @@ setMethod("rbind", "FactorisedExperiment", function(..., deparse.level = 1) {
 #'
 #' @seealso \code{\link[ReducedExperiment]{calcEigengenes}}
 #'
+#' @author Jack Gisby
+#'
 #' @examples
 #' # Get two random matrices with rnorm
 #' # 1: 100 rows (features) and 20 columns (observations)
@@ -555,6 +561,8 @@ setMethod("predict", c("FactorisedExperiment"), function(object, newdata, ...) {
 #' returning the results.
 #'
 #' @seealso [ReducedExperiment::get_common_features()]
+#'
+#' @author Jack Gisby
 #'
 #' @examples
 #' # Get a random matrix with rnorm, with 100 rows (features)
@@ -700,6 +708,8 @@ setMethod("getAlignedFeatures", c("FactorisedExperiment"), function(
 #' created by either \link[clusterProfiler]{enricher}, in the case of
 #' overrepresentation analysis, or \link[clusterProfiler]{GSEA}, in the case of
 #' GSEA.
+#'
+#' @author Jack Gisby
 #'
 #' @examples
 #' set.seed(2)

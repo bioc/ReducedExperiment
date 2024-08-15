@@ -146,3 +146,6 @@ ica_res <- run_ica(X, nc = 5, use_stability = FALSE)
 ica_res_stab <- run_ica(X, nc = 5, use_stability = TRUE)
 
 }
+\author{
+Jack Gisby
+}

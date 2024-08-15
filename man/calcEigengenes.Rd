@@ -140,3 +140,6 @@ me_2_eig[1:5, 1:5]
 \code{\link[ReducedExperiment]{projectData}},
 \code{\link[WGCNA]{moduleEigengenes}}
 }
+\author{
+Jack Gisby
+}

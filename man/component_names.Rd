@@ -65,3 +65,6 @@ componentNames(re)[2] <- "custom_component_name"
 print(paste0("Component name at [2]: ", componentNames(re)[2]))
 
 }
+\author{
+Jack Gisby
+}

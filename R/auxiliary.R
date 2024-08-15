@@ -11,6 +11,8 @@
 #'
 #' @param cname Name of columns (will be appended to the column number)
 #'
+#' @author Jack Gisby
+#'
 #' @noRd
 #' @keywords internal
 .makeRandomData <- function(r, c, rname, cname) {
@@ -33,6 +35,8 @@
 #'
 #' @param k Number of dimensionally-reduced components
 #'
+#' @author Jack Gisby
+#'
 #' @noRd
 #' @keywords internal
 .createRandomisedReducedExperiment <- function(i, j, k) {
@@ -52,6 +56,8 @@
 #' @param j Number of samples
 #'
 #' @param k Number of factors
+#'
+#' @author Jack Gisby
 #'
 #' @noRd
 #' @keywords internal
@@ -73,6 +79,8 @@
 #' @param j Number of samples
 #'
 #' @param k Number of modules
+#'
+#' @author Jack Gisby
 #'
 #' @noRd
 #' @keywords internal
@@ -97,6 +105,8 @@
 #' @param n_features If not NULL, the number of features (genes) to be randomly
 #' selected from the original airway data. Can provide a smaller dataset for
 #' testing
+#'
+#' @author Jack Gisby
 #'
 #' @noRd
 #' @keywords internal

@@ -82,3 +82,6 @@ fe
 \code{\link[=ModularExperiment]{ModularExperiment()}},
 \code{\link[=estimate_factors]{estimate_factors()}}
 }
+\author{
+Jack Gisby
+}

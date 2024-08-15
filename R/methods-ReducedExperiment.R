@@ -44,6 +44,8 @@
 #' @seealso [ReducedExperiment::FactorisedExperiment()],
 #' [ReducedExperiment::ModularExperiment()]
 #'
+#' @author Jack Gisby
+#'
 #' @examples
 #' # Create randomised data with the following dimensions
 #' i <- 300 # Number of features
@@ -144,6 +146,8 @@ S4Vectors::setValidity2("ReducedExperiment", function(object) {
 #' @returns A matrix with samples/observations as rows and columns referring
 #' to the dimensionally-reduced components.
 #'
+#' @author Jack Gisby
+#'
 #' @examples
 #' # Create randomised data with the following dimensions
 #' i <- 300 # Number of features
@@ -209,6 +213,8 @@ setReplaceMethod("reduced", "ReducedExperiment", function(object, value) {
 #' objects, whereas `moduleNames` is only valid for
 #' \link[ReducedExperiment]{ModularExperiment}s.
 #'
+#' @author Jack Gisby
+#'
 #' @examples
 #' # Create randomised data with the following dimensions
 #' i <- 300 # Number of features
@@ -259,6 +265,8 @@ setReplaceMethod("componentNames", "ReducedExperiment", function(object,
 #' @param value New value to replace existing names.
 #'
 #' @returns A vector containing the names of the features.
+#'
+#' @author Jack Gisby
 #'
 #' @examples
 #' # Create randomised data with the following dimensions
@@ -339,6 +347,8 @@ setReplaceMethod("featureNames", "ReducedExperiment", function(x, value) {
 #'
 #' @returns A vector containing the names of the features.
 #'
+#' @author Jack Gisby
+#'
 #' @examples
 #' # Create randomised data with the following dimensions
 #' i <- 300 # Number of features
@@ -392,6 +402,8 @@ setReplaceMethod("colnames", "ReducedExperiment", function(x, value) {
 #' @param object \link[ReducedExperiment]{ReducedExperiment} object.
 #'
 #' @returns A character summary describing the object.
+#'
+#' @author Jack Gisby
 #'
 #' @examples
 #' # Create randomised data with the following dimensions
@@ -475,6 +487,8 @@ NULL
 #'
 #' @returns A \link[ReducedExperiment]{ReducedExperiment} object, potentially
 #' sliced by rows (`i`), columns (`j`) and components (`k`).
+#'
+#' @author Jack Gisby
 #'
 #' @examples
 #' # Create randomised data with the following dimensions
@@ -682,6 +696,8 @@ setReplaceMethod(
 #' \link[SummarizedExperiment]{SummarizedExperiment}s, and a single
 #' \link[SummarizedExperiment]{SummarizedExperiment} object will be returned.
 #'
+#' @author Jack Gisby
+#'
 #' @examples
 #' # Create randomised containers with different numbers of samples
 #' i <- 300 # Number of features
@@ -833,6 +849,8 @@ setMethod("rbind", "ReducedExperiment", function(..., deparse.level = 1) {
 #' @returns Returns a named vector containing the dimensions of the samples,
 #' features and reduced dimensions.
 #'
+#' @author Jack Gisby
+#'
 #' @examples
 #' # Create a randomised ReducedExperiment
 #' re <- ReducedExperiment:::.createRandomisedReducedExperiment(100, 50, 10)
@@ -855,6 +873,8 @@ setMethod("dim", "ReducedExperiment", function(x) {
 #'
 #' @returns The number of samples (`nSamples`), features (`nFeatures`)
 #' or dimensionally-reduced components (`nComponents`) are returned.
+#'
+#' @author Jack Gisby
 #'
 #' @examples
 #' # Create a randomised ReducedExperiment
@@ -930,6 +950,8 @@ setMethod("nFeatures", "ReducedExperiment", function(object) {
 #' the `rowData` slot.
 #'
 #' @seealso [biomaRt::useEnsembl()], [biomaRt::getBM()]
+#'
+#' @author Jack Gisby
 #'
 #' @examples
 #' set.seed(2)

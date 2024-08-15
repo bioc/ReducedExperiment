@@ -77,3 +77,6 @@ rowData(airway_fe)
 \seealso{
 \code{\link[biomaRt:useEnsembl]{biomaRt::useEnsembl()}}, \code{\link[biomaRt:getBM]{biomaRt::getBM()}}
 }
+\author{
+Jack Gisby
+}

@@ -91,3 +91,6 @@ mp <- module_preservation(me_1, me_2, verbose = 10, nPermutations = 10)
 plot_module_preservation(mp)
 
 }
+\author{
+Jack Gisby
+}

@@ -73,3 +73,6 @@ plotDendro(me)
 \seealso{
 \code{\link[WGCNA:plotDendroAndColors]{WGCNA::plotDendroAndColors()}}
 }
+\author{
+Jack Gisby
+}

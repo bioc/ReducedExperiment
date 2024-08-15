@@ -36,6 +36,8 @@
 #'
 #' @seealso [ReducedExperiment::run_ica()], [ica::ica()]
 #'
+#' @author Jack Gisby
+#'
 #' @examples
 #' # Get a random matrix with rnorm, with 100 rows (features)
 #' # and 20 columns (observations)
@@ -109,6 +111,8 @@ estimate_factors <- function(X,
 #' @param center_X Data to be passed to the `center_X` slot.
 #'
 #' @param scale_X Data to be passed to the `scale_X` slot.
+#'
+#' @author Jack Gisby
 #'
 #' @noRd
 #' @keywords internal
@@ -234,6 +238,8 @@ estimate_factors <- function(X,
 #'  above.}
 #' }
 #'
+#' @author Jack Gisby
+#'
 #' @examples
 #' # Get a random matrix with rnorm, with 100 rows (features)
 #' # and 20 columns (observations)
@@ -304,6 +310,8 @@ run_ica <- function(
 #' @import ica
 #' @import BiocParallel
 #'
+#' @author Jack Gisby
+#'
 #' @noRd
 #' @keywords internal
 .stability_ica <- function(
@@ -366,6 +374,8 @@ run_ica <- function(
 
 #' Parallelisable function for running a stabilized ICA iteration
 #'
+#' @author Jack Gisby
+#'
 #' @noRd
 #' @keywords internal
 .ica_random <- function(X_mat, i, nc, method, resample, ...) {
@@ -404,6 +414,8 @@ run_ica <- function(
 #'
 #' @import moments
 #'
+#' @author Jack Gisby
+#'
 #' @noRd
 #' @keywords internal
 .reorient_factors <- function(S) {
@@ -428,6 +440,8 @@ run_ica <- function(
 #'
 #' Now instead does the following:
 #' M = X * S
+#'
+#' @author Jack Gisby
 #'
 #' @noRd
 #' @keywords internal
@@ -517,6 +531,8 @@ run_ica <- function(
 #'  `mean_stability_threshold`.}
 #' }
 #'
+#' @author Jack Gisby
+#'
 #' @examples
 #' # Get a random matrix with rnorm, with 200 rows (features)
 #' # and 100 columns (observations)
@@ -593,6 +609,8 @@ estimate_stability <- function(X, min_components = 10,
 
 #' Estimates an appropriate number of components
 #'
+#' @author Jack Gisby
+#'
 #' @noRd
 #' @keywords internal
 .select_nc <- function(stabilities, mean_stability_threshold) {
@@ -641,6 +659,8 @@ estimate_stability <- function(X, min_components = 10,
 #'  \item{mean_plot}{The average component stability as a function of the
 #'  number of components.}
 #' }
+#'
+#' @author Jack Gisby
 #'
 #' @examples
 #' # Get a random matrix with rnorm, with 200 rows (features)

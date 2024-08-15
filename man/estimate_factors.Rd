@@ -68,3 +68,6 @@ fe_2
 \seealso{
 \code{\link[=run_ica]{run_ica()}}, \code{\link[ica:ica]{ica::ica()}}
 }
+\author{
+Jack Gisby
+}
