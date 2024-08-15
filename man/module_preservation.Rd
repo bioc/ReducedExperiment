@@ -75,20 +75,13 @@ Tests whether a set of modules defined in the reference dataset are
 preserved in the test dataset.
 }
 \examples{
-# Get random matrices with rnorm, with 100 rows (features)
-# and 20 columns (observations)
-X_1 <- ReducedExperiment:::.makeRandomData(100, 20, "feature", "obs")
-X_2 <- ReducedExperiment:::.makeRandomData(100, 20, "feature", "obs")
+# Get random ModularExperiments with rnorm, with 100 rows (features),
+# 20 columns (observations) and 5/10 modules
+me_1 <- ReducedExperiment:::.createRandomisedModularExperiment(100, 20, 5)
+me_2 <- ReducedExperiment:::.createRandomisedModularExperiment(100, 20, 10)
 
-# Estimate 5 factors based on the data matrix
-me_1 <- identify_modules(X_1, nc = 5, verbose = 0, powers = 5)
-me_2 <- identify_modules(X_2, nc = 5, verbose = 0, powers = 5)
-
-# Test module preservation
-mp <- module_preservation(me_1, me_2, verbose = 10, nPermutations = 10)
-
-# Plot the results
-plot_module_preservation(mp)
+# Test module preservation (test modules from dataset 1 in dataset 2)
+mp <- module_preservation(me_1, me_2, verbose = 0, nPermutations = 3)
 
 }
 \author{

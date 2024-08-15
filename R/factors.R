@@ -542,7 +542,8 @@ run_ica <- function(
 #' stab_res_1 <- estimate_stability(
 #'     X,
 #'     min_components = 10,
-#'     max_components = 30
+#'     max_components = 30,
+#'     n_runs = 5
 #' )
 #'
 #' # Convert the data matrix to a SummarizedExperiment, then estimate stability
@@ -550,11 +551,9 @@ run_ica <- function(
 #' stab_res_2 <- estimate_stability(
 #'     se,
 #'     min_components = 10,
-#'     max_components = 30
+#'     max_components = 30,
+#'     n_runs = 5
 #' )
-#'
-#' # Plot the stability
-#' plot_stability(stab_res_1)
 #'
 #' @export
 estimate_stability <- function(X, min_components = 10,
@@ -668,9 +667,10 @@ estimate_stability <- function(X, min_components = 10,
 #' X <- ReducedExperiment:::.makeRandomData(200, 100, "feature", "obs")
 #'
 #' # Estimate stability across 10 to 30 components
-#' stab_res <- estimate_stability(X, min_components = 10, max_components = 30)
+#' stab_res <- estimate_stability(X, min_components = 10, max_components = 30, n_runs = 5)
 #'
-#' plot_stability(stab_res)
+#' # Intracluster stability similar to extracluster since this is random data
+#' plot_stability(stab_res)$combined_plot
 #'
 #' @import ggplot2
 #' @import patchwork

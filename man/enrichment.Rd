@@ -106,6 +106,7 @@ overrep_res <- runEnrich(
     p_cutoff = 0.1,
     universe = rownames(airway_fe)
 )
+
 head(overrep_res)
 
 # Run gene set enrichment approach

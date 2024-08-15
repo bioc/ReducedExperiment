@@ -107,7 +107,8 @@ X <- ReducedExperiment:::.makeRandomData(200, 100, "feature", "obs")
 stab_res_1 <- estimate_stability(
     X,
     min_components = 10,
-    max_components = 30
+    max_components = 30,
+    n_runs = 5
 )
 
 # Convert the data matrix to a SummarizedExperiment, then estimate stability
@@ -115,11 +116,9 @@ se <- SummarizedExperiment(assays = list("normal" = X))
 stab_res_2 <- estimate_stability(
     se,
     min_components = 10,
-    max_components = 30
+    max_components = 30,
+    n_runs = 5
 )
-
-# Plot the stability
-plot_stability(stab_res_1)
 
 }
 \author{

@@ -730,6 +730,7 @@ setMethod("getAlignedFeatures", c("FactorisedExperiment"), function(
 #'     p_cutoff = 0.1,
 #'     universe = rownames(airway_fe)
 #' )
+#'
 #' head(overrep_res)
 #'
 #' # Run gene set enrichment approach
