@@ -56,10 +56,12 @@ outputs of common dimensionality reduction techniques.
 
 As an example, the `SummarizedExperiment` described below contains gene
 expression data from individuals with COVID-19. It contains the
-following slots: \* `assays` - A features by samples matrix containing
-the expression data. \* `colData` - Contains a row for each sample
-containing phenotype data. \* `rowData` - Contains a row for each
-feature containing gene IDs.
+following slots:
+
+- `assays` - A features by samples matrix containing the expression
+  data.
+- `colData` - Contains a row for each sample containing phenotype data.
+- `rowData` - Contains a row for each feature containing gene IDs.
 
 The `SummarizedExperiment` objects are convenient because, when we slice
 the rows or columns of the expression matrix, the metadata for the rows
@@ -114,10 +116,12 @@ fe
 ```
 
 This `FactorisedExperiment` object has an additional dimension
-representing the 35 factors. It also has additional slots, including: \*
-`reduced` - A samples by factors matrix containing the
-dimensionally-reduced data. \* `loadings` - Contains a features by
-factors matrix containing the loadings.
+representing the 35 factors. It also has additional slots, including:
+
+- `reduced` - A samples by factors matrix containing the
+  dimensionally-reduced data.
+- `loadings` - Contains a features by factors matrix containing the
+  loadings.
 
 The `ReducedExperiment` objects allow users to simultaneously slice and
 modify the `assays`, `rowData`, `colData`, `reduced` and `loadings`
@@ -158,27 +162,31 @@ fe_prcomp
 
 ## Functionality
 
-The package currently provides three types of container: \*
-`ReducedExperiment` - A basic container that can store
-dimensionally-reduced components. \* `FactorisedExperiment` - A
-container based on `ReducedExperiment` designed for working with the
-results of factor analysis. It can contain feature loadings and factor
-stability values. \* `ModularExperiment` - A container based on
-`ReducedExperiment` designed for working with modules of features
-(usually genes), as is produced by the popular Weighted Gene Correlation
-Network Analysis (WGCNA) approach. It contains the mapping of features
-to modules
+The package currently provides three types of container:
+
+- `ReducedExperiment` - A basic container that can store
+  dimensionally-reduced components.
+- `FactorisedExperiment` - A container based on `ReducedExperiment`
+  designed for working with the results of factor analysis. It can
+  contain feature loadings and factor stability values.
+- `ModularExperiment` - A container based on `ReducedExperiment`
+  designed for working with modules of features (usually genes), as is
+  produced by the popular Weighted Gene Correlation Network Analysis
+  (WGCNA) approach. It contains the mapping of features to modules
 
 Various tools are provided by the package for applying dimensionality
-reduction and manipulating their results. These include: \* Workflows
-for applying independent component analysis (ICA) and WGCNA. We
-additionally developed an R implementation of the stabilised ICA
-algorithm. \* Methods for applying pathway enrichment analysis to
-factors and modules. -\* Functions for identifying associations between
-factors/modules and sample-level variables. \* Methods for applying
-identified factors or modules to new datasets. \* Other
-approach-specific plots and utilities, such as factor stability plots
-and module preservation plots.
+reduction and manipulating their results. These include:
+
+- Workflows for applying independent component analysis (ICA) and WGCNA.
+  We additionally developed an R implementation of the stabilised ICA
+  algorithm.
+- Methods for applying pathway enrichment analysis to factors and
+  modules.
+- Functions for identifying associations between factors/modules and
+  sample-level variables.
+- Methods for applying identified factors or modules to new datasets.
+- Other approach-specific plots and utilities, such as factor stability
+  plots and module preservation plots.
 
 Many of these are demonstrated in more detail in the [package’s
 vignette](https://jackgisby.github.io/ReducedExperiment/articles/ReducedExperiment.html).

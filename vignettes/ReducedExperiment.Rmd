@@ -1,7 +1,6 @@
 ---
 title: "ReducedExperiment"
 author: "Jack Gisby"
-package: ReducedExperiment
 date: "`r Sys.Date()`" 
 output:
     BiocStyle::html_document:

@@ -14,7 +14,7 @@ estimate_factors(
 )
 }
 \arguments{
-\item{X}{Either a \link\link{SummarizedExperiment} object
+\item{X}{Either a \link[SummarizedExperiment]{SummarizedExperiment} object
 or a matrix containing data to be subject to ICA. \code{X} should have rows as
 features and columns as samples.}
 
@@ -33,7 +33,7 @@ to have a standard deviation of 1) before ICA.}
 name of the assay to be subject to ICA.}
 
 \item{...}{Additional arguments to be passed to
-\link\link[=run_ica]{ReducedExperiment}.}
+\link[ReducedExperiment]{run_ica}.}
 }
 \value{
 A \link[ReducedExperiment]{FactorisedExperiment} is returned

@@ -74,14 +74,15 @@
 #'
 #' @rdname modular_experiment
 #' @export
-ModularExperiment <- function(reduced = new("matrix"),
-    scale = TRUE,
-    center = TRUE,
-    loadings = NULL,
-    assignments = character(),
-    dendrogram = NULL,
-    threshold = NULL,
-    ...) {
+ModularExperiment <- function(
+        reduced = new("matrix"),
+        scale = TRUE,
+        center = TRUE,
+        loadings = NULL,
+        assignments = character(),
+        dendrogram = NULL,
+        threshold = NULL,
+        ...) {
     re <- ReducedExperiment(
         reduced = reduced,
         scale = scale,
@@ -171,9 +172,8 @@ NULL
 
 #' @rdname module_assignments
 #' @export
-setMethod("assignments", "ModularExperiment", function(
-        object,
-        as_list = FALSE) {
+setMethod("assignments", "ModularExperiment", function(object,
+    as_list = FALSE) {
     if (as_list) {
         a <- list()
         for (comp in componentNames(object)) {
@@ -252,10 +252,11 @@ NULL
 
 #' @rdname loadings
 #' @export
-setMethod("loadings", "ModularExperiment", function(object,
-    scale_loadings = FALSE,
-    center_loadings = FALSE,
-    abs_loadings = FALSE) {
+setMethod("loadings", "ModularExperiment", function(
+        object,
+        scale_loadings = FALSE,
+        center_loadings = FALSE,
+        abs_loadings = FALSE) {
     # Return them if the loadings are NULL
     if (is.null(object@loadings)) {
         return(object@loadings)
@@ -307,9 +308,8 @@ setReplaceMethod("rownames", "ModularExperiment", function(x, value) {
 
 #' @rdname component_names
 #' @export
-setReplaceMethod("componentNames", "ModularExperiment", function(
-        object,
-        value) {
+setReplaceMethod("componentNames", "ModularExperiment", function(object,
+    value) {
     curr_names <- colnames(object@reduced)
     object <- callNextMethod(object, value)
     new_names <- colnames(object@reduced)
@@ -503,12 +503,11 @@ setMethod("rbind", "ModularExperiment", function(..., deparse.level = 1) {
 
 #' @rdname enrichment
 #' @export
-setMethod("runEnrich", c("ModularExperiment"), function(
-        object,
-        method = "overrepresentation",
-        feature_id_col = "rownames",
-        as_dataframe = FALSE,
-        ...) {
+setMethod("runEnrich", c("ModularExperiment"), function(object,
+    method = "overrepresentation",
+    feature_id_col = "rownames",
+    as_dataframe = FALSE,
+    ...) {
     if (method == "overrepresentation") {
         if (feature_id_col != "rownames") {
             names(object) <-
@@ -594,10 +593,9 @@ NULL
 #' @export
 setMethod(
     "plotDendro", c("ModularExperiment"),
-    function(
-        object, groupLabels = "Module colors", dendroLabels = FALSE,
-        hang = 0.03, addGuide = TRUE, guideHang = 0.05,
-        color_func = WGCNA::labels2colors, modules_are_colors = FALSE, ...) {
+    function(object, groupLabels = "Module colors", dendroLabels = FALSE,
+    hang = 0.03, addGuide = TRUE, guideHang = 0.05,
+    color_func = WGCNA::labels2colors, modules_are_colors = FALSE, ...) {
         if (!modules_are_colors) {
             colors <- as.numeric(gsub(
                 "module_", "",
@@ -714,15 +712,16 @@ NULL
 
 #' @rdname calcEigengenes
 #' @export
-setMethod("calcEigengenes", c("ModularExperiment", "matrix"), function(object,
-    newdata,
-    project = TRUE,
-    scale_reduced = TRUE,
-    return_loadings = FALSE,
-    scale_newdata = NULL,
-    center_newdata = NULL,
-    realign = TRUE,
-    min_module_genes = 10) {
+setMethod("calcEigengenes", c("ModularExperiment", "matrix"), function(
+        object,
+        newdata,
+        project = TRUE,
+        scale_reduced = TRUE,
+        return_loadings = FALSE,
+        scale_newdata = NULL,
+        center_newdata = NULL,
+        realign = TRUE,
+        min_module_genes = 10) {
     if (!identical(rownames(object), rownames(newdata))) {
         stop("Rownames of x do not match those of newdata")
     }
@@ -770,16 +769,15 @@ setMethod("calcEigengenes", c("ModularExperiment", "matrix"), function(object,
 
 #' @rdname calcEigengenes
 #' @export
-setMethod("calcEigengenes", c("ModularExperiment", "data.frame"), function(
-        object,
-        newdata,
-        project = TRUE,
-        scale_reduced = TRUE,
-        return_loadings = FALSE,
-        scale_newdata = NULL,
-        center_newdata = NULL,
-        realign = TRUE,
-        min_module_genes = 10) {
+setMethod("calcEigengenes", c("ModularExperiment", "data.frame"), function(object,
+    newdata,
+    project = TRUE,
+    scale_reduced = TRUE,
+    return_loadings = FALSE,
+    scale_newdata = NULL,
+    center_newdata = NULL,
+    realign = TRUE,
+    min_module_genes = 10) {
     return(calcEigengenes(object, as.matrix(newdata),
         project = project, return_loadings = return_loadings,
         scale_newdata = scale_newdata, center_newdata = center_newdata,
@@ -792,16 +790,15 @@ setMethod("calcEigengenes", c("ModularExperiment", "data.frame"), function(
 #' @export
 setMethod(
     "calcEigengenes", c("ModularExperiment", "SummarizedExperiment"),
-    function(
-        object,
-        newdata,
-        project = TRUE,
-        scale_reduced = TRUE,
-        assay_name = "normal",
-        scale_newdata = NULL,
-        center_newdata = NULL,
-        realign = TRUE,
-        min_module_genes = 10) {
+    function(object,
+    newdata,
+    project = TRUE,
+    scale_reduced = TRUE,
+    assay_name = "normal",
+    scale_newdata = NULL,
+    center_newdata = NULL,
+    realign = TRUE,
+    min_module_genes = 10) {
         eig <- calcEigengenes(object, assay(newdata, assay_name),
             project = project, return_loadings = FALSE,
             scale_newdata = scale_newdata, center_newdata = center_newdata,
@@ -864,10 +861,9 @@ NULL
 
 #' @rdname getCentrality
 #' @export
-setMethod("getCentrality", c("ModularExperiment"), function(
-        object,
-        assay_name = "normal",
-        feature_id_col = "rownames") {
+setMethod("getCentrality", c("ModularExperiment"), function(object,
+    assay_name = "normal",
+    feature_id_col = "rownames") {
     # Get module membership (correlation with eigengene)
     signed_kme <- WGCNA::signedKME(
         t(assay(object, assay_name)),

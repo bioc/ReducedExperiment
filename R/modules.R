@@ -43,12 +43,11 @@
 #'     [WGCNA::pickSoftThreshold()]
 #'
 #' @export
-identify_modules <- function(
-        X,
-        center_X = TRUE,
-        scale_X = TRUE,
-        assay_name = "normal",
-        ...) {
+identify_modules <- function(X,
+    center_X = TRUE,
+    scale_X = TRUE,
+    assay_name = "normal",
+    ...) {
     if (!inherits(X, "SummarizedExperiment")) {
         X <- SummarizedExperiment(assays = list("normal" = X))
     }
@@ -107,15 +106,14 @@ identify_modules <- function(
 #'
 #' @noRd
 #' @keywords internal
-.se_to_me <- function(
-        se,
-        reduced,
-        loadings,
-        assignments,
-        center_X,
-        scale_X,
-        dendrogram = NULL,
-        threshold = NULL) {
+.se_to_me <- function(se,
+    reduced,
+    loadings,
+    assignments,
+    center_X,
+    scale_X,
+    dendrogram = NULL,
+    threshold = NULL) {
     return(ModularExperiment(
         reduced = reduced, loadings = loadings, assignments = assignments,
         center = center_X, scale = scale_X,
@@ -226,11 +224,10 @@ identify_modules <- function(
 #' table(names(wgcna_res$assignments))
 #'
 #' @export
-run_wgcna <- function(
-        X, powers = 1:30, min_r_squared = 0.85,
-        max_mean_connectivity = 100, corType = "pearson",
-        networkType = "signed", module_labels = "numbers", maxBlockSize = 30000,
-        verbose = 0, return_full_output = FALSE, scale_reduced = TRUE, ...) {
+run_wgcna <- function(X, powers = 1:30, min_r_squared = 0.85,
+    max_mean_connectivity = 100, corType = "pearson",
+    networkType = "signed", module_labels = "numbers", maxBlockSize = 30000,
+    verbose = 0, return_full_output = FALSE, scale_reduced = TRUE, ...) {
     .max_block_size_check(maxBlockSize, nrow(X))
     cor <- corFnc <- .get_cor_fn(corType) # Get correlation function
 
@@ -333,14 +330,15 @@ run_wgcna <- function(
 #'
 #' @noRd
 #' @keywords internal
-.select_threshold <- function(X,
-    min_r_squared,
-    max_mean_connectivity,
-    powers,
-    corFnc,
-    networkType,
-    maxBlockSize,
-    verbose) {
+.select_threshold <- function(
+        X,
+        min_r_squared,
+        max_mean_connectivity,
+        powers,
+        corFnc,
+        networkType,
+        maxBlockSize,
+        verbose) {
     threshold <- WGCNA::pickSoftThreshold(
         t(X),
         RsquaredCut = min_r_squared, powerVector = powers, corFnc = corFnc,
@@ -398,11 +396,10 @@ run_wgcna <- function(
 #'
 #' @noRd
 #' @keywords internal
-.calculate_eigengenes <- function(
-        newdata,
-        module_names,
-        module_assignments,
-        realign = TRUE) {
+.calculate_eigengenes <- function(newdata,
+    module_names,
+    module_assignments,
+    realign = TRUE) {
     red <- data.frame(row.names = colnames(newdata))
     lod <- c()
 
@@ -441,12 +438,11 @@ run_wgcna <- function(
 #'
 #' @noRd
 #' @keywords internal
-.project_eigengenes <- function(
-        newdata,
-        module_names,
-        module_assignments,
-        lod,
-        min_module_genes) {
+.project_eigengenes <- function(newdata,
+    module_names,
+    module_assignments,
+    lod,
+    min_module_genes) {
     red <- data.frame(row.names = colnames(newdata))
 
     for (m in module_names) {

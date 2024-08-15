@@ -68,11 +68,10 @@
 #'
 #' @rdname reduced_experiment
 #' @export
-ReducedExperiment <- function(
-        reduced = new("matrix"),
-        scale = TRUE,
-        center = TRUE,
-        ...) {
+ReducedExperiment <- function(reduced = new("matrix"),
+    scale = TRUE,
+    center = TRUE,
+    ...) {
     se <- SummarizedExperiment::SummarizedExperiment(...)
 
     return(.ReducedExperiment(
@@ -175,10 +174,9 @@ NULL
 
 #' @rdname reduced
 #' @export
-setMethod("reduced", "ReducedExperiment", function(
-        object,
-        scale_reduced = FALSE,
-        center_reduced = FALSE) {
+setMethod("reduced", "ReducedExperiment", function(object,
+    scale_reduced = FALSE,
+    center_reduced = FALSE) {
     return(scale(
         object@reduced,
         scale = scale_reduced,
@@ -245,9 +243,8 @@ setMethod("componentNames", "ReducedExperiment", function(object) {
 
 #' @rdname component_names
 #' @export
-setReplaceMethod("componentNames", "ReducedExperiment", function(
-        object,
-        value) {
+setReplaceMethod("componentNames", "ReducedExperiment", function(object,
+    value) {
     colnames(object@reduced) <- value
     validObject(object)
     return(object)
@@ -966,14 +963,13 @@ NULL
 
 #' @rdname get_gene_ids
 #' @export
-setMethod("getGeneIDs", "ReducedExperiment", function(
-        object,
-        gene_id_col = "rownames",
-        gene_id_type = "ensembl_gene_id",
-        ids_to_get = c("hgnc_symbol", "entrezgene_id"),
-        dataset = "hsapiens_gene_ensembl",
-        mart = NULL,
-        biomart_out = NULL) {
+setMethod("getGeneIDs", "ReducedExperiment", function(object,
+    gene_id_col = "rownames",
+    gene_id_type = "ensembl_gene_id",
+    ids_to_get = c("hgnc_symbol", "entrezgene_id"),
+    dataset = "hsapiens_gene_ensembl",
+    mart = NULL,
+    biomart_out = NULL) {
     if (gene_id_col == "rownames") {
         rowData(object)[[gene_id_type]] <- rownames(object)
     } else {

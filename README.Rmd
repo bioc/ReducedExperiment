@@ -69,6 +69,7 @@ dimensionality reduction techniques.
 
 As an example, the `SummarizedExperiment` described below contains gene 
 expression data from individuals with COVID-19. It contains the following slots:
+
 * `assays` - A features by samples matrix containing the expression data.
 * `colData` - Contains a row for each sample containing phenotype data.
 * `rowData` - Contains a row for each feature containing gene IDs.
@@ -104,6 +105,7 @@ fe
 
 This `FactorisedExperiment` object has an additional dimension representing the 
 35 factors. It also has additional slots, including:
+
 * `reduced` - A samples by factors matrix containing the dimensionally-reduced 
     data.
 * `loadings` - Contains a features by factors matrix containing the loadings.
@@ -136,6 +138,7 @@ fe_prcomp
 ## Functionality
 
 The package currently provides three types of container:
+
 * `ReducedExperiment` - A basic container that can store dimensionally-reduced 
     components.
 * `FactorisedExperiment` - A container based on `ReducedExperiment` designed for
@@ -148,11 +151,12 @@ The package currently provides three types of container:
 
 Various tools are provided by the package for applying dimensionality reduction
 and manipulating their results. These include:
+
 * Workflows for applying independent component analysis (ICA) and 
     WGCNA. We additionally developed an R implementation of the stabilised ICA 
     algorithm.
 * Methods for applying pathway enrichment analysis to factors and modules.
--* Functions for identifying associations between factors/modules and 
+* Functions for identifying associations between factors/modules and 
     sample-level variables.
 * Methods for applying identified factors or modules to new datasets.
 * Other approach-specific plots and utilities, such as factor stability plots
