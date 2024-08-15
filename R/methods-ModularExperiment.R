@@ -645,6 +645,8 @@ setMethod(
 #' @param project Whether to perform projection (i.e., using PCA rotation matrix
 #' from the original data to calculate modules) or calculate eigengenes from
 #' scratch in the new data (i.e., performing PCA for each module in `newdata`).
+#' By default, eigengenes are recalculated using an approach similar to
+#' \link[WGCNA]{moduleEigengenes}. Projection approach is experimental.
 #'
 #' @param scale_reduced Whether or not the reduced data should be scaled
 #' after calculation.
@@ -724,16 +726,15 @@ NULL
 
 #' @rdname calcEigengenes
 #' @export
-setMethod("calcEigengenes", c("ModularExperiment", "matrix"), function(
-        object,
-        newdata,
-        project = FALSE,
-        scale_reduced = TRUE,
-        return_loadings = FALSE,
-        scale_newdata = NULL,
-        center_newdata = NULL,
-        realign = TRUE,
-        min_module_genes = 10) {
+setMethod("calcEigengenes", c("ModularExperiment", "matrix"), function(object,
+    newdata,
+    project = FALSE,
+    scale_reduced = TRUE,
+    return_loadings = FALSE,
+    scale_newdata = NULL,
+    center_newdata = NULL,
+    realign = TRUE,
+    min_module_genes = 10) {
     if (!identical(rownames(object), rownames(newdata))) {
         stop("Rownames of x do not match those of newdata")
     }
@@ -781,15 +782,16 @@ setMethod("calcEigengenes", c("ModularExperiment", "matrix"), function(
 
 #' @rdname calcEigengenes
 #' @export
-setMethod("calcEigengenes", c("ModularExperiment", "data.frame"), function(object,
-    newdata,
-    project = FALSE,
-    scale_reduced = TRUE,
-    return_loadings = FALSE,
-    scale_newdata = NULL,
-    center_newdata = NULL,
-    realign = TRUE,
-    min_module_genes = 10) {
+setMethod("calcEigengenes", c("ModularExperiment", "data.frame"), function(
+        object,
+        newdata,
+        project = FALSE,
+        scale_reduced = TRUE,
+        return_loadings = FALSE,
+        scale_newdata = NULL,
+        center_newdata = NULL,
+        realign = TRUE,
+        min_module_genes = 10) {
     return(calcEigengenes(object, as.matrix(newdata),
         project = project, return_loadings = return_loadings,
         scale_newdata = scale_newdata, center_newdata = center_newdata,
@@ -802,15 +804,16 @@ setMethod("calcEigengenes", c("ModularExperiment", "data.frame"), function(objec
 #' @export
 setMethod(
     "calcEigengenes", c("ModularExperiment", "SummarizedExperiment"),
-    function(object,
-    newdata,
-    project = FALSE,
-    scale_reduced = TRUE,
-    assay_name = "normal",
-    scale_newdata = NULL,
-    center_newdata = NULL,
-    realign = TRUE,
-    min_module_genes = 10) {
+    function(
+        object,
+        newdata,
+        project = FALSE,
+        scale_reduced = TRUE,
+        assay_name = "normal",
+        scale_newdata = NULL,
+        center_newdata = NULL,
+        realign = TRUE,
+        min_module_genes = 10) {
         eig <- calcEigengenes(object, assay(newdata, assay_name),
             project = project, return_loadings = FALSE,
             scale_newdata = scale_newdata, center_newdata = center_newdata,
