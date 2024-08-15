@@ -2,15 +2,15 @@
 #'
 #' Performs independent component analysis (ICA) and packages both the input
 #' data and subsequent results into a
-#' \link{ReducedExperiment}[FactorisedExperiment] container. Calls
-#' \link{ReducedExperiment}[run_ica] to perform the analysis.
+#' \link[ReducedExperiment]{FactorisedExperiment} container. Calls
+#' \link[ReducedExperiment]{run_ica} to perform the analysis.
 #'
-#' @param X Either a \link{SummarizedExperiment}[SummarizedExperiment] object
+#' @param X Either a \link[SummarizedExperiment]{SummarizedExperiment} object
 #' or a matrix containing data to be subject to ICA. `X` should have rows as
 #' features and columns as samples.
 #'
 #' @param nc The number of components to be identified. See
-#' \link{ReducedExperiment}[estimate_stability] for a method to estimate the
+#' \link[ReducedExperiment]{estimate_stability} for a method to estimate the
 #' optimal number of components.
 #'
 #' @param center_X If TRUE, X is centered (i.e., features / rows are transformed
@@ -20,21 +20,23 @@
 #' to have a standard deviation of 1) before ICA.
 #'
 #' @param assay_name If `X` is a
-#' \link{SummarizedExperiment}[SummarizedExperiment], then this should be the
+#' \link[SummarizedExperiment]{SummarizedExperiment}, then this should be the
 #' name of the assay to be subject to ICA.
 #'
 #' @param ... Additional arguments to be passed to
-#' \link{ReducedExperiment}[run_ica].
+#' \link[ReducedExperiment]{run_ica}.
 #'
-#' @returns A \link{ReducedExperiment}[FactorisedExperiment] is returned
+#' @returns A \link[ReducedExperiment]{FactorisedExperiment} is returned
 #' containing the input data (i.e., the original data matrix in addition to
-#' other slots if a \link{SummarizedExperiment}[SummarizedExperiment] was used
+#' other slots if a \link[SummarizedExperiment]{SummarizedExperiment} was used
 #' as input). Additionally contains the results of factor analysis, stored in
 #' the `reduced` and `loadings` slots. The `center_X`, `scale_X` and
 #' `stability` slots may also be filled depending on the arguments given
 #' to `estimate_factors`.
 #'
 #' @seealso [ReducedExperiment::run_ica()], [ica::ica()]
+#'
+#' @author Jack Gisby
 #'
 #' @examples
 #' # Get a random matrix with rnorm, with 100 rows (features)
@@ -51,13 +53,12 @@
 #' fe_2
 #'
 #' @export
-estimate_factors <- function(
-        X,
-        nc,
-        center_X = TRUE,
-        scale_X = FALSE,
-        assay_name = "normal",
-        ...) {
+estimate_factors <- function(X,
+    nc,
+    center_X = TRUE,
+    scale_X = FALSE,
+    assay_name = "normal",
+    ...) {
     if (!inherits(X, "SummarizedExperiment")) {
         X <- SummarizedExperiment(assays = list("normal" = X))
     }
@@ -96,10 +97,10 @@ estimate_factors <- function(
 #' Creates a FactorisedExperiment from a SummarizedExperiment
 #'
 #' Helper function for transforming a
-#' \link{ReducedExperiment}[FactorisedExperiment] into a
-#' \link{SummarizedExperiment}[SummarizedExperiment]
+#' \link[ReducedExperiment]{FactorisedExperiment} into a
+#' \link[SummarizedExperiment]{SummarizedExperiment}
 #'
-#' @param se A \link{SummarizedExperiment}[SummarizedExperiment] object.
+#' @param se A \link[SummarizedExperiment]{SummarizedExperiment} object.
 #'
 #' @param reduced Data to be passed to the `reduced` slot.
 #'
@@ -110,6 +111,8 @@ estimate_factors <- function(
 #' @param center_X Data to be passed to the `center_X` slot.
 #'
 #' @param scale_X Data to be passed to the `scale_X` slot.
+#'
+#' @author Jack Gisby
 #'
 #' @noRd
 #' @keywords internal
@@ -124,14 +127,14 @@ estimate_factors <- function(
 
 #' Run ICA for a data matrix
 #'
-#' Runs ICA through \link{ica}[ica]. If `use_stability` is FALSE, then X is
-#' passed directly to \link{ica}[ica] and a standard ICA analysis is performed.
+#' Runs ICA through \link[ica]{ica}. If `use_stability` is FALSE, then X is
+#' passed directly to \link[ica]{ica} and a standard ICA analysis is performed.
 #' If `use_stability` is TRUE, then the stabilised ICA procedure is carried out.
 #'
 #' @param X A matrix with features as rows and columns as samples.
 #'
 #' @param nc The number of components to be identified. See
-#' \link{ReducedExperiment}[estimate_stability] for a method to estimate the
+#' \link[ReducedExperiment]{estimate_stability} for a method to estimate the
 #' optimal number of components.
 #'
 #' @param use_stability Whether to use a stability-based approach to estimate
@@ -141,7 +144,7 @@ estimate_factors <- function(
 #' Else, random initialisation of ICA is employed. Ignored if `use_stability`
 #' is FALSE. See `details` for further information.
 #'
-#' @param method The ICA method to use. Passed to \link{ica}[ica], the options
+#' @param method The ICA method to use. Passed to \link[ica]{ica}, the options
 #' are "fast", "imax" or "jade".
 #'
 #' @param stability_threshold A stability threshold for pruning factors. Factors
@@ -174,7 +177,7 @@ estimate_factors <- function(
 #' is FALSE. See `details` for further information.
 #'
 #' @param ... Additional arguments to be passed to
-#' \link{ica}[ica].
+#' \link[ica]{ica}.
 #'
 #' @details
 #' Function performs ICA for a data matrix. If `use_stability` is TRUE, then
@@ -235,6 +238,8 @@ estimate_factors <- function(
 #'  above.}
 #' }
 #'
+#' @author Jack Gisby
+#'
 #' @examples
 #' # Get a random matrix with rnorm, with 100 rows (features)
 #' # and 20 columns (observations)
@@ -248,11 +253,12 @@ estimate_factors <- function(
 #'
 #' @import ica
 #' @export
-run_ica <- function(X, nc, use_stability = FALSE, resample = FALSE,
-    method = "fast", stability_threshold = NULL, center_X = TRUE,
-    scale_X = FALSE, reorient_skewed = TRUE, scale_components = TRUE,
-    scale_reduced = TRUE, n_runs = 30,
-    BPPARAM = BiocParallel::SerialParam(RNGseed = 1), ...) {
+run_ica <- function(
+        X, nc, use_stability = FALSE, resample = FALSE,
+        method = "fast", stability_threshold = NULL, center_X = TRUE,
+        scale_X = FALSE, reorient_skewed = TRUE, scale_components = TRUE,
+        scale_reduced = TRUE, n_runs = 30,
+        BPPARAM = BiocParallel::SerialParam(RNGseed = 1), ...) {
     if (center_X | scale_X) {
         X <- t(scale(t(X), center = center_X, scale = scale_X))
     }
@@ -299,16 +305,19 @@ run_ica <- function(X, nc, use_stability = FALSE, resample = FALSE,
 
 #' Stability ICA method
 #'
-#' Function for running stabilised ICA. See \link{ReducedExperiment}[run_ica].
+#' Function for running stabilised ICA. See \link[ReducedExperiment]{run_ica}.
 #'
 #' @import ica
 #' @import BiocParallel
 #'
+#' @author Jack Gisby
+#'
 #' @noRd
 #' @keywords internal
-.stability_ica <- function(X, nc, resample, method, n_runs, BPPARAM,
-    stability_threshold, BPOPTIONS = bpoptions(), return_centrotypes = TRUE,
-    ...) {
+.stability_ica <- function(
+        X, nc, resample, method, n_runs, BPPARAM,
+        stability_threshold, BPOPTIONS = bpoptions(), return_centrotypes = TRUE,
+        ...) {
     # Run stabilized ICA in parallel (depending on BPPARAM)
     S_all <- BiocParallel::bplapply(seq_len(n_runs), .ica_random,
         BPPARAM = BPPARAM, BPOPTIONS = BPOPTIONS, X_mat = X, nc = nc,
@@ -365,6 +374,8 @@ run_ica <- function(X, nc, use_stability = FALSE, resample = FALSE,
 
 #' Parallelisable function for running a stabilized ICA iteration
 #'
+#' @author Jack Gisby
+#'
 #' @noRd
 #' @keywords internal
 .ica_random <- function(X_mat, i, nc, method, resample, ...) {
@@ -403,6 +414,8 @@ run_ica <- function(X, nc, use_stability = FALSE, resample = FALSE,
 #'
 #' @import moments
 #'
+#' @author Jack Gisby
+#'
 #' @noRd
 #' @keywords internal
 .reorient_factors <- function(S) {
@@ -428,6 +441,8 @@ run_ica <- function(X, nc, use_stability = FALSE, resample = FALSE,
 #' Now instead does the following:
 #' M = X * S
 #'
+#' @author Jack Gisby
+#'
 #' @noRd
 #' @keywords internal
 .project_ica <- function(newdata, S) {
@@ -444,7 +459,7 @@ run_ica <- function(X, nc, use_stability = FALSE, resample = FALSE,
 #' Estimates the stability of factors over a range of component numbers to
 #' aid in the identification of the optimal factor number.
 #'
-#' @param X Either a \link{SummarizedExperiment}[SummarizedExperiment] object
+#' @param X Either a \link[SummarizedExperiment]{SummarizedExperiment} object
 #' or a matrix containing data to be subject to ICA. `X` should have rows as
 #' features and columns as samples.
 #'
@@ -474,7 +489,7 @@ run_ica <- function(X, nc, use_stability = FALSE, resample = FALSE,
 #' to have a standard deviation of 1) before ICA.
 #'
 #' @param assay_name If `X` is a
-#' \link{SummarizedExperiment}[SummarizedExperiment], then this should be the
+#' \link[SummarizedExperiment]{SummarizedExperiment}, then this should be the
 #' name of the assay to be subject to ICA.
 #'
 #' @param BPPARAM A class containing parameters for parallel evaluation. Uses
@@ -488,7 +503,7 @@ run_ica <- function(X, nc, use_stability = FALSE, resample = FALSE,
 #' of components.
 #'
 #' @param ... Additional arguments to be passed to
-#' \link{ReducedExperiment}[run_ica].
+#' \link[ReducedExperiment]{run_ica}.
 #'
 #' @details
 #' Runs the stability-based ICA algorithm
@@ -516,6 +531,8 @@ run_ica <- function(X, nc, use_stability = FALSE, resample = FALSE,
 #'  `mean_stability_threshold`.}
 #' }
 #'
+#' @author Jack Gisby
+#'
 #' @examples
 #' # Get a random matrix with rnorm, with 200 rows (features)
 #' # and 100 columns (observations)
@@ -525,7 +542,8 @@ run_ica <- function(X, nc, use_stability = FALSE, resample = FALSE,
 #' stab_res_1 <- estimate_stability(
 #'     X,
 #'     min_components = 10,
-#'     max_components = 30
+#'     max_components = 30,
+#'     n_runs = 5
 #' )
 #'
 #' # Convert the data matrix to a SummarizedExperiment, then estimate stability
@@ -533,19 +551,16 @@ run_ica <- function(X, nc, use_stability = FALSE, resample = FALSE,
 #' stab_res_2 <- estimate_stability(
 #'     se,
 #'     min_components = 10,
-#'     max_components = 30
+#'     max_components = 30,
+#'     n_runs = 5
 #' )
 #'
-#' # Plot the stability
-#' plot_stability(stab_res_1)
-#'
 #' @export
-estimate_stability <- function(
-        X, min_components = 10,
-        max_components = 60, by = 2, n_runs = 30, resample = FALSE,
-        mean_stability_threshold = NULL, center_X = TRUE, scale_X = FALSE,
-        assay_name = "normal", BPPARAM = BiocParallel::SerialParam(RNGseed = 1),
-        verbose = TRUE, ...) {
+estimate_stability <- function(X, min_components = 10,
+    max_components = 60, by = 2, n_runs = 30, resample = FALSE,
+    mean_stability_threshold = NULL, center_X = TRUE, scale_X = FALSE,
+    assay_name = "normal", BPPARAM = BiocParallel::SerialParam(RNGseed = 1),
+    verbose = TRUE, ...) {
     if (inherits(X, "SummarizedExperiment")) {
         X <- assay(X, "normal")
     }
@@ -592,6 +607,8 @@ estimate_stability <- function(
 }
 
 #' Estimates an appropriate number of components
+#'
+#' @author Jack Gisby
 #'
 #' @noRd
 #' @keywords internal
@@ -642,23 +659,27 @@ estimate_stability <- function(
 #'  number of components.}
 #' }
 #'
+#' @author Jack Gisby
+#'
 #' @examples
 #' # Get a random matrix with rnorm, with 200 rows (features)
 #' # and 100 columns (observations)
 #' X <- ReducedExperiment:::.makeRandomData(200, 100, "feature", "obs")
 #'
 #' # Estimate stability across 10 to 30 components
-#' stab_res <- estimate_stability(X, min_components = 10, max_components = 30)
+#' stab_res <- estimate_stability(X, min_components = 10, max_components = 30, n_runs = 5)
 #'
-#' plot_stability(stab_res)
+#' # Intracluster stability similar to extracluster since this is random data
+#' plot_stability(stab_res)$combined_plot
 #'
 #' @import ggplot2
 #' @import patchwork
 #'
 #' @export
-plot_stability <- function(stability, plot_path = NULL,
-    stability_threshold = NULL, mean_stability_threshold = NULL,
-    height = 4, width = 10, ...) {
+plot_stability <- function(
+        stability, plot_path = NULL,
+        stability_threshold = NULL, mean_stability_threshold = NULL,
+        height = 4, width = 10, ...) {
     if (is.list(stability)) stability <- stability[["stability"]]
 
     stab_plot <- ggplot(stability, aes(

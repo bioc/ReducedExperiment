@@ -21,7 +21,7 @@ estimate_stability(
 )
 }
 \arguments{
-\item{X}{Either a \link{SummarizedExperiment}\link{SummarizedExperiment} object
+\item{X}{Either a \link[SummarizedExperiment]{SummarizedExperiment} object
 or a matrix containing data to be subject to ICA. \code{X} should have rows as
 features and columns as samples.}
 
@@ -51,7 +51,7 @@ to have a mean of 0) prior to ICA. Generally recommended.}
 to have a standard deviation of 1) before ICA.}
 
 \item{assay_name}{If \code{X} is a
-\link{SummarizedExperiment}\link{SummarizedExperiment}, then this should be the
+\link[SummarizedExperiment]{SummarizedExperiment}, then this should be the
 name of the assay to be subject to ICA.}
 
 \item{BPPARAM}{A class containing parameters for parallel evaluation. Uses
@@ -65,7 +65,7 @@ because the time taken to run ICA generally increases with the number
 of components.}
 
 \item{...}{Additional arguments to be passed to
-\link{ReducedExperiment}\link{run_ica}.}
+\link[ReducedExperiment]{run_ica}.}
 }
 \value{
 Returns a list containing:
@@ -107,7 +107,8 @@ X <- ReducedExperiment:::.makeRandomData(200, 100, "feature", "obs")
 stab_res_1 <- estimate_stability(
     X,
     min_components = 10,
-    max_components = 30
+    max_components = 30,
+    n_runs = 5
 )
 
 # Convert the data matrix to a SummarizedExperiment, then estimate stability
@@ -115,10 +116,11 @@ se <- SummarizedExperiment(assays = list("normal" = X))
 stab_res_2 <- estimate_stability(
     se,
     min_components = 10,
-    max_components = 30
+    max_components = 30,
+    n_runs = 5
 )
 
-# Plot the stability
-plot_stability(stab_res_1)
-
+}
+\author{
+Jack Gisby
 }

@@ -34,3 +34,6 @@ re <- ReducedExperiment(
 re
 
 }
+\author{
+Jack Gisby
+}

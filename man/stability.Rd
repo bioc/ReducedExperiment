@@ -41,3 +41,6 @@ stability(fe)
 \seealso{
 \code{\link[=estimate_stability]{estimate_stability()}}
 }
+\author{
+Jack Gisby
+}

@@ -49,3 +49,6 @@ nModules(me) # 10
 \seealso{
 \link[ReducedExperiment]{dim,ReducedExperiment-method}
 }
+\author{
+Jack Gisby
+}

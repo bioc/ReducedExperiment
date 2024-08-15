@@ -47,6 +47,8 @@
 #' [ReducedExperiment::FactorisedExperiment()],
 #' [ReducedExperiment::identify_modules()]
 #'
+#' @author Jack Gisby
+#'
 #' @examples
 #' # Create randomised data with the following dimensions
 #' i <- 300 # Number of features
@@ -74,14 +76,15 @@
 #'
 #' @rdname modular_experiment
 #' @export
-ModularExperiment <- function(reduced = new("matrix"),
-    scale = TRUE,
-    center = TRUE,
-    loadings = NULL,
-    assignments = character(),
-    dendrogram = NULL,
-    threshold = NULL,
-    ...) {
+ModularExperiment <- function(
+        reduced = new("matrix"),
+        scale = TRUE,
+        center = TRUE,
+        loadings = NULL,
+        assignments = character(),
+        dendrogram = NULL,
+        threshold = NULL,
+        ...) {
     re <- ReducedExperiment(
         reduced = reduced,
         scale = scale,
@@ -143,6 +146,8 @@ S4Vectors::setValidity2("ModularExperiment", function(object) {
 #' @returns A vector with values representing features and names representing
 #' feature assignments (i.e., modules).
 #'
+#' @author Jack Gisby
+#'
 #' @examples
 #' # Create ModularExperiment with random data (100 features, 50 samples,
 #' # 10 modules)
@@ -171,9 +176,8 @@ NULL
 
 #' @rdname module_assignments
 #' @export
-setMethod("assignments", "ModularExperiment", function(
-        object,
-        as_list = FALSE) {
+setMethod("assignments", "ModularExperiment", function(object,
+    as_list = FALSE) {
     if (as_list) {
         a <- list()
         for (comp in componentNames(object)) {
@@ -231,6 +235,8 @@ setReplaceMethod("assignments", "ModularExperiment", function(object, value) {
 #' loadings are calculated for each module separately, so their values are
 #' not comparable across modules.
 #'
+#' @author Jack Gisby
+#'
 #' @examples
 #' # Create ModularExperiment with random data (100 features, 50 samples,
 #' # 10 modules)
@@ -252,10 +258,11 @@ NULL
 
 #' @rdname loadings
 #' @export
-setMethod("loadings", "ModularExperiment", function(object,
-    scale_loadings = FALSE,
-    center_loadings = FALSE,
-    abs_loadings = FALSE) {
+setMethod("loadings", "ModularExperiment", function(
+        object,
+        scale_loadings = FALSE,
+        center_loadings = FALSE,
+        abs_loadings = FALSE) {
     # Return them if the loadings are NULL
     if (is.null(object@loadings)) {
         return(object@loadings)
@@ -307,9 +314,8 @@ setReplaceMethod("rownames", "ModularExperiment", function(x, value) {
 
 #' @rdname component_names
 #' @export
-setReplaceMethod("componentNames", "ModularExperiment", function(
-        object,
-        value) {
+setReplaceMethod("componentNames", "ModularExperiment", function(object,
+    value) {
     curr_names <- colnames(object@reduced)
     object <- callNextMethod(object, value)
     new_names <- colnames(object@reduced)
@@ -370,6 +376,8 @@ setMethod("nModules", "ModularExperiment", function(object) {
 #'
 #' # Or class method that calls WGCNA::plotDendroAndColors
 #' plotDendro(me)
+#'
+#' @author Jack Gisby
 #'
 #' @rdname module_dendrogram
 #' @name dendrogram
@@ -503,12 +511,11 @@ setMethod("rbind", "ModularExperiment", function(..., deparse.level = 1) {
 
 #' @rdname enrichment
 #' @export
-setMethod("runEnrich", c("ModularExperiment"), function(
-        object,
-        method = "overrepresentation",
-        feature_id_col = "rownames",
-        as_dataframe = FALSE,
-        ...) {
+setMethod("runEnrich", c("ModularExperiment"), function(object,
+    method = "overrepresentation",
+    feature_id_col = "rownames",
+    as_dataframe = FALSE,
+    ...) {
     if (method == "overrepresentation") {
         if (feature_id_col != "rownames") {
             names(object) <-
@@ -569,6 +576,8 @@ setMethod("runEnrich", c("ModularExperiment"), function(
 #'
 #' @seealso [WGCNA::plotDendroAndColors()]
 #'
+#' @author Jack Gisby
+#'
 #' @examples
 #' # Create ModularExperiment with random data (100 features, 50 samples,
 #' # 10 modules)
@@ -594,10 +603,9 @@ NULL
 #' @export
 setMethod(
     "plotDendro", c("ModularExperiment"),
-    function(
-        object, groupLabels = "Module colors", dendroLabels = FALSE,
-        hang = 0.03, addGuide = TRUE, guideHang = 0.05,
-        color_func = WGCNA::labels2colors, modules_are_colors = FALSE, ...) {
+    function(object, groupLabels = "Module colors", dendroLabels = FALSE,
+    hang = 0.03, addGuide = TRUE, guideHang = 0.05,
+    color_func = WGCNA::labels2colors, modules_are_colors = FALSE, ...) {
         if (!modules_are_colors) {
             colors <- as.numeric(gsub(
                 "module_", "",
@@ -637,6 +645,8 @@ setMethod(
 #' @param project Whether to perform projection (i.e., using PCA rotation matrix
 #' from the original data to calculate modules) or calculate eigengenes from
 #' scratch in the new data (i.e., performing PCA for each module in `newdata`).
+#' By default, eigengenes are recalculated using an approach similar to
+#' \link[WGCNA]{moduleEigengenes}. Projection approach is experimental.
 #'
 #' @param scale_reduced Whether or not the reduced data should be scaled
 #' after calculation.
@@ -684,6 +694,8 @@ setMethod(
 #' @seealso \code{\link[ReducedExperiment]{projectData}},
 #' \code{\link[WGCNA]{moduleEigengenes}}
 #'
+#' @author Jack Gisby
+#'
 #' @examples
 #' # Create ModularExperiment with random data (100 features, 50 samples,
 #' # 10 modules)
@@ -716,7 +728,7 @@ NULL
 #' @export
 setMethod("calcEigengenes", c("ModularExperiment", "matrix"), function(object,
     newdata,
-    project = TRUE,
+    project = FALSE,
     scale_reduced = TRUE,
     return_loadings = FALSE,
     scale_newdata = NULL,
@@ -773,7 +785,7 @@ setMethod("calcEigengenes", c("ModularExperiment", "matrix"), function(object,
 setMethod("calcEigengenes", c("ModularExperiment", "data.frame"), function(
         object,
         newdata,
-        project = TRUE,
+        project = FALSE,
         scale_reduced = TRUE,
         return_loadings = FALSE,
         scale_newdata = NULL,
@@ -795,7 +807,7 @@ setMethod(
     function(
         object,
         newdata,
-        project = TRUE,
+        project = FALSE,
         scale_reduced = TRUE,
         assay_name = "normal",
         scale_newdata = NULL,
@@ -848,6 +860,8 @@ setMethod("predict", c("ModularExperiment"), function(object, newdata, ...) {
 #'
 #' @seealso [WGCNA::signedKME()]
 #'
+#' @author Jack Gisby
+#'
 #' @examples
 #' # Create ModularExperiment with random data (100 features, 50 samples,
 #' # 10 modules)
@@ -864,10 +878,9 @@ NULL
 
 #' @rdname getCentrality
 #' @export
-setMethod("getCentrality", c("ModularExperiment"), function(
-        object,
-        assay_name = "normal",
-        feature_id_col = "rownames") {
+setMethod("getCentrality", c("ModularExperiment"), function(object,
+    assay_name = "normal",
+    feature_id_col = "rownames") {
     # Get module membership (correlation with eigengene)
     signed_kme <- WGCNA::signedKME(
         t(assay(object, assay_name)),

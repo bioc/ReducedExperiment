@@ -3,12 +3,13 @@
 #' Performs overrepresentation analysis given a set of components (factors or
 #' modules) that are each linked to a list of genes.
 #'
+#' @author Jack Gisby
+#'
 #' @noRd
 #' @keywords internal
-reduced_oa <- function(
-        component_features, database = "msigdb_c2_cp",
-        TERM2GENE = NULL, p_cutoff = 1, adj_method = "BH",
-        min_genes = 3, universe = NULL, ...) {
+reduced_oa <- function(component_features, database = "msigdb_c2_cp",
+    TERM2GENE = NULL, p_cutoff = 1, adj_method = "BH",
+    min_genes = 3, universe = NULL, ...) {
     TERM2GENE <- .get_t2g(database, TERM2GENE)
     enrich_res <- list()
 
@@ -47,6 +48,8 @@ reduced_oa <- function(
 #' Gets a correctly formatted TERM2GENE object for use by the `clusterProfiler`
 #' package for enrichment analysis.
 #'
+#' @author Jack Gisby
+#'
 #' @noRd
 #' @keywords internal
 .get_t2g <- function(database, TERM2GENE) {
@@ -67,13 +70,14 @@ reduced_oa <- function(
 #'
 #' Reformats `clusterProfiler` enrichment results into a consistent format.
 #'
+#' @author Jack Gisby
+#'
 #' @noRd
 #' @keywords internal
-.format_enrich_res <- function(
-        enrich_res_single,
-        adj_method,
-        p_cutoff,
-        min_genes = NULL) {
+.format_enrich_res <- function(enrich_res_single,
+    adj_method,
+    p_cutoff,
+    min_genes = NULL) {
     if (is.null(enrich_res_single)) {
         return(NULL)
     }
@@ -109,11 +113,12 @@ reduced_oa <- function(
 #' Expects a loadings matrix where features (genes) are rows and factors are
 #' columns.
 #'
+#' @author Jack Gisby
+#'
 #' @noRd
 #' @keywords internal
-reduced_gsea <- function(
-        S, database = "msigdb_c2_cp", TERM2GENE = NULL,
-        p_cutoff = 1, adj_method = "BH", nPermSimple = 1000, eps = 1e-10, ...) {
+reduced_gsea <- function(S, database = "msigdb_c2_cp", TERM2GENE = NULL,
+    p_cutoff = 1, adj_method = "BH", nPermSimple = 1000, eps = 1e-10, ...) {
     TERM2GENE <- .get_t2g(database, TERM2GENE)
     enrich_res <- list()
 
@@ -155,7 +160,7 @@ reduced_gsea <- function(
 #'
 #' Gets pathways from the MSigDB database in the format required by
 #' `clusterProfiler` enrichment functions. May be used as input to
-#' \link{ReducedExperiment}[runEnrich]. By default, retrieves the C2
+#' \link[ReducedExperiment]{runEnrich}. By default, retrieves the C2
 #' canonical pathways.
 #'
 #' @param species The species for which to obtain MSigDB pathways. See
@@ -178,6 +183,8 @@ reduced_gsea <- function(
 #' of a pathway, and the `gene_id` column indicates genes that belong to
 #' said pathway.
 #'
+#' @author Jack Gisby
+#'
 #' @examples
 #' pathways <- get_msigdb_t2g(
 #'     species = "Homo sapiens",
@@ -190,12 +197,11 @@ reduced_gsea <- function(
 #' head(pathways)
 #'
 #' @export
-get_msigdb_t2g <- function(
-        species = "Homo sapiens",
-        category = "C2",
-        subcategory = NULL,
-        subcategory_to_remove = "CGP",
-        gene_id = "ensembl_gene") {
+get_msigdb_t2g <- function(species = "Homo sapiens",
+    category = "C2",
+    subcategory = NULL,
+    subcategory_to_remove = "CGP",
+    gene_id = "ensembl_gene") {
     t2g <- data.frame(msigdbr::msigdbr(
         species = species,
         category = category,
@@ -223,6 +229,8 @@ get_msigdb_t2g <- function(
 #'
 #' @seealso [ReducedExperiment::plot_common_features()],
 #' [ReducedExperiment::getAlignedFeatures()]
+#'
+#' @author Jack Gisby
 #'
 #' @examples
 #' # Get a random matrix with rnorm, with 100 rows (features)
@@ -313,6 +321,8 @@ get_common_features <- function(factor_features) {
 #' @seealso [ReducedExperiment::get_common_features()],
 #'  [ReducedExperiment::getAlignedFeatures()]
 #'
+#' @author Jack Gisby
+#'
 #' @examples
 #' # Get a random matrix with rnorm, with 100 rows (features)
 #' # and 20 columns (observations)
@@ -335,12 +345,13 @@ get_common_features <- function(factor_features) {
 #' plot_common_features(common_features)
 #'
 #' @export
-plot_common_features <- function(common_features,
-    filename = NA,
-    color = grDevices::colorRampPalette(RColorBrewer::brewer.pal(
-        n = 7,
-        name = "YlOrRd"
-    ))(100)) {
+plot_common_features <- function(
+        common_features,
+        filename = NA,
+        color = grDevices::colorRampPalette(RColorBrewer::brewer.pal(
+            n = 7,
+            name = "YlOrRd"
+        ))(100)) {
     common_features <- subset(common_features,
         select = c("c_1", "c_2", "intersect_prop")
     )
@@ -426,33 +437,29 @@ plot_common_features <- function(common_features,
 #' @returns A `data.frame` containing preservation statistics, as described
 #' by \link[WGCNA]{modulePreservation}.
 #'
+#' @author Jack Gisby
+#'
 #' @examples
-#' # Get random matrices with rnorm, with 100 rows (features)
-#' # and 20 columns (observations)
-#' X_1 <- ReducedExperiment:::.makeRandomData(100, 20, "feature", "obs")
-#' X_2 <- ReducedExperiment:::.makeRandomData(100, 20, "feature", "obs")
+#' # Get random ModularExperiments with rnorm, with 100 rows (features),
+#' # 20 columns (observations) and 5/10 modules
+#' me_1 <- ReducedExperiment:::.createRandomisedModularExperiment(100, 20, 5)
+#' me_2 <- ReducedExperiment:::.createRandomisedModularExperiment(100, 20, 10)
 #'
-#' # Estimate 5 factors based on the data matrix
-#' me_1 <- identify_modules(X_1, nc = 5, verbose = 0, powers = 5)
-#' me_2 <- identify_modules(X_2, nc = 5, verbose = 0, powers = 5)
-#'
-#' # Test module preservation
-#' mp <- module_preservation(me_1, me_2, verbose = 10, nPermutations = 10)
-#'
-#' # Plot the results
-#' plot_module_preservation(mp)
+#' # Test module preservation (test modules from dataset 1 in dataset 2)
+#' mp <- module_preservation(me_1, me_2, verbose = 0, nPermutations = 3)
 #'
 #' @export
-module_preservation <- function(reference_dataset, test_dataset,
-    reference_assay_name = "normal",
-    test_assay_name = "normal",
-    module_assignments = NULL,
-    greyName = "module_0",
-    goldName = "random",
-    networkType = "signed",
-    corFnc = "cor",
-    savePermutedStatistics = FALSE,
-    ...) {
+module_preservation <- function(
+        reference_dataset, test_dataset,
+        reference_assay_name = "normal",
+        test_assay_name = "normal",
+        module_assignments = NULL,
+        greyName = "module_0",
+        goldName = "random",
+        networkType = "signed",
+        corFnc = "cor",
+        savePermutedStatistics = FALSE,
+        ...) {
     if (inherits(reference_dataset, "ModularExperiment")) {
         module_assignments <- assignments(reference_dataset)
     } else if (is.null(module_assignments)) {
@@ -508,28 +515,25 @@ module_preservation <- function(reference_dataset, test_dataset,
 #' module preservation statistics generated by
 #' \link[ReducedExperiment]{module_preservation}.
 #'
+#' @author Jack Gisby
+#'
 #' @examples
-#' # Get random matrices with rnorm, with 100 rows (features)
-#' # and 20 columns (observations)
-#' X_1 <- ReducedExperiment:::.makeRandomData(100, 20, "feature", "obs")
-#' X_2 <- ReducedExperiment:::.makeRandomData(100, 20, "feature", "obs")
+#' # Get random ModularExperiments with rnorm, with 100 rows (features),
+#' # 20 columns (observations) and 5/10 modules
+#' me_1 <- ReducedExperiment:::.createRandomisedModularExperiment(100, 20, 5)
+#' me_2 <- ReducedExperiment:::.createRandomisedModularExperiment(100, 20, 10)
 #'
-#' # Estimate 5 factors based on the data matrix
-#' me_1 <- identify_modules(X_1, nc = 5, verbose = 0, powers = 5)
-#' me_2 <- identify_modules(X_2, nc = 5, verbose = 0, powers = 5)
+#' # Test module preservation (test modules from dataset 1 in dataset 2)
+#' mp <- module_preservation(me_1, me_2, verbose = 0, nPermutations = 3)
 #'
-#' # Test module preservation
-#' mp <- module_preservation(me_1, me_2, verbose = 10, nPermutations = 10)
-#'
-#' # Plot the results
+#' # No significant preservation, since these were random modules
 #' plot_module_preservation(mp)
 #'
 #' @import ggplot2
 #' @import patchwork
 #' @export
-plot_module_preservation <- function(
-        module_preservation_results,
-        show_random = TRUE, remove_module = NULL) {
+plot_module_preservation <- function(module_preservation_results,
+    show_random = TRUE, remove_module = NULL) {
     mr_df <- module_preservation_results$preservation$observed$ref.reference$
         inColumnsAlsoPresentIn.test
     zs_df <- module_preservation_results$preservation$Z$ref.reference$
@@ -574,6 +578,8 @@ plot_module_preservation <- function(
 
 #' Makes a median rank plot to visualise module preservation
 #'
+#' @author Jack Gisby
+#'
 #' @noRd
 #' @keywords internal
 .make_medianrank_plot <- function(mr_df, max_module_size, nudge_mr) {
@@ -597,6 +603,8 @@ plot_module_preservation <- function(
 }
 
 #' Makes a Zsummary plot to visualise module preservation
+#'
+#' @author Jack Gisby
 #'
 #' @noRd
 #' @keywords internal

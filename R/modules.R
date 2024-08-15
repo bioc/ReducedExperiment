@@ -1,9 +1,9 @@
 #' Apply dimensionality reduction using WGCNA
 #'
 #' Performs Weighted gene correlation network analysis (WGCNA).
-#' Calls \link{ReducedExperiment}[run_wgcna] to perform the analysis.
+#' Calls \link[ReducedExperiment]{run_wgcna} to perform the analysis.
 #'
-#' @param X Either a \link{SummarizedExperiment}[SummarizedExperiment] object
+#' @param X Either a \link[SummarizedExperiment]{SummarizedExperiment} object
 #' or a matrix containing data to be subject to WGCNA. `X` should have rows as
 #' features and columns as samples.
 #'
@@ -14,19 +14,21 @@
 #' to have a standard deviation of 1) before WGCNA.
 #'
 #' @param assay_name If `X` is a
-#' \link{SummarizedExperiment}[SummarizedExperiment], then this should be the
+#' \link[SummarizedExperiment]{SummarizedExperiment}, then this should be the
 #' name of the assay to be subject to WGCNA.
 #'
 #' @param ... Additional arguments to be passed to
-#' \link{ReducedExperiment}[run_wgcna].
+#' \link[ReducedExperiment]{run_wgcna}.
 #'
-#' @returns A \link{ReducedExperiment}[ModularExperiment] is returned
+#' @returns A \link[ReducedExperiment]{ModularExperiment} is returned
 #' containing the input data (i.e., the original data matrix in addition to
-#' other slots if a \link{SummarizedExperiment}[SummarizedExperiment] was used
+#' other slots if a \link[SummarizedExperiment]{SummarizedExperiment} was used
 #' as input). Additionally contains the results of module analysis, stored in
 #' the `reduced` and `assignments` slots. The `center_X`, `scale_X`,
 #' `loadings`, `threshold` and `dendrogram` slots may also be filled depending
 #' on the arguments given to `identify_modules`.
+#'
+#' @author Jack Gisby
 #'
 #' @examples
 #' # Get the airway data as a SummarizedExperiment (with a subset of features)
@@ -43,12 +45,11 @@
 #'     [WGCNA::pickSoftThreshold()]
 #'
 #' @export
-identify_modules <- function(
-        X,
-        center_X = TRUE,
-        scale_X = TRUE,
-        assay_name = "normal",
-        ...) {
+identify_modules <- function(X,
+    center_X = TRUE,
+    scale_X = TRUE,
+    assay_name = "normal",
+    ...) {
     if (!inherits(X, "SummarizedExperiment")) {
         X <- SummarizedExperiment(assays = list("normal" = X))
     }
@@ -86,10 +87,10 @@ identify_modules <- function(
 #' Creates a ModularExperiment from a SummarizedExperiment
 #'
 #' Helper function for transforming a
-#' \link{ReducedExperiment}[ModularExperiment] into a
-#' \link{SummarizedExperiment}[SummarizedExperiment]
+#' \link[ReducedExperiment]{ModularExperiment} into a
+#' \link[SummarizedExperiment]{SummarizedExperiment}
 #'
-#' @param se A \link{SummarizedExperiment}[SummarizedExperiment] object.
+#' @param se A \link[SummarizedExperiment]{SummarizedExperiment} object.
 #'
 #' @param reduced Data to be passed to the `reduced` slot.
 #'
@@ -105,17 +106,18 @@ identify_modules <- function(
 #'
 #' @param threshold Data to be passed to the `threshold` slot.
 #'
+#' @author Jack Gisby
+#'
 #' @noRd
 #' @keywords internal
-.se_to_me <- function(
-        se,
-        reduced,
-        loadings,
-        assignments,
-        center_X,
-        scale_X,
-        dendrogram = NULL,
-        threshold = NULL) {
+.se_to_me <- function(se,
+    reduced,
+    loadings,
+    assignments,
+    center_X,
+    scale_X,
+    dendrogram = NULL,
+    threshold = NULL) {
     return(ModularExperiment(
         reduced = reduced, loadings = loadings, assignments = assignments,
         center = center_X, scale = scale_X,
@@ -213,6 +215,8 @@ identify_modules <- function(
 #' @seealso [WGCNA::blockwiseModules()],
 #'     [WGCNA::pickSoftThreshold()]
 #'
+#' @author Jack Gisby
+#'
 #' @examples
 #' # Get the airway data as a SummarizedExperiment (with a subset of features)
 #' set.seed(2)
@@ -226,11 +230,10 @@ identify_modules <- function(
 #' table(names(wgcna_res$assignments))
 #'
 #' @export
-run_wgcna <- function(
-        X, powers = 1:30, min_r_squared = 0.85,
-        max_mean_connectivity = 100, corType = "pearson",
-        networkType = "signed", module_labels = "numbers", maxBlockSize = 30000,
-        verbose = 0, return_full_output = FALSE, scale_reduced = TRUE, ...) {
+run_wgcna <- function(X, powers = 1:30, min_r_squared = 0.85,
+    max_mean_connectivity = 100, corType = "pearson",
+    networkType = "signed", module_labels = "numbers", maxBlockSize = 30000,
+    verbose = 0, return_full_output = FALSE, scale_reduced = TRUE, ...) {
     .max_block_size_check(maxBlockSize, nrow(X))
     cor <- corFnc <- .get_cor_fn(corType) # Get correlation function
 
@@ -304,6 +307,8 @@ run_wgcna <- function(
 
 #' Based on a string, determine the WGCNA correlation function to use
 #'
+#' @author Jack Gisby
+#'
 #' @noRd
 #' @keywords internal
 .get_cor_fn <- function(corType) {
@@ -318,6 +323,8 @@ run_wgcna <- function(
 
 #' Raise warning if blockwise module detection is taking place
 #'
+#' @author Jack Gisby
+#'
 #' @noRd
 #' @keywords internal
 .max_block_size_check <- function(max_block_size, n_rows) {
@@ -331,16 +338,19 @@ run_wgcna <- function(
 
 #' Wrapper around WGCNA::pickSoftThreshold
 #'
+#' @author Jack Gisby
+#'
 #' @noRd
 #' @keywords internal
-.select_threshold <- function(X,
-    min_r_squared,
-    max_mean_connectivity,
-    powers,
-    corFnc,
-    networkType,
-    maxBlockSize,
-    verbose) {
+.select_threshold <- function(
+        X,
+        min_r_squared,
+        max_mean_connectivity,
+        powers,
+        corFnc,
+        networkType,
+        maxBlockSize,
+        verbose) {
     threshold <- WGCNA::pickSoftThreshold(
         t(X),
         RsquaredCut = min_r_squared, powerVector = powers, corFnc = corFnc,
@@ -376,6 +386,8 @@ run_wgcna <- function(
 
 #' Convert WGCNA colours to numbers
 #'
+#' @author Jack Gisby
+#'
 #' @noRd
 #' @keywords internal
 .colors2numbers <- function(colors) {
@@ -396,13 +408,14 @@ run_wgcna <- function(
 
 #' Calculates eigengenes for new data based on module assignments
 #'
+#' @author Jack Gisby
+#'
 #' @noRd
 #' @keywords internal
-.calculate_eigengenes <- function(
-        newdata,
-        module_names,
-        module_assignments,
-        realign = TRUE) {
+.calculate_eigengenes <- function(newdata,
+    module_names,
+    module_assignments,
+    realign = TRUE) {
     red <- data.frame(row.names = colnames(newdata))
     lod <- c()
 
@@ -439,14 +452,15 @@ run_wgcna <- function(
 
 #' Calculates eigengenes for new data based on the original PCA rotation matrix
 #'
+#' @author Jack Gisby
+#'
 #' @noRd
 #' @keywords internal
-.project_eigengenes <- function(
-        newdata,
-        module_names,
-        module_assignments,
-        lod,
-        min_module_genes) {
+.project_eigengenes <- function(newdata,
+    module_names,
+    module_assignments,
+    lod,
+    min_module_genes) {
     red <- data.frame(row.names = colnames(newdata))
 
     for (m in module_names) {

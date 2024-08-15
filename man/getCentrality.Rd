@@ -43,3 +43,6 @@ getCentrality(me)
 \seealso{
 \code{\link[WGCNA:signedKME]{WGCNA::signedKME()}}
 }
+\author{
+Jack Gisby
+}

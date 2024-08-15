@@ -9,7 +9,7 @@ output:
 vignette: >
     %\VignetteIndexEntry{ReducedExperiment}
     %\VignetteEngine{knitr::rmarkdown}
-    %\VignetteEncoding{UTF-8} 
+    %\VignetteEncoding{UTF-8}  
 ---
 
 # Installation
@@ -25,6 +25,7 @@ set.seed(1)
 ```
 
 ```{r load_packages, message=FALSE, warning=FALSE}
+library(SummarizedExperiment)
 library(ReducedExperiment)
 library(ggplot2)
 
@@ -43,18 +44,20 @@ devtools::install_github("jackgisby/ReducedExperiment")
 
 # Introduction
 
-The `ReducedExperiment` package implements classes for applying dimensionality
-reduction approaches to high-dimensional datasets, such as gene expression 
-datasets produced by RNA sequencing. 
+Dimensionality reduction approaches are often applied to reduce the complexity
+of high-dimensional datasets, such as gene expression data produced by 
+microarrays and RNA sequencing. The `ReducedExperiment` containers are able to
+simultaneously store high-dimensional experimental data, sample- and 
+feature-level metadata, and the dimensionally-reduced data. 
 
-These objects are derived from the `SummarizedExperiment` class available from
-Bioconductor 
-(https://bioconductor.org/packages/release/bioc/html/SummarizedExperiment.html).
+If you are not familiar with the `SummarizedExperiment` containers, we suggest
+first reading through the package vignette, either through the 
+[Bioconductor website](https://bioconductor.org/packages/release/bioc/html/SummarizedExperiment.html) 
+or by installing the package and running the following.
 
-`SummarizedExperiment` objects can store matrices, where rows represent features
-(e.g., genes) and columns represent samples. Additional information on the
-features and samples can be retrieved from the object using the `rowData` and
-`colData` functions, respectively. 
+```{r se_vignette, eval=FALSE}
+vignette("SummarizedExperiment", package = "SummarizedExperiment")
+```
 
 The key benefit of `SummarizedExperiment` objects is that they allow for both
 assay and metadata to be kept in sync while slicing and reordering the features
@@ -70,7 +73,7 @@ factors or components as columns. These methods also usually generate a
 loadings or rotation matrix, with features as rows and factors/components as 
 columns.
 
-The `ReducedExperiment` objects extend `SummarizedExperiment` by allowing for
+The `ReducedExperiment` containers extend `SummarizedExperiment` by allowing for
 the storage and slicing of these additional matrices. This package implements 
 `ReducedExperiment`, a high-level class that can store an additional matrix 
 with samples as rows and reduced dimensions as columns. We also implemented 
@@ -83,12 +86,21 @@ class, which additionally allows for the storage of a loadings matrix. The
 such as "Weighted Gene Correlation Network Analysis" (WGCNA), a popular method 
 used to analyse transcriptomic datasets.
 
-For convenience, functions are provided to perform these analyses on 
-high-dimensional datasets stored in `SummarizedExperiment` objects. We implement
-a method for identifying factors based on Independent Component Analysis, and
-wrappers are provided for applying WGCNA. 
+# Introducing ReducedExperiment containers with a case study
 
-# Creating and using ReducedExperiment objects
+There are two ways to build a `ReducedExperiment` object. Firstly, we provide
+convenience functions that both perform dimensionality reduction and package
+the results into the appropriate container class. We implement a method,
+`estimate_factors`, for identifying factors through Independent Component
+Analysis. We also provide a wrapper for applying WGCNA, `identify_modules`.
+
+In this section of the vignette, we will apply both of these methods to 
+some sample RNA sequencing data. Alternatively, if you have already applied 
+dimensionality reduction to your data, you may simply construct a 
+`ReducedExperiment` object from scratch. For instructions on how to do this,
+see the section entitled "Constructing a `ReducedExperiment` from scratch".
+
+## The case study data
 
 For the purposes of this vignette, we will be working with some RNA sequencing
 data generated for patients with COVID-19. The data were published in the 
@@ -120,7 +132,7 @@ wave2_se <- readRDS(system.file(
 wave1_se
 ```
 
-# Factor analysis
+## Applying factor analysis
 
 The first step in performing independent component analysis is to estimate the
 optimal number of components. We can do this with the `estimate_stability` 
@@ -164,7 +176,7 @@ thousands of genes, you might see a stability profile more like the one
 plotted below. You'll commonly observe an elbow in the stability plot on the
 left, which in this case appears around 30-40 components.
 
-![Stability plot for the full dataset](https://raw.githubusercontent.com/jackgisby/ReducedExperiment/devel/inst/stability.png)
+![](https://raw.githubusercontent.com/jackgisby/ReducedExperiment/devel/inst/stability.png)
 
 Now we run the factor analysis with these components. We additionally set a 
 stability threshold of 0.25 to remove components with low stability. This
@@ -188,13 +200,15 @@ The FactorisedExperiment contains an additional matrix for the
 dimensionally-reduced data (i.e., samples vs. factors) and one for the factor
 loadings (i.e., genes vs. factors).
 
-We can get the reduced data as so:
+We can get the reduced data as so.
+
 ```{r get_factor_reduced}
 # get reduced data for first 5 samples and factors
 reduced(wave1_fe)[1:5, 1:5]
 ```
 
-And we get the factor loadings below:
+And we get the factor loadings below.
+
 ```{r get_factor_loadings}
 # get loadings for first 5 genes and factors
 loadings(wave1_fe)[1:5, 1:5]
@@ -203,13 +217,13 @@ loadings(wave1_fe)[1:5, 1:5]
 Most of the normal operations that can be performed on SummarizedExperiment 
 objects
 can also be performed on FactorisedExperiments. We can slice them by samples,
-features and components, like so:
+features and components, like so.
 
 ```{r slice_fe}
 dim(wave1_fe[1:20, 1:10, 1:5])
 ```
 
-# Module analysis
+## Module analysis
 
 Similarly, we can run a module analysis using the weighted gene correlation
 network analysis (WGCNA) package: 
@@ -258,25 +272,31 @@ for the dimensionally-reduced data (samples vs. modules) and loadings (a vector
 containing a value for each gene). There is additionally a slot for the module 
 assignments. 
 
-We can get the reduced data as so:
+The reduced data contain expression profiles for each module that are 
+representative of the member genes, also referred to as an "eigengene". We can
+get these data as in the following chunk.
+
 ```{r get_module_reduced}
 # get reduced data for first 5 samples and factors
 reduced(wave1_me)[1:5, 1:5]
 ```
 
-The module assignments:
+We can also find out which module each feature is assigned to.
+
 ```{r get_module_assignments}
 # get assignments for first 5 genes
 assignments(wave1_me)[1:5]
 ```
 
-And the loadings:
+The `ModularExperiment` object also stores the loadings, indicating the 
+alignment of each feature with the corresponding eigengene. 
+
 ```{r get_module_loadings}
 # get loadings for first 5 genes
 loadings(wave1_me)[1:5]
 ```
 
-# Identifying factor and module associations
+## Identifying factor and module associations
 One thing we might be interested in doing is identifying factors that are 
 associated with disease outcomes. We can do this with the 
 `associate_components` function. First, we can look at the sample-level data 
@@ -287,11 +307,8 @@ colData(wave1_se)[, c("sample_id", "individual_id", "case_control", "sex", "calc
 ```
 
 In this case, we will focus on the `case_control` variable, indicating whether
-patients are COVID-19 positive or negative. We also adjust for sex, age
-and ethnicity in these models. In this study, there were multiple samples
-for each individual. To handle repeated measurements from the same individuals,
-we use the "lmer" method (i.e., a linear mixed model) and include a random
-intercept for the individual in the model formula.
+patients are COVID-19 positive or negative. For each component, we apply linear 
+models that are adjusted for for sex and age.  
 
 ```{r associate_components}
 f <- "~ case_control + sex + calc_age"
@@ -354,15 +371,26 @@ ggplot(
     scale_fill_gradient2(low = "#3A3A98", high = "#832424")
 ```
 
-# Finding functional enrichments for factors and modules
+## Finding functional enrichments for factors and modules
 
 Now that we know which of our modules are up- and downregulated in COVID-19,
 we want to know more about the genes and pathways that are associated
 with our factors.
 
 As shown before, we know which genes belong to each module by accessing
-the module assignments in the ModularExperiment object. We can also 
+the module assignments in the ModularExperiment object. We can also estimate
+the centrality of the genes in the module, based on the `WGCNA::signedKME` 
+function.
+
+```{r module_centrality}
+module_centrality <- getCentrality(wave1_me)
+head(module_centrality)
+```
+
+This indicates the correlation of each feature with the corresponding 
+module "eigengene". We can also 
 identify the genes that are highly aligned with each factor, as follows:
+
 ```{r factor_alignments}
 aligned_features <- getAlignedFeatures(wave1_fe, format = "data.frame")
 head(aligned_features[, c("component", "feature", "value")])
@@ -373,7 +401,7 @@ each factor. Some factors display moderate associations with many genes,
 whereas others show strong associations with just a few genes.
 
 We can also perform pathway enrichment analyses for both factors and modules.
-We use the enrichment methods implemented in the clusterProfiler package. By
+We use the enrichment methods implemented in the `clusterProfiler` package. By
 default, we run gene set enrichment analysis for the factors, whereas we use
 a simple overrepresentation analysis for the modules.
 
@@ -421,7 +449,7 @@ ggplot(
     geom_vline(xintercept = -log10(0.05))
 ```
 
-# Projecting factors and modules into new datasets
+## Projecting factors and modules into new datasets
 
 Sometimes, we might want to calculate sample-level values of our factors and
 modules in a new dataset. In this instance, we have a second cohort that we
@@ -519,6 +547,155 @@ replication_estimates <- replication_me$summaries$estimate[
 ]
 
 cor.test(original_estimates, replication_estimates)
+```
+
+# Extending the ReducedExperiment class
+
+The `SummarizedExperiment` package includes a detailed vignette explaining
+how to derive new containers from the SummarizedExperiment class.
+
+```{r extension_vignette, eval=FALSE}
+vignette("Extensions", package = "SummarizedExperiment")
+```
+
+The `ReducedExperiment` containers may be extended in a similar fashion. In this
+package, we implemented `ReducedExperiment` and two derivative classes, 
+`ModularExperiment` and `FactorisedExperiment`. While these are convenient for 
+working with the output of module and factor analysis, respectively, other 
+dimensionality reduction approaches may require the incorporation of additional
+components and methods. 
+
+For instance, we could define a `PCAExperiment` class for storing the output
+of `stats::prcomp` (i.e., Principal Components Analysis, or PCA). 
+The function produces the following:
+* `x`: The reduced data, which we will store in the existing `ReducedExperiment`
+`reduced` slot.
+* `rotation`: The feature loadings, for which we will create a new slot,
+* `sdev`: The standard deviations of the principal components, for which
+we will create a new slot.
+* `center` and `scale`: The centering and scaling used, which we will store
+in their existing `ReducedExperiment` slots.
+
+```{r extend_class}
+PCAExperiment <- setClass(
+    "PCAExperiment",
+    contains = "ReducedExperiment",
+    slots = representation(
+        rotation = "matrix",
+        sdev = "numeric"
+    )
+)
+```
+
+We may then run `stats::prcomp` on our data and store the output in a
+`PCAExperiment` container. We give the original `SummarizedExperiment` object
+as an argument, and we also supply the outputs of `stats::prcomp` to the 
+slots defined for `ReducedExperiment` and the new slots defined above for
+`PCAExperiment`.
+
+```{r}
+prcomp_res <- stats::prcomp(t(assay(wave1_se)), center = TRUE, scale. = TRUE)
+
+my_pca_experiment <- PCAExperiment(
+    wave1_se,
+    reduced = prcomp_res$x,
+    rotation = prcomp_res$rotation,
+    sdev = prcomp_res$sdev,
+    center = prcomp_res$center,
+    scale = prcomp_res$scale
+)
+
+my_pca_experiment
+```
+
+We can retrieve the principal components.
+
+```{r}
+reduced(my_pca_experiment)[1:5, 1:5]
+```
+
+But to retrieve our new `rotation` matrix we need to define a "getter" method.
+
+```{r}
+setGeneric("rotation", function(x, ...) standardGeneric("rotation"))
+
+setMethod("rotation", "PCAExperiment", function(x, withDimnames = TRUE) {
+    return(x@rotation)
+})
+
+rotation(my_pca_experiment)[1:5, 1:5]
+```
+
+And to change the values of the `rotation` matrix we must also define a setter:
+```{r}
+setGeneric("rotation<-", function(x, ..., value) standardGeneric("rotation<-"))
+
+setReplaceMethod("rotation", "PCAExperiment", function(x, value) {
+    x@rotation <- value
+    validObject(x)
+    return(x)
+})
+
+# Set the value at position [1, 1] to 10 and get
+rotation(my_pca_experiment)[1, 1] <- 10
+rotation(my_pca_experiment)[1:5, 1:5]
+```
+
+To fully flesh out our class we would also need to consider:
+* Defining getters and setters for the `sdev` slot
+* Implementing a constructor method to make creating `PCAExperiment` simpler and
+add sensible defaults
+* Implementing a method to check the validity of our object
+* Modifying existing methods, such as subsetting operations (i.e., `]`), to
+handle the new slots we have introduced
+
+For the `ModularExperiment` and `FactorisedExperiment` classes, we additionally
+implemented a variety of methods specific to the type of data they store. Since 
+the results of PCA are similar to that of factor analysis, in practice
+it would likely be more straightforward to simply store these results in a
+`FactorisedExperiment`.
+
+# Constructing a `ReducedExperiment` from scratch
+
+If you have already applied dimensionality reduction to your data, you may be
+able to package the results into one of the `ReducedExperiment` containers.
+Below, we construct a `FactorisedExperiment` container based on the results of
+PCA applied to gene expression data. This container is appropriate, because we
+can store the sample-level principal components in the `reduced` slot of the
+object, and we may store the rotation matrix returned by `stats::prcomp` to
+the `loadings` slot. 
+
+To construct our `FactorisedExperiment`, we provide a `SummarizedExperiment` as
+our first argument. In this case we reconstruct our `SummarizedExperiment`
+for demonstration purposes, but if you have already constructed a 
+`SummarizedExperiment` you may simply pass this as the first argument.
+
+We then pass the results of `stats::prcomp` to the object's slots. This object
+is now ready to work with as described in the section above ("Introducing `ReducedExperiment` containers with a case study").
+
+```{r make_fe_from_pca}
+# Construct a SummarizedExperiment (if you don't already have one)
+expr_mat <- assay(wave1_se)
+pheno_data <- colData(wave1_se)
+se <- SummarizedExperiment(
+    assays = list("normal" = expr_mat),
+    colData = pheno_data
+)
+
+# Calculate PCA with prcomp
+prcomp_res <- stats::prcomp(t(assay(se)), center = TRUE, scale. = TRUE)
+
+# Create a FactorisedExperiment container
+fe <- FactorisedExperiment(
+    se,
+    reduced = prcomp_res$x,
+    loadings = prcomp_res$rotation,
+    stability = prcomp_res$sdev,
+    center = prcomp_res$center,
+    scale = prcomp_res$scale
+)
+
+fe
 ```
 
 # Vignette references

@@ -11,7 +11,7 @@
 \S4method{calcEigengenes}{ModularExperiment,matrix}(
   object,
   newdata,
-  project = TRUE,
+  project = FALSE,
   scale_reduced = TRUE,
   return_loadings = FALSE,
   scale_newdata = NULL,
@@ -23,7 +23,7 @@
 \S4method{calcEigengenes}{ModularExperiment,data.frame}(
   object,
   newdata,
-  project = TRUE,
+  project = FALSE,
   scale_reduced = TRUE,
   return_loadings = FALSE,
   scale_newdata = NULL,
@@ -35,7 +35,7 @@
 \S4method{calcEigengenes}{ModularExperiment,SummarizedExperiment}(
   object,
   newdata,
-  project = TRUE,
+  project = FALSE,
   scale_reduced = TRUE,
   assay_name = "normal",
   scale_newdata = NULL,
@@ -60,7 +60,9 @@ rows of \code{newdata} match those of the
 
 \item{project}{Whether to perform projection (i.e., using PCA rotation matrix
 from the original data to calculate modules) or calculate eigengenes from
-scratch in the new data (i.e., performing PCA for each module in \code{newdata}).}
+scratch in the new data (i.e., performing PCA for each module in \code{newdata}).
+By default, eigengenes are recalculated using an approach similar to
+\link[WGCNA]{moduleEigengenes}. Projection approach is experimental.}
 
 \item{scale_reduced}{Whether or not the reduced data should be scaled
 after calculation.}
@@ -139,4 +141,7 @@ me_2_eig[1:5, 1:5]
 \seealso{
 \code{\link[ReducedExperiment]{projectData}},
 \code{\link[WGCNA]{moduleEigengenes}}
+}
+\author{
+Jack Gisby
 }

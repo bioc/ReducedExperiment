@@ -77,3 +77,6 @@ loadings(me)[9] <- 8
 loadings(me)[1:10]
 
 }
+\author{
+Jack Gisby
+}

@@ -24,3 +24,6 @@ re <- ReducedExperiment:::.createRandomisedReducedExperiment(100, 50, 10)
 dim(re)
 
 }
+\author{
+Jack Gisby
+}

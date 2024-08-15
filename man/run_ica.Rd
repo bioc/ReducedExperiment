@@ -25,7 +25,7 @@ run_ica(
 \item{X}{A matrix with features as rows and columns as samples.}
 
 \item{nc}{The number of components to be identified. See
-\link{ReducedExperiment}\link{estimate_stability} for a method to estimate the
+\link[ReducedExperiment]{estimate_stability} for a method to estimate the
 optimal number of components.}
 
 \item{use_stability}{Whether to use a stability-based approach to estimate
@@ -35,7 +35,7 @@ factors. See \code{details} for further information}
 Else, random initialisation of ICA is employed. Ignored if \code{use_stability}
 is FALSE. See \code{details} for further information.}
 
-\item{method}{The ICA method to use. Passed to \link{ica}\link{ica}, the options
+\item{method}{The ICA method to use. Passed to \link[ica]{ica}, the options
 are "fast", "imax" or "jade".}
 
 \item{stability_threshold}{A stability threshold for pruning factors. Factors
@@ -68,7 +68,7 @@ ICA computation at a time. Ignored if \code{use_stability}
 is FALSE. See \code{details} for further information.}
 
 \item{...}{Additional arguments to be passed to
-\link{ica}\link{ica}.}
+\link[ica]{ica}.}
 }
 \value{
 \describe{
@@ -82,8 +82,8 @@ above.}
 }
 }
 \description{
-Runs ICA through \link{ica}\link{ica}. If \code{use_stability} is FALSE, then X is
-passed directly to \link{ica}\link{ica} and a standard ICA analysis is performed.
+Runs ICA through \link[ica]{ica}. If \code{use_stability} is FALSE, then X is
+passed directly to \link[ica]{ica} and a standard ICA analysis is performed.
 If \code{use_stability} is TRUE, then the stabilised ICA procedure is carried out.
 }
 \details{
@@ -145,4 +145,7 @@ ica_res <- run_ica(X, nc = 5, use_stability = FALSE)
 # Run stabilised ICA on the data with 5 components
 ica_res_stab <- run_ica(X, nc = 5, use_stability = TRUE)
 
+}
+\author{
+Jack Gisby
 }

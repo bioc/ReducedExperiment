@@ -77,3 +77,6 @@ re
 \code{\link[=FactorisedExperiment]{FactorisedExperiment()}},
 \code{\link[=ModularExperiment]{ModularExperiment()}}
 }
+\author{
+Jack Gisby
+}
