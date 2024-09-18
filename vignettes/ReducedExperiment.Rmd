@@ -560,7 +560,45 @@ cor.test(original_estimates, replication_estimates)
 
 ### Applying modules to new data
 
+Similarly to factors, we can look at how our modules behave in new data. Below,
+we use `calcEigengenes` to do so, and we look at whether the modules behave
+similarly with respect to COVID-19 status. As we saw for factors, there is a 
+reasonable concordance between the modules in the two datasets.
 
+```{r}
+wave2_me <- calcEigengenes(wave1_me, wave2_se)
+replication_me <- associate_components(wave2_me, method = "lmer", formula = paste0(f, " + (1|individual_id)"))
+
+original_estimates <- associations_me$summaries$estimate[
+    associations_me$summaries$term == "case_controlPOSITIVE"
+]
+replication_estimates <- replication_me$summaries$estimate[
+    replication_me$summaries$term == "case_controlPOSITIVE"
+]
+
+cor.test(original_estimates, replication_estimates)
+```
+
+### Module preservation
+
+We can also consider the preservation of modules. Below, we take our modules
+calculated in the Wave 1 dataset, and assess their reproducibility in the
+Wave 2 dataset. A variety of statistics are calculated by WGCNA's
+`modulePreservation`. By default, the `plot_module_preservation` function 
+shows us the "medianRank" and "Zsummary" statistics. You can find out more
+about these in the corresponding 
+[publication](https://doi.org/10.1371/journal.pcbi.1001057), but in general
+we are interested in modules with higher Zsummary scores. In short, we can
+consider modules above the blue line (Z > 2) to be moderately preserved and
+modules above the green line (Z > 10) to be highly preserved. We see
+that modules 1 and 2 have relatively high preservation in the Wave 2 dataset,
+whereas modules 5 and 0 (our unclustered genes) display relatively low 
+preservation. 
+
+```{r}
+mod_pres_res <- module_preservation(wave1_me, wave2_se, verbose = 0, nPermutations = 20)
+plot_module_preservation(mod_pres_res)
+```
 
 # Extending the ReducedExperiment class
 
@@ -750,6 +788,9 @@ Weighted Gene Correlation Network Analysis (WGCNA) framework
     (https://doi.org/10.1186/1471-2105-9-559)
     - Langfelder and Horvath, 2008
 * "WGCNA" R package (https://cran.r-project.org/web/packages/WGCNA/index.html)
+* "Is My Network Module Preserved and Reproducible?" 
+    (https://doi.org/10.1371/journal.pcbi.1001057) 
+    - Langfelder, Luo, Oldham and Horvath, 2011
 
 # Session Information
 
