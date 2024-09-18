@@ -132,8 +132,8 @@ S4Vectors::setValidity2("ReducedExperiment", function(object) {
 #' components as columns. Setter method can be used to replace or modify
 #' all or part of the matrix.
 #'
-#' @param object \link[ReducedExperiment]{ReducedExperiment} object or its
-#' children.
+#' @param object An object that inherits from
+#' \link[ReducedExperiment]{ReducedExperiment}.
 #'
 #' @param scale_reduced If `TRUE`, data will be scaled column-wise to have a
 #' standard deviation of 0.
@@ -258,7 +258,7 @@ setReplaceMethod("componentNames", "ReducedExperiment", function(object,
 
 #' Get feature names
 #'
-#' Retrieves feature names (rownames, usually genes).
+#' Gets and sets feature names (i.e., rownames, usually genes).
 #'
 #' @param x \link[ReducedExperiment]{ReducedExperiment} object.
 #'
@@ -282,10 +282,12 @@ setReplaceMethod("componentNames", "ReducedExperiment", function(object,
 #'     reduced = rand_reduced_data
 #' )
 #'
+#' # Methods return equivalent results
 #' stopifnot(all.equal(featureNames(re), rownames(rand_assay_data)))
 #' stopifnot(all.equal(rownames(re), rownames(rand_assay_data)))
 #' stopifnot(all.equal(names(re), rownames(rand_assay_data)))
 #'
+#' # We can change the feature name at a particular position
 #' print(paste0("Feature name at position 55: ", featureNames(re)[55]))
 #' featureNames(re)[55] <- "custom_feature_name"
 #' print(paste0("Reduced data at position 55: ", featureNames(re)[55]))

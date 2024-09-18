@@ -1,7 +1,8 @@
 #' FactorisedExperiment: A container for the results of factor analysis
 #'
 #' @description
-#' A container inheriting from \link[ReducedExperiment]{ReducedExperiment}, that
+#' A container inheriting from the \link[ReducedExperiment]{ReducedExperiment}
+#' class, that
 #' contains one or more data matrices, to which factor analysis has been applied
 #' to identify a reduced set of features. A
 #' \link[ReducedExperiment]{FactorisedExperiment} can be created directly in
@@ -189,7 +190,7 @@ setReplaceMethod("rownames", "FactorisedExperiment", function(x, value) {
     return(x)
 })
 
-#' Getting and setting the stability values for factors
+#' Get and setting the stability values for factors
 #'
 #' @param object \link[ReducedExperiment]{FactorisedExperiment} object.
 #'
@@ -397,13 +398,13 @@ setMethod("rbind", "FactorisedExperiment", function(..., deparse.level = 1) {
 #' after calculation.
 #'
 #' @param scale_newdata Controls whether the `newdata` are scaled. If NULL,
-#' performs scaling based on the \link[ReducedExperiment]{FactorisedExperiment}
+#' performs scaling based on the `FactorisedExperiment`
 #' object's `scale` slot. The value of this argument will be passed to the
 #' `scale` argument of \link[base]{scale}.
 #'
 #' @param center_newdata Controls whether the `newdata` are centered If NULL,
 #' performs centering based on the
-#' \link[ReducedExperiment]{FactorisedExperiment} object's `center` slot. The
+#' `FactorisedExperiment` object's `center` slot. The
 #' value of this argument will be passed to the `center` argument of
 #' \link[base]{scale}.
 #'
@@ -417,10 +418,18 @@ setMethod("rbind", "FactorisedExperiment", function(..., deparse.level = 1) {
 #' @returns Calculates a matrix with samples as rows and factors as columns. If
 #' `newdata` was a `matrix` or `data.frame`, this will be returned as a matrix.
 #' If a \link[SummarizedExperiment]{SummarizedExperiment} object was passed
-#' instead, then a If a \link[ReducedExperiment]{FactorisedExperiment}
+#' instead, then a If a `FactorisedExperiment`
 #' object will be created containing this matrix in its `reduced` slot.
 #'
-#' @seealso \code{\link[ReducedExperiment]{calcEigengenes}}
+#' @details
+#' If `scale_newdata` and `center_newdata` are left as `NULL`, then the
+#' projection method assumes that the `newdata` are on the same scale as the
+#' original data of the `object`. It will therefore use the values of the
+#' `center` and `scale` slots of the `object`. For instance, if the `scale` slot
+#' is `TRUE`, the `newdata` will be scaled. If the `scale` slot is a vector,
+#' the values of this vector will be applied to scale the `newdata`.
+#'
+#' @seealso \code{\link[ReducedExperiment]{calcEigengenes}}, [stats::prcomp]
 #'
 #' @author Jack Gisby
 #'
@@ -438,8 +447,8 @@ setMethod("rbind", "FactorisedExperiment", function(..., deparse.level = 1) {
 #' fe_1
 #'
 #' # Project the fe_1 factors for the samples in X_2
-#' fe_2 <- projectData(fe_1, X_2)
-#' fe_2
+#' projected_data <- projectData(fe_1, X_2)
+#' projected_data
 #'
 #' @rdname projectData
 #' @name projectData
@@ -548,14 +557,15 @@ setMethod("predict", c("FactorisedExperiment"), function(object, newdata, ...) {
 #' feature ID. Setting this to "rownames" (default) instead uses
 #' `rownames(object)`.
 #'
-#' @param format The format in which to return the results. See `value` below.
+#' @param format A string specifying the format in which to return the results.
+#' See the `value` section below.
 #'
 #' @param center_loadings If `TRUE`, loadings will be centered column-wise to
 #' have a mean of 0.
 #'
-#' @returns If the `format` argument is `list`, then a
+#' @returns If the `format` argument is `"list"`, then a
 #' list will be returned with an entry for each factor, each containing a vector
-#' of input features. Otherwise, if `format` is `data.frame`, a data.frame is
+#' of input features. Otherwise, if `format` is `"data.frame"`, a data.frame is
 #' returned with a row for each gene-factor combination. The `format` argument
 #' can also be a function to be applied to the output data.frame before
 #' returning the results.
@@ -572,12 +582,12 @@ setMethod("predict", c("FactorisedExperiment"), function(object, newdata, ...) {
 #' # Estimate 5 factors based on the data matrix
 #' fe <- estimate_factors(X, nc = 5)
 #'
-#' # Get the genes highly aligned with each factoras a list
-#' aligned_features <- getAlignedFeatures(fe)
+#' # Get the genes highly aligned with each factor as a list
+#' aligned_features <- getAlignedFeatures(fe, proportional_threshold = 0.03)
 #' aligned_features
 #'
 #' # Can also view as a data.frame
-#' head(getAlignedFeatures(fe, format = "data.frame"))
+#' head(getAlignedFeatures(fe, format = "data.frame", proportional_threshold = 0.03))
 #'
 #' @rdname getAlignedFeatures
 #' @name getAlignedFeatures
@@ -658,12 +668,12 @@ setMethod("getAlignedFeatures", c("FactorisedExperiment"), function(
 #' \link[ReducedExperiment]{ModularExperiment} object.
 #'
 #' @param method The method to use for identifying enriched pathways. One of
-#' "overrepresentation" or "gsea". The overrepresentation method calls
+#' `"overrepresentation"` or `"gsea"`. The overrepresentation method calls
 #' \link[clusterProfiler]{enricher} whereas the gsea method calls
 #' \link[clusterProfiler]{GSEA}. Note that GSEA is not available for modules.
 #'
 #' @param feature_id_col The column in `rowData(object)` that will be used as a
-#' feature ID. Setting this to "rownames" (default) instead uses
+#' feature ID. Setting this to `"rownames"` (default) instead uses
 #' `rownames(object)`.
 #'
 #' @param as_dataframe If `TRUE`, the results will be returned as a data.frame.
@@ -682,7 +692,7 @@ setMethod("getAlignedFeatures", c("FactorisedExperiment"), function(
 #'
 #' @param loading_threshold Factors only: See
 #' \link[ReducedExperiment]{getAlignedFeatures}. Only relevant for
-#' overresentation analysis.
+#' overrepresentation analysis.
 #'
 #' @param proportional_threshold Factors only: See
 #' \link[ReducedExperiment]{getAlignedFeatures}. Only relevant for

@@ -396,7 +396,7 @@ plot_common_features <- function(
 #' preservation. Must be a `data.frame` or `matrix` with features as rows and
 #' samples as columns, or a \link[SummarizedExperiment]{SummarizedExperiment}
 #' object. The features of `test_dataset` should be the same as
-#' `reference_dataset`.
+#' `reference_dataset` and in the same order.
 #'
 #' @param reference_assay_name If the reference dataset is a
 #' \link[ReducedExperiment]{ModularExperiment} or
@@ -428,7 +428,7 @@ plot_common_features <- function(
 #' correlation. One of "cor" or "bicor". See
 #' \link[WGCNA]{modulePreservation}.
 #'
-#' @param savePermutedStatistics If TRUE, saves the permutation statistics
+#' @param savePermutedStatistics If `TRUE`, saves the permutation statistics
 #' as a .RData file. See \link[WGCNA]{modulePreservation}.
 #'
 #' @param ... Additional arguments to be passed to
