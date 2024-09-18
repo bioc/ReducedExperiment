@@ -5,7 +5,7 @@
 \alias{stability<-}
 \alias{stability,FactorisedExperiment-method}
 \alias{stability<-,FactorisedExperiment-method}
-\title{Getting and setting the stability values for factors}
+\title{Get and setting the stability values for factors}
 \usage{
 \S4method{stability}{FactorisedExperiment}(object)
 
@@ -22,7 +22,7 @@ stability. More details are available from the
 \link[ReducedExperiment]{estimate_stability} help page.
 }
 \description{
-Getting and setting the stability values for factors
+Get and setting the stability values for factors
 }
 \examples{
 # Get a random matrix with rnorm, with 100 rows (features)

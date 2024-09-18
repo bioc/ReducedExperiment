@@ -56,11 +56,12 @@ construction.}
 }
 \value{
 Constructor method returns a
-\link[ReducedExperiment]{ModularExperiment} object.
+\code{ModularExperiment} object.
 }
 \description{
-A container inheriting from \link[ReducedExperiment]{ReducedExperiment}, that
-contains one or more data matrices, to which module analysis has been applied
+A container inheriting from the \link[ReducedExperiment]{ReducedExperiment}
+class, that contains one or more data matrices, to which module analysis
+has been applied
 to identify a reduced set of features.
 }
 \examples{

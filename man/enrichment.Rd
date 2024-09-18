@@ -32,12 +32,12 @@
 \link[ReducedExperiment]{ModularExperiment} object.}
 
 \item{method}{The method to use for identifying enriched pathways. One of
-"overrepresentation" or "gsea". The overrepresentation method calls
+\code{"overrepresentation"} or \code{"gsea"}. The overrepresentation method calls
 \link[clusterProfiler]{enricher} whereas the gsea method calls
 \link[clusterProfiler]{GSEA}. Note that GSEA is not available for modules.}
 
 \item{feature_id_col}{The column in \code{rowData(object)} that will be used as a
-feature ID. Setting this to "rownames" (default) instead uses
+feature ID. Setting this to \code{"rownames"} (default) instead uses
 \code{rownames(object)}.}
 
 \item{center_loadings}{Factors only: If \code{TRUE}, loadings will be centered
@@ -51,7 +51,7 @@ analysis will be based on absolute loadings.}
 
 \item{loading_threshold}{Factors only: See
 \link[ReducedExperiment]{getAlignedFeatures}. Only relevant for
-overresentation analysis.}
+overrepresentation analysis.}
 
 \item{proportional_threshold}{Factors only: See
 \link[ReducedExperiment]{getAlignedFeatures}. Only relevant for

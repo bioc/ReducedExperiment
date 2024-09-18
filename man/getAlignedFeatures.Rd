@@ -33,15 +33,16 @@ the \code{loadings}}
 feature ID. Setting this to "rownames" (default) instead uses
 \code{rownames(object)}.}
 
-\item{format}{The format in which to return the results. See \code{value} below.}
+\item{format}{A string specifying the format in which to return the results.
+See the \code{value} section below.}
 
 \item{center_loadings}{If \code{TRUE}, loadings will be centered column-wise to
 have a mean of 0.}
 }
 \value{
-If the \code{format} argument is \code{list}, then a
+If the \code{format} argument is \code{"list"}, then a
 list will be returned with an entry for each factor, each containing a vector
-of input features. Otherwise, if \code{format} is \code{data.frame}, a data.frame is
+of input features. Otherwise, if \code{format} is \code{"data.frame"}, a data.frame is
 returned with a row for each gene-factor combination. The \code{format} argument
 can also be a function to be applied to the output data.frame before
 returning the results.
@@ -59,12 +60,12 @@ X <- ReducedExperiment:::.makeRandomData(100, 20, "feature", "obs")
 # Estimate 5 factors based on the data matrix
 fe <- estimate_factors(X, nc = 5)
 
-# Get the genes highly aligned with each factoras a list
-aligned_features <- getAlignedFeatures(fe)
+# Get the genes highly aligned with each factor as a list
+aligned_features <- getAlignedFeatures(fe, proportional_threshold = 0.03)
 aligned_features
 
 # Can also view as a data.frame
-head(getAlignedFeatures(fe, format = "data.frame"))
+head(getAlignedFeatures(fe, format = "data.frame", proportional_threshold = 0.03))
 
 }
 \seealso{

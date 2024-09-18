@@ -6,15 +6,12 @@
 \usage{
 run_wgcna(
   X,
-  powers = 1:30,
-  min_r_squared = 0.85,
-  max_mean_connectivity = 100,
+  power,
   corType = "pearson",
   networkType = "signed",
   module_labels = "numbers",
   maxBlockSize = 30000,
   verbose = 0,
-  return_full_output = FALSE,
   scale_reduced = TRUE,
   ...
 )
@@ -22,16 +19,10 @@ run_wgcna(
 \arguments{
 \item{X}{A matrix with features as rows and columns as samples.}
 
-\item{powers}{The soft-thresholding power(s) to test, see
-\link[WGCNA]{pickSoftThreshold} for more details.}
-
-\item{min_r_squared}{The correlation threshold for selection of the
-soft-thresholding power, see \link[WGCNA]{pickSoftThreshold} for more
-details.}
-
-\item{max_mean_connectivity}{A threshold for the maximal mean connectivity,
-used when selecting the soft-thresholding power, see
-\link[WGCNA]{pickSoftThreshold} for more details.}
+\item{power}{An integer representing the soft-thresholding power to be
+used to define modules. See the
+\link[ReducedExperiment]{assess_soft_threshold} function for aid in
+selecting this parameter.}
 
 \item{corType}{The type of correlation to be used to generate a correlation
 matrix during network formation. One of "pearson" (\link[WGCNA]{cor}) and
@@ -55,14 +46,6 @@ to calculate networks.}
 
 \item{verbose}{The verbosity, passed to \link[WGCNA]{blockwiseModules}.}
 
-\item{return_full_output}{If FALSE (default), returns the results specified
-below in \code{returns}. Else, returns additional information, including
-"run_wgcna_output") the results specified below in \code{returns}; "original_E")
-the original eigengene matrix calculated by \link[WGCNA]{blockwiseModules};
-"blockwise_modules_output") the object returned by
-\link[WGCNA]{blockwiseModules}; and "pick_soft_threshold_output") the
-output of \link[WGCNA]{pickSoftThreshold}.}
-
 \item{scale_reduced}{If TRUE, the reduced data (eigengenes) are standardised
 to have a mean of 0 and a standard deviation of 1.}
 
@@ -82,37 +65,36 @@ genes to modules.}
 }
 \description{
 Runs WGCNA. Largely a wrapper for the \link[WGCNA]{blockwiseModules}
-function. Additionally applies \link[WGCNA]{pickSoftThreshold} to
-aid in the selection of the soft thresholding power, reformats data
+function that reformats data
 into a format convenient for creating a
 \link[ReducedExperiment]{ModularExperiment} object and changes module names
-from colours to numbers (default).
+from colours to numbers by default.
 }
 \details{
 The function also stores the loadings matrices generated when PCA is
 performed for each module to calculate eigengenes. These loadings can be
-used to quantify the alignment of genes with the module eigengene,
-can be used to recalculate the reduced data matrix (eigengenes) and these
-loadings can be used to transform new datasets.
+used to recalculate the reduced data matrix (eigengenes).
 
 Note that if \code{module_labels} is set to "numbers", then
 "module_0" represents unclustered genes, whereas if it is set to "colours"
 then "grey" represents unclustered genes.
-
-Note that if \code{powers} is a range, the power to use will be selected
-automatically based on the output of \link[WGCNA]{pickSoftThreshold}. We
-recommend that users avoid relying on the automatic threshold detection
-and instead consider the best soft thresholding power carefully, for instance
-using the plots described in the \code{WGCNA} tutorials.
 }
 \examples{
 # Get the airway data as a SummarizedExperiment (with a subset of features)
 set.seed(2)
 airway_se <- ReducedExperiment:::.get_airway_data(n_features = 500)
 
-# Identify modules using the airway expression matrix
+# Choose an appropriate soft-thresholding power
 WGCNA::disableWGCNAThreads()
-wgcna_res <- run_wgcna(assay(airway_se, "normal"), verbose = 0, powers = 5)
+fit_indices <- assess_soft_threshold(airway_se)
+estimated_power <- fit_indices$Power[fit_indices$estimated_power]
+
+# Identify modules using the airway expression matrix
+wgcna_res <- run_wgcna(
+    assay(airway_se, "normal"),
+    verbose = 0,
+    power = estimated_power
+)
 
 # We find three modules (module_0 indicates unclustered genes)
 table(names(wgcna_res$assignments))
@@ -120,7 +102,8 @@ table(names(wgcna_res$assignments))
 }
 \seealso{
 \code{\link[WGCNA:blockwiseModules]{WGCNA::blockwiseModules()}},
-\code{\link[WGCNA:pickSoftThreshold]{WGCNA::pickSoftThreshold()}}
+\code{\link[=assess_soft_threshold]{assess_soft_threshold()}},
+\code{\link[WGCNA:pickSoftThreshold]{WGCNA::pickSoftThreshold()}},
 }
 \author{
 Jack Gisby

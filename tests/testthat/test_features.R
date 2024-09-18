@@ -26,7 +26,7 @@ test_that("ModularExperiment enrichment", {
     airway <- .get_airway_data(n_features = 500)
 
     WGCNA::disableWGCNAThreads()
-    airway_me <- identify_modules(airway, verbose = 0, powers = 21)
+    airway_me <- identify_modules(airway, verbose = 0, power = 21)
 
     # Run overrepresentation analysis
     enrich_res <- runEnrich(airway_me, method = "overrepresentation", as_dataframe = TRUE, p_cutoff = 0.1)
@@ -64,7 +64,7 @@ test_that("Module preservation", {
     airway <- .get_airway_data(n_features = 500)
 
     WGCNA::disableWGCNAThreads()
-    airway_me <- identify_modules(airway, verbose = 0, powers = 21)
+    airway_me <- identify_modules(airway, verbose = 0, power = 21)
 
     assay(airway_me, "noised") <- assay(airway_me, "transformed") + matrix(rnorm(nrow(airway_me) * ncol(airway_me), mean = 0, sd = 0.3), nrow = nrow(airway_me), ncol = ncol(airway_me))
 

@@ -51,13 +51,13 @@ rows of \code{newdata} match those of the
 after calculation.}
 
 \item{scale_newdata}{Controls whether the \code{newdata} are scaled. If NULL,
-performs scaling based on the \link[ReducedExperiment]{FactorisedExperiment}
+performs scaling based on the \code{FactorisedExperiment}
 object's \code{scale} slot. The value of this argument will be passed to the
 \code{scale} argument of \link[base]{scale}.}
 
 \item{center_newdata}{Controls whether the \code{newdata} are centered If NULL,
 performs centering based on the
-\link[ReducedExperiment]{FactorisedExperiment} object's \code{center} slot. The
+\code{FactorisedExperiment} object's \code{center} slot. The
 value of this argument will be passed to the \code{center} argument of
 \link[base]{scale}.}
 
@@ -72,13 +72,21 @@ used for projection.}
 Calculates a matrix with samples as rows and factors as columns. If
 \code{newdata} was a \code{matrix} or \code{data.frame}, this will be returned as a matrix.
 If a \link[SummarizedExperiment]{SummarizedExperiment} object was passed
-instead, then a If a \link[ReducedExperiment]{FactorisedExperiment}
+instead, then a If a \code{FactorisedExperiment}
 object will be created containing this matrix in its \code{reduced} slot.
 }
 \description{
 Uses a projection approach to calculate factors in new data. Functions in a
 similar fashion to the \code{predict} method of \link[stats]{prcomp}. The
 transposed \code{newdata} are multiplied by the original loadings matrix.
+}
+\details{
+If \code{scale_newdata} and \code{center_newdata} are left as \code{NULL}, then the
+projection method assumes that the \code{newdata} are on the same scale as the
+original data of the \code{object}. It will therefore use the values of the
+\code{center} and \code{scale} slots of the \code{object}. For instance, if the \code{scale} slot
+is \code{TRUE}, the \code{newdata} will be scaled. If the \code{scale} slot is a vector,
+the values of this vector will be applied to scale the \code{newdata}.
 }
 \examples{
 # Get two random matrices with rnorm
@@ -94,12 +102,12 @@ fe_1 <- estimate_factors(X_1, nc = 5)
 fe_1
 
 # Project the fe_1 factors for the samples in X_2
-fe_2 <- projectData(fe_1, X_2)
-fe_2
+projected_data <- projectData(fe_1, X_2)
+projected_data
 
 }
 \seealso{
-\code{\link[ReducedExperiment]{calcEigengenes}}
+\code{\link[ReducedExperiment]{calcEigengenes}}, \link[stats:prcomp]{stats::prcomp}
 }
 \author{
 Jack Gisby

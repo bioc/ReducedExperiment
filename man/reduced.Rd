@@ -12,8 +12,8 @@
 \S4method{reduced}{ReducedExperiment}(object) <- value
 }
 \arguments{
-\item{object}{\link[ReducedExperiment]{ReducedExperiment} object or its
-children.}
+\item{object}{An object that inherits from
+\link[ReducedExperiment]{ReducedExperiment}.}
 
 \item{scale_reduced}{If \code{TRUE}, data will be scaled column-wise to have a
 standard deviation of 0.}

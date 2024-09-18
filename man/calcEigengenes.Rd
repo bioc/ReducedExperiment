@@ -114,11 +114,18 @@ functions in a similar fashion to the \code{predict} method of
 \link[stats]{prcomp}. Else, eigengenes are calculated from scratch using PCA,
 in a similar manner to the \link[WGCNA]{moduleEigengenes} function.
 }
+\details{
+If \code{scale_newdata} and \code{center_newdata} are left as \code{NULL}, then the
+projection method assumes that the \code{newdata} are on the same scale as the
+original data of the \code{object}. It will therefore use the values of the
+\code{center} and \code{scale} slots of the \code{object}. For instance, if the \code{scale} slot
+is \code{TRUE}, the \code{newdata} will be scaled. If the \code{scale} slot is a vector,
+the values of this vector will be applied to scale the \code{newdata}.
+}
 \examples{
 # Create ModularExperiment with random data (100 features, 50 samples,
 # 10 modules)
 me_1 <- ReducedExperiment:::.createRandomisedModularExperiment(100, 50, 10)
-me_1
 
 # Generate a new dataset with the same features (100 rows) but different
 # samples/observations (20 columns)
