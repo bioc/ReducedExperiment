@@ -28,7 +28,7 @@ columns, or a \link[ReducedExperiment]{ModularExperiment} or
 preservation. Must be a \code{data.frame} or \code{matrix} with features as rows and
 samples as columns, or a \link[SummarizedExperiment]{SummarizedExperiment}
 object. The features of \code{test_dataset} should be the same as
-\code{reference_dataset}.}
+\code{reference_dataset} and in the same order.}
 
 \item{reference_assay_name}{If the reference dataset is a
 \link[ReducedExperiment]{ModularExperiment} or
@@ -60,7 +60,7 @@ the reference and test datasets. One of"unsigned", "signed" or
 correlation. One of "cor" or "bicor". See
 \link[WGCNA]{modulePreservation}.}
 
-\item{savePermutedStatistics}{If TRUE, saves the permutation statistics
+\item{savePermutedStatistics}{If \code{TRUE}, saves the permutation statistics
 as a .RData file. See \link[WGCNA]{modulePreservation}.}
 
 \item{...}{Additional arguments to be passed to

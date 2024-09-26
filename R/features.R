@@ -7,9 +7,10 @@
 #'
 #' @noRd
 #' @keywords internal
-reduced_oa <- function(component_features, database = "msigdb_c2_cp",
-    TERM2GENE = NULL, p_cutoff = 1, adj_method = "BH",
-    min_genes = 3, universe = NULL, ...) {
+reduced_oa <- function(
+        component_features, database = "msigdb_c2_cp",
+        TERM2GENE = NULL, p_cutoff = 1, adj_method = "BH",
+        min_genes = 3, universe = NULL, ...) {
     TERM2GENE <- .get_t2g(database, TERM2GENE)
     enrich_res <- list()
 
@@ -74,10 +75,11 @@ reduced_oa <- function(component_features, database = "msigdb_c2_cp",
 #'
 #' @noRd
 #' @keywords internal
-.format_enrich_res <- function(enrich_res_single,
-    adj_method,
-    p_cutoff,
-    min_genes = NULL) {
+.format_enrich_res <- function(
+        enrich_res_single,
+        adj_method,
+        p_cutoff,
+        min_genes = NULL) {
     if (is.null(enrich_res_single)) {
         return(NULL)
     }
@@ -117,8 +119,9 @@ reduced_oa <- function(component_features, database = "msigdb_c2_cp",
 #'
 #' @noRd
 #' @keywords internal
-reduced_gsea <- function(S, database = "msigdb_c2_cp", TERM2GENE = NULL,
-    p_cutoff = 1, adj_method = "BH", nPermSimple = 1000, eps = 1e-10, ...) {
+reduced_gsea <- function(
+        S, database = "msigdb_c2_cp", TERM2GENE = NULL,
+        p_cutoff = 1, adj_method = "BH", nPermSimple = 1000, eps = 1e-10, ...) {
     TERM2GENE <- .get_t2g(database, TERM2GENE)
     enrich_res <- list()
 
@@ -197,11 +200,12 @@ reduced_gsea <- function(S, database = "msigdb_c2_cp", TERM2GENE = NULL,
 #' head(pathways)
 #'
 #' @export
-get_msigdb_t2g <- function(species = "Homo sapiens",
-    category = "C2",
-    subcategory = NULL,
-    subcategory_to_remove = "CGP",
-    gene_id = "ensembl_gene") {
+get_msigdb_t2g <- function(
+        species = "Homo sapiens",
+        category = "C2",
+        subcategory = NULL,
+        subcategory_to_remove = "CGP",
+        gene_id = "ensembl_gene") {
     t2g <- data.frame(msigdbr::msigdbr(
         species = species,
         category = category,
@@ -345,13 +349,12 @@ get_common_features <- function(factor_features) {
 #' plot_common_features(common_features)
 #'
 #' @export
-plot_common_features <- function(
-        common_features,
-        filename = NA,
-        color = grDevices::colorRampPalette(RColorBrewer::brewer.pal(
-            n = 7,
-            name = "YlOrRd"
-        ))(100)) {
+plot_common_features <- function(common_features,
+    filename = NA,
+    color = grDevices::colorRampPalette(RColorBrewer::brewer.pal(
+        n = 7,
+        name = "YlOrRd"
+    ))(100)) {
     common_features <- subset(common_features,
         select = c("c_1", "c_2", "intersect_prop")
     )
@@ -396,7 +399,7 @@ plot_common_features <- function(
 #' preservation. Must be a `data.frame` or `matrix` with features as rows and
 #' samples as columns, or a \link[SummarizedExperiment]{SummarizedExperiment}
 #' object. The features of `test_dataset` should be the same as
-#' `reference_dataset`.
+#' `reference_dataset` and in the same order.
 #'
 #' @param reference_assay_name If the reference dataset is a
 #' \link[ReducedExperiment]{ModularExperiment} or
@@ -428,7 +431,7 @@ plot_common_features <- function(
 #' correlation. One of "cor" or "bicor". See
 #' \link[WGCNA]{modulePreservation}.
 #'
-#' @param savePermutedStatistics If TRUE, saves the permutation statistics
+#' @param savePermutedStatistics If `TRUE`, saves the permutation statistics
 #' as a .RData file. See \link[WGCNA]{modulePreservation}.
 #'
 #' @param ... Additional arguments to be passed to
@@ -449,17 +452,16 @@ plot_common_features <- function(
 #' mp <- module_preservation(me_1, me_2, verbose = 0, nPermutations = 3)
 #'
 #' @export
-module_preservation <- function(
-        reference_dataset, test_dataset,
-        reference_assay_name = "normal",
-        test_assay_name = "normal",
-        module_assignments = NULL,
-        greyName = "module_0",
-        goldName = "random",
-        networkType = "signed",
-        corFnc = "cor",
-        savePermutedStatistics = FALSE,
-        ...) {
+module_preservation <- function(reference_dataset, test_dataset,
+    reference_assay_name = "normal",
+    test_assay_name = "normal",
+    module_assignments = NULL,
+    greyName = "module_0",
+    goldName = "random",
+    networkType = "signed",
+    corFnc = "cor",
+    savePermutedStatistics = FALSE,
+    ...) {
     if (inherits(reference_dataset, "ModularExperiment")) {
         module_assignments <- assignments(reference_dataset)
     } else if (is.null(module_assignments)) {
@@ -532,8 +534,9 @@ module_preservation <- function(
 #' @import ggplot2
 #' @import patchwork
 #' @export
-plot_module_preservation <- function(module_preservation_results,
-    show_random = TRUE, remove_module = NULL) {
+plot_module_preservation <- function(
+        module_preservation_results,
+        show_random = TRUE, remove_module = NULL) {
     mr_df <- module_preservation_results$preservation$observed$ref.reference$
         inColumnsAlsoPresentIn.test
     zs_df <- module_preservation_results$preservation$Z$ref.reference$

@@ -46,7 +46,7 @@ returned.}
 \item{value}{New value to replace existing loadings.}
 }
 \value{
-#' If \code{object} is a \link[ReducedExperiment]{FactorisedExperiment}, the
+If \code{object} is a \link[ReducedExperiment]{FactorisedExperiment}, the
 loadings matrix will be returned, with features as rows and reduced
 components as columns. If \code{object} is a
 \link[ReducedExperiment]{ModularExperiment}, the loadings

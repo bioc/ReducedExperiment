@@ -6,6 +6,7 @@
 \usage{
 identify_modules(
   X,
+  power,
   center_X = TRUE,
   scale_X = TRUE,
   assay_name = "normal",
@@ -16,6 +17,11 @@ identify_modules(
 \item{X}{Either a \link[SummarizedExperiment]{SummarizedExperiment} object
 or a matrix containing data to be subject to WGCNA. \code{X} should have rows as
 features and columns as samples.}
+
+\item{power}{An integer representing the soft-thresholding power to be
+used to define modules. See the
+\link[ReducedExperiment]{assess_soft_threshold} function for aid in
+selecting this parameter.}
 
 \item{center_X}{If TRUE, X is centered (i.e., features / rows are transformed
 to have a mean of 0) prior to WGCNA.}
@@ -48,9 +54,13 @@ Calls \link[ReducedExperiment]{run_wgcna} to perform the analysis.
 set.seed(2)
 airway_se <- ReducedExperiment:::.get_airway_data(n_features = 500)
 
-# Identify modules in the airway data
+# Select soft-thresholding power to use
 WGCNA::disableWGCNAThreads()
-me_1 <- identify_modules(airway_se, verbose = 0, powers = 5)
+fit_indices <- assess_soft_threshold(airway_se)
+estimated_power <- fit_indices$Power[fit_indices$estimated_power]
+
+# Identify modules using WGCNA
+me_1 <- identify_modules(airway_se, verbose = 0, power = estimated_power)
 me_1
 
 }

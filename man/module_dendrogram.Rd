@@ -12,7 +12,7 @@
 \S4method{dendrogram}{ModularExperiment}(object) <- value
 }
 \arguments{
-\item{object}{\link[ReducedExperiment]{ModularExperiment} object.}
+\item{object}{A \link[ReducedExperiment]{ModularExperiment} object.}
 
 \item{value}{New value to replace existing dendrogram.}
 }
@@ -42,6 +42,9 @@ plot(dendrogram(me))
 # Or class method that calls WGCNA::plotDendroAndColors
 plotDendro(me)
 
+}
+\seealso{
+\code{\link[WGCNA:blockwiseModules]{WGCNA::blockwiseModules()}}, \code{\link[stats:hclust]{stats::hclust()}}
 }
 \author{
 Jack Gisby

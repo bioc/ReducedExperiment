@@ -70,10 +70,11 @@
 #'
 #' @rdname reduced_experiment
 #' @export
-ReducedExperiment <- function(reduced = new("matrix"),
-    scale = TRUE,
-    center = TRUE,
-    ...) {
+ReducedExperiment <- function(
+        reduced = new("matrix"),
+        scale = TRUE,
+        center = TRUE,
+        ...) {
     se <- SummarizedExperiment::SummarizedExperiment(...)
 
     return(.ReducedExperiment(
@@ -132,8 +133,8 @@ S4Vectors::setValidity2("ReducedExperiment", function(object) {
 #' components as columns. Setter method can be used to replace or modify
 #' all or part of the matrix.
 #'
-#' @param object \link[ReducedExperiment]{ReducedExperiment} object or its
-#' children.
+#' @param object An object that inherits from
+#' \link[ReducedExperiment]{ReducedExperiment}.
 #'
 #' @param scale_reduced If `TRUE`, data will be scaled column-wise to have a
 #' standard deviation of 0.
@@ -178,9 +179,10 @@ NULL
 
 #' @rdname reduced
 #' @export
-setMethod("reduced", "ReducedExperiment", function(object,
-    scale_reduced = FALSE,
-    center_reduced = FALSE) {
+setMethod("reduced", "ReducedExperiment", function(
+        object,
+        scale_reduced = FALSE,
+        center_reduced = FALSE) {
     return(scale(
         object@reduced,
         scale = scale_reduced,
@@ -249,8 +251,9 @@ setMethod("componentNames", "ReducedExperiment", function(object) {
 
 #' @rdname component_names
 #' @export
-setReplaceMethod("componentNames", "ReducedExperiment", function(object,
-    value) {
+setReplaceMethod("componentNames", "ReducedExperiment", function(
+        object,
+        value) {
     colnames(object@reduced) <- value
     validObject(object)
     return(object)
@@ -258,7 +261,7 @@ setReplaceMethod("componentNames", "ReducedExperiment", function(object,
 
 #' Get feature names
 #'
-#' Retrieves feature names (rownames, usually genes).
+#' Gets and sets feature names (i.e., rownames, usually genes).
 #'
 #' @param x \link[ReducedExperiment]{ReducedExperiment} object.
 #'
@@ -282,10 +285,12 @@ setReplaceMethod("componentNames", "ReducedExperiment", function(object,
 #'     reduced = rand_reduced_data
 #' )
 #'
+#' # Methods return equivalent results
 #' stopifnot(all.equal(featureNames(re), rownames(rand_assay_data)))
 #' stopifnot(all.equal(rownames(re), rownames(rand_assay_data)))
 #' stopifnot(all.equal(names(re), rownames(rand_assay_data)))
 #'
+#' # We can change the feature name at a particular position
 #' print(paste0("Feature name at position 55: ", featureNames(re)[55]))
 #' featureNames(re)[55] <- "custom_feature_name"
 #' print(paste0("Reduced data at position 55: ", featureNames(re)[55]))
@@ -985,13 +990,14 @@ NULL
 
 #' @rdname get_gene_ids
 #' @export
-setMethod("getGeneIDs", "ReducedExperiment", function(object,
-    gene_id_col = "rownames",
-    gene_id_type = "ensembl_gene_id",
-    ids_to_get = c("hgnc_symbol", "entrezgene_id"),
-    dataset = "hsapiens_gene_ensembl",
-    mart = NULL,
-    biomart_out = NULL) {
+setMethod("getGeneIDs", "ReducedExperiment", function(
+        object,
+        gene_id_col = "rownames",
+        gene_id_type = "ensembl_gene_id",
+        ids_to_get = c("hgnc_symbol", "entrezgene_id"),
+        dataset = "hsapiens_gene_ensembl",
+        mart = NULL,
+        biomart_out = NULL) {
     if (gene_id_col == "rownames") {
         rowData(object)[[gene_id_type]] <- rownames(object)
     } else {

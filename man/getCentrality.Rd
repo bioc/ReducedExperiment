@@ -8,7 +8,7 @@
 \S4method{getCentrality}{ModularExperiment}(object, assay_name = "normal", feature_id_col = "rownames")
 }
 \arguments{
-\item{object}{\link[ReducedExperiment]{ModularExperiment} object.}
+\item{object}{A \link[ReducedExperiment]{ModularExperiment} object.}
 
 \item{assay_name}{The name of the assay to be used for calculation of
 module centrality.}
@@ -26,9 +26,9 @@ Returns a \code{data.frame} with columns for \code{feature},
 }
 \description{
 Provides a wrapper around \link[WGCNA]{signedKME}. Provides a measure
-of module centrality/connectivity of each feature. Essentially just
-calculates correlation (Pearson's r) of each feature with the module
-eigengene, i.e., the column of \code{reduced} to which the feature belongs.
+of module centrality/connectivity of each feature. Calculates
+correlation (Pearson's r) of each feature with the module
+eigengene (i.e., the column of \code{reduced} to which the feature belongs).
 }
 \examples{
 # Create ModularExperiment with random data (100 features, 50 samples,
@@ -37,7 +37,7 @@ me <- ReducedExperiment:::.createRandomisedModularExperiment(100, 50, 10)
 me
 
 # Calculate centrality of each feature for the corresponding module
-getCentrality(me)
+head(getCentrality(me))
 
 }
 \seealso{

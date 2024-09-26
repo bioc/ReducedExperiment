@@ -231,19 +231,34 @@ https://bmcbioinformatics.biomedcentral.com/articles/10.1186/1471-2105-9-559
 
 The ReducedExperiment package provides wrapper functions for running 
 such an analysis, before packaging them into a ModularExperiment
-class. Since for this example we've filtered out most of the genes that were in
-the original dataset, we allow for the identification of smaller modules of 
-genes (10).
+class. 
 
-The dendrogram is also stored in this object, allowing us to plot the clusters
+First, we use the `assess_soft_threshold` function to determine the 
+soft-thresholding power appropriate for our dataset. By default, the function
+selects the minimal power satisfying a minimal scale free topology fitting
+index of `0.85` and a maximal average connectivity of `100`. See
+WGCNA's `pickSoftThreshold` function for more details.
+
+```{r assess_threshold}
+WGCNA::disableWGCNAThreads()
+
+wave1_fit_indices <- assess_soft_threshold(wave1_se)
+wave1_estimated_power <- wave1_fit_indices$Power[wave1_fit_indices$estimated_power]
+
+print(paste0("Estimated power: ", wave1_estimated_power))
+```
+
+Now we can pass our data with the selected power to the `identify_modules`
+function. Since for this example we've filtered out most of the genes that were in
+the original dataset, we allow for the identification of smaller modules of 
+genes (10). The dendrogram is also stored in this object, allowing us to plot the clusters
 of genes that are identified.
 
 ```{r}
-WGCNA::disableWGCNAThreads()
 wave1_me <- identify_modules(
     wave1_se,
     verbose = 0,
-    powers = 10,
+    power = wave1_estimated_power,
     minModuleSize = 10
 )
 
@@ -449,16 +464,18 @@ ggplot(
     geom_vline(xintercept = -log10(0.05))
 ```
 
-## Projecting factors and modules into new datasets
+## Applying factors and modules to new datasets
 
 Sometimes, we might want to calculate sample-level values of our factors and
 modules in a new dataset. In this instance, we have a second cohort that we
 might want to validate our results in. The ReducedExperiment package has
-methods for projecting new data into the factor- or module-space defined
-previously.
+methods for projecting new data into the factor-space defined
+previously and for recalculating eigengenes in new data.
 
-This projection approach is similar to that applied by the `predict` method
-of `prcomp`. It uses the loadings calculated in the original dataset to 
+### Factor projection
+
+The factor projection approach is similar to that applied by the `predict` 
+method of `prcomp`. It uses the loadings calculated in the original dataset to 
 calculate sample-level scores given new data. Essentially, it uses these
 loadings as a weighted score to perform the projection.
 
@@ -477,17 +494,15 @@ processed and normalised in the same way.
 
 ```{r project_data}
 wave2_fe <- projectData(wave1_fe, wave2_se)
-wave2_me <- calcEigengenes(wave1_me, wave2_se)
-
-wave2_me
+wave2_fe
 ```
 
-The new ModularExperiment created by projecting the wave 2 data (above) has the
-same genes (2184) and modules (10) as the original ModularExperiment (below),
-but with different samples (119 vs. 234). 
+The new `FactorisedExperiment` created by projecting the wave 2 data (above) has the
+same genes (2184) and factors (34) as the original `FactorisedExperiment` (below),
+but with different samples (83 vs. 65). 
 
 ```{r reprint_original}
-wave1_me
+wave1_fe
 ```
 
 While we will avoid directly comparing the dimensionally-reduced data from
@@ -498,22 +513,16 @@ there are multiple samples for each patient, so we use a linear mixed model
 also add a random intercept for the patient ID in the model formula.
 
 ```{r replicating_associations}
-replication_me <- associate_components(wave2_me, method = "lmer", formula = paste0(f, " + (1|individual_id)"))
 replication_fe <- associate_components(wave2_fe, method = "lmer", formula = paste0(f, " + (1|individual_id)"))
 ```
 
 While there are differences in the most significantly associated modules
-between the wave 1 and 2 cohorts, the results are broadly similar. Modules 1, 8,
-2 and 9 remain positively associated with COVID-19 status, whereas modules 0, 5
-and 4 remain negatively associated. 
-
-upregulation of modules 1, 2, 7 and 8 remain positively associated with COVID-19 
-status, and modules 3 and 5 are still downregulated.
+between the wave 1 and 2 cohorts, the results are broadly similar. 
 
 ```{r plotting_replicated_associations}
 ggplot(
-    replication_me$summaries[
-        replication_me$summaries$term == "case_controlPOSITIVE",
+    replication_fe$summaries[
+        replication_fe$summaries$term == "case_controlPOSITIVE",
     ],
     aes(
         -log10(adj_pvalue),
@@ -523,7 +532,7 @@ ggplot(
 ) +
     geom_point(pch = 21, size = 3) +
     xlab("-log10(p-value)") +
-    ylab("Module name (ordered by p-value)") +
+    ylab("Module nafe (ordered by p-value)") +
     geom_vline(xintercept = -log10(0.05)) +
     scale_fill_gradient2(low = "#3A3A98", high = "#832424") +
     expand_limits(x = 0)
@@ -539,6 +548,27 @@ SARS-CoV-2 variants were in prevalent at the time the cohorts were sampled, and
 there were more treatments available for the 2021 (wave 2) cohort.
 
 ```{r correlation_with_projection}
+original_estimates <- associations_fe$summaries$estimate[
+    associations_fe$summaries$term == "case_controlPOSITIVE"
+]
+replication_estimates <- replication_fe$summaries$estimate[
+    replication_fe$summaries$term == "case_controlPOSITIVE"
+]
+
+cor.test(original_estimates, replication_estimates)
+```
+
+### Applying modules to new data
+
+Similarly to factors, we can look at how our modules behave in new data. Below,
+we use `calcEigengenes` to do so, and we look at whether the modules behave
+similarly with respect to COVID-19 status. As we saw for factors, there is a 
+reasonable concordance between the modules in the two datasets.
+
+```{r}
+wave2_me <- calcEigengenes(wave1_me, wave2_se)
+replication_me <- associate_components(wave2_me, method = "lmer", formula = paste0(f, " + (1|individual_id)"))
+
 original_estimates <- associations_me$summaries$estimate[
     associations_me$summaries$term == "case_controlPOSITIVE"
 ]
@@ -547,6 +577,27 @@ replication_estimates <- replication_me$summaries$estimate[
 ]
 
 cor.test(original_estimates, replication_estimates)
+```
+
+### Module preservation
+
+We can also consider the preservation of modules. Below, we take our modules
+calculated in the Wave 1 dataset, and assess their reproducibility in the
+Wave 2 dataset. A variety of statistics are calculated by WGCNA's
+`modulePreservation`. By default, the `plot_module_preservation` function 
+shows us the "medianRank" and "Zsummary" statistics. You can find out more
+about these in the corresponding 
+[publication](https://doi.org/10.1371/journal.pcbi.1001057), but in general
+we are interested in modules with higher Zsummary scores. In short, we can
+consider modules above the blue line (Z > 2) to be moderately preserved and
+modules above the green line (Z > 10) to be highly preserved. We see
+that modules 1 and 2 have relatively high preservation in the Wave 2 dataset,
+whereas modules 5 and 0 (our unclustered genes) display relatively low 
+preservation. 
+
+```{r}
+mod_pres_res <- module_preservation(wave1_me, wave2_se, verbose = 0, nPermutations = 20)
+plot_module_preservation(mod_pres_res)
 ```
 
 # Extending the ReducedExperiment class
@@ -737,6 +788,9 @@ Weighted Gene Correlation Network Analysis (WGCNA) framework
     (https://doi.org/10.1186/1471-2105-9-559)
     - Langfelder and Horvath, 2008
 * "WGCNA" R package (https://cran.r-project.org/web/packages/WGCNA/index.html)
+* "Is My Network Module Preserved and Reproducible?" 
+    (https://doi.org/10.1371/journal.pcbi.1001057) 
+    - Langfelder, Luo, Oldham and Horvath, 2011
 
 # Session Information
 

@@ -50,8 +50,9 @@ colours by \code{color_func}.}
 A plot produced by \link[WGCNA]{plotDendroAndColors}.
 }
 \description{
-Gets the dendrogram and plots it using
-\link[WGCNA]{plotDendroAndColors}.
+Plots the dendrogram in the \code{dendrogam} slot of a
+\link[ReducedExperiment]{ModularExperiment} object using the
+\link[WGCNA]{plotDendroAndColors} function.
 }
 \examples{
 # Create ModularExperiment with random data (100 features, 50 samples,
@@ -71,7 +72,7 @@ plotDendro(me)
 
 }
 \seealso{
-\code{\link[WGCNA:plotDendroAndColors]{WGCNA::plotDendroAndColors()}}
+\code{\link[WGCNA:plotDendroAndColors]{WGCNA::plotDendroAndColors()}}, \link[stats]{plot.hclust}
 }
 \author{
 Jack Gisby

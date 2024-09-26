@@ -46,7 +46,8 @@ Constructor method returns a
 \link[ReducedExperiment]{FactorisedExperiment} object.
 }
 \description{
-A container inheriting from \link[ReducedExperiment]{ReducedExperiment}, that
+A container inheriting from the \link[ReducedExperiment]{ReducedExperiment}
+class, that
 contains one or more data matrices, to which factor analysis has been applied
 to identify a reduced set of features. A
 \link[ReducedExperiment]{FactorisedExperiment} can be created directly in

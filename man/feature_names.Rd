@@ -48,7 +48,7 @@
 A vector containing the names of the features.
 }
 \description{
-Retrieves feature names (rownames, usually genes).
+Gets and sets feature names (i.e., rownames, usually genes).
 }
 \examples{
 # Create randomised data with the following dimensions
@@ -64,10 +64,12 @@ re <- ReducedExperiment(
     reduced = rand_reduced_data
 )
 
+# Methods return equivalent results
 stopifnot(all.equal(featureNames(re), rownames(rand_assay_data)))
 stopifnot(all.equal(rownames(re), rownames(rand_assay_data)))
 stopifnot(all.equal(names(re), rownames(rand_assay_data)))
 
+# We can change the feature name at a particular position
 print(paste0("Feature name at position 55: ", featureNames(re)[55]))
 featureNames(re)[55] <- "custom_feature_name"
 print(paste0("Reduced data at position 55: ", featureNames(re)[55]))

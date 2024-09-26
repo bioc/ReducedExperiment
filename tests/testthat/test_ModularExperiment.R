@@ -170,7 +170,7 @@ test_that("Eigengene calculation / projection / prediction", {
     airway <- .get_airway_data(n_features = 500)
 
     WGCNA::disableWGCNAThreads()
-    airway_me <- identify_modules(airway, verbose = 0, powers = 21) # , return_full_output=TRUE
+    airway_me <- identify_modules(airway, verbose = 0, power = 21)
 
     # Recalculate eigengenes using WGCNA::moduleEigengenes
     eig <- WGCNA::moduleEigengenes(t(assay(airway_me, "transformed")), setNames(names(assignments(airway_me)), assignments(airway_me)))
@@ -252,7 +252,7 @@ test_that("Plot and access dendrogram", {
 
     set.seed(2)
     airway <- .get_airway_data(n_features = 500)
-    airway_me <- identify_modules(airway, verbose = 0, powers = 21) # , return_full_output=TRUE
+    airway_me <- identify_modules(airway, verbose = 0, power = 21)
 
     expect_true(dim(airway_me)[1] == length(dendrogram(airway_me)$order))
 

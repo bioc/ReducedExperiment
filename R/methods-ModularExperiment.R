@@ -1,8 +1,9 @@
 #' ModularExperiment: A container for the results of module analysis
 #'
 #' @description
-#' A container inheriting from \link[ReducedExperiment]{ReducedExperiment}, that
-#' contains one or more data matrices, to which module analysis has been applied
+#' A container inheriting from the \link[ReducedExperiment]{ReducedExperiment}
+#' class, that contains one or more data matrices, to which module analysis
+#' has been applied
 #' to identify a reduced set of features.
 #'
 #' @param reduced A data matrix, produced by module analysis, with rows
@@ -41,7 +42,7 @@
 #' \link[ReducedExperiment]{ReducedExperiment}.
 #'
 #' @returns Constructor method returns a
-#' \link[ReducedExperiment]{ModularExperiment} object.
+#' `ModularExperiment` object.
 #'
 #' @seealso [ReducedExperiment::ReducedExperiment()],
 #' [ReducedExperiment::FactorisedExperiment()],
@@ -76,15 +77,14 @@
 #'
 #' @rdname modular_experiment
 #' @export
-ModularExperiment <- function(
-        reduced = new("matrix"),
-        scale = TRUE,
-        center = TRUE,
-        loadings = NULL,
-        assignments = character(),
-        dendrogram = NULL,
-        threshold = NULL,
-        ...) {
+ModularExperiment <- function(reduced = new("matrix"),
+    scale = TRUE,
+    center = TRUE,
+    loadings = NULL,
+    assignments = character(),
+    dendrogram = NULL,
+    threshold = NULL,
+    ...) {
     re <- ReducedExperiment(
         reduced = reduced,
         scale = scale,
@@ -176,8 +176,9 @@ NULL
 
 #' @rdname module_assignments
 #' @export
-setMethod("assignments", "ModularExperiment", function(object,
-    as_list = FALSE) {
+setMethod("assignments", "ModularExperiment", function(
+        object,
+        as_list = FALSE) {
     if (as_list) {
         a <- list()
         for (comp in componentNames(object)) {
@@ -222,7 +223,7 @@ setReplaceMethod("assignments", "ModularExperiment", function(object, value) {
 #' @param value New value to replace existing loadings.
 #'
 #' @returns
-#' #' If `object` is a \link[ReducedExperiment]{FactorisedExperiment}, the
+#' If `object` is a \link[ReducedExperiment]{FactorisedExperiment}, the
 #' loadings matrix will be returned, with features as rows and reduced
 #' components as columns. If `object` is a
 #' \link[ReducedExperiment]{ModularExperiment}, the loadings
@@ -258,11 +259,10 @@ NULL
 
 #' @rdname loadings
 #' @export
-setMethod("loadings", "ModularExperiment", function(
-        object,
-        scale_loadings = FALSE,
-        center_loadings = FALSE,
-        abs_loadings = FALSE) {
+setMethod("loadings", "ModularExperiment", function(object,
+    scale_loadings = FALSE,
+    center_loadings = FALSE,
+    abs_loadings = FALSE) {
     # Return them if the loadings are NULL
     if (is.null(object@loadings)) {
         return(object@loadings)
@@ -314,8 +314,9 @@ setReplaceMethod("rownames", "ModularExperiment", function(x, value) {
 
 #' @rdname component_names
 #' @export
-setReplaceMethod("componentNames", "ModularExperiment", function(object,
-    value) {
+setReplaceMethod("componentNames", "ModularExperiment", function(
+        object,
+        value) {
     curr_names <- colnames(object@reduced)
     object <- callNextMethod(object, value)
     new_names <- colnames(object@reduced)
@@ -351,13 +352,17 @@ setMethod("nModules", "ModularExperiment", function(object) {
 
 #' Get the dendrogram stored in a ModularExperiment
 #'
-#' @param object \link[ReducedExperiment]{ModularExperiment} object.
+#' @param object A \link[ReducedExperiment]{ModularExperiment} object.
 #'
 #' @param value New value to replace existing dendrogram.
 #'
 #' @returns Returns a dendrogram describing relationships between genes.
 #' Usually produced through hierarchical clustering using the
 #' \link[WGCNA]{blockwiseModules} function.
+#'
+#' @seealso [WGCNA::blockwiseModules()], [stats::hclust()]
+#'
+#' @author Jack Gisby
 #'
 #' @examples
 #' # Create ModularExperiment with random data (100 features, 50 samples,
@@ -376,8 +381,6 @@ setMethod("nModules", "ModularExperiment", function(object) {
 #'
 #' # Or class method that calls WGCNA::plotDendroAndColors
 #' plotDendro(me)
-#'
-#' @author Jack Gisby
 #'
 #' @rdname module_dendrogram
 #' @name dendrogram
@@ -511,11 +514,12 @@ setMethod("rbind", "ModularExperiment", function(..., deparse.level = 1) {
 
 #' @rdname enrichment
 #' @export
-setMethod("runEnrich", c("ModularExperiment"), function(object,
-    method = "overrepresentation",
-    feature_id_col = "rownames",
-    as_dataframe = FALSE,
-    ...) {
+setMethod("runEnrich", c("ModularExperiment"), function(
+        object,
+        method = "overrepresentation",
+        feature_id_col = "rownames",
+        as_dataframe = FALSE,
+        ...) {
     if (method == "overrepresentation") {
         if (feature_id_col != "rownames") {
             names(object) <-
@@ -541,8 +545,9 @@ setMethod("runEnrich", c("ModularExperiment"), function(object,
 
 #' Plot a dendrogram stored in a ModularExperiment
 #'
-#' Gets the dendrogram and plots it using
-#' \link[WGCNA]{plotDendroAndColors}.
+#' Plots the dendrogram in the `dendrogam` slot of a
+#' \link[ReducedExperiment]{ModularExperiment} object using the
+#' \link[WGCNA]{plotDendroAndColors} function.
 #'
 #' @param object \link[ReducedExperiment]{ModularExperiment} object.
 #'
@@ -574,7 +579,7 @@ setMethod("runEnrich", c("ModularExperiment"), function(object,
 #'
 #' @returns A plot produced by \link[WGCNA]{plotDendroAndColors}.
 #'
-#' @seealso [WGCNA::plotDendroAndColors()]
+#' @seealso [WGCNA::plotDendroAndColors()], \link[stats]{plot.hclust}
 #'
 #' @author Jack Gisby
 #'
@@ -603,9 +608,10 @@ NULL
 #' @export
 setMethod(
     "plotDendro", c("ModularExperiment"),
-    function(object, groupLabels = "Module colors", dendroLabels = FALSE,
-    hang = 0.03, addGuide = TRUE, guideHang = 0.05,
-    color_func = WGCNA::labels2colors, modules_are_colors = FALSE, ...) {
+    function(
+        object, groupLabels = "Module colors", dendroLabels = FALSE,
+        hang = 0.03, addGuide = TRUE, guideHang = 0.05,
+        color_func = WGCNA::labels2colors, modules_are_colors = FALSE, ...) {
         if (!modules_are_colors) {
             colors <- as.numeric(gsub(
                 "module_", "",
@@ -691,6 +697,14 @@ setMethod(
 #' instead, then a If a \link[ReducedExperiment]{ModularExperiment}
 #' object will be created containing this matrix in its `reduced` slot.
 #'
+#' @details
+#' If `scale_newdata` and `center_newdata` are left as `NULL`, then the
+#' projection method assumes that the `newdata` are on the same scale as the
+#' original data of the `object`. It will therefore use the values of the
+#' `center` and `scale` slots of the `object`. For instance, if the `scale` slot
+#' is `TRUE`, the `newdata` will be scaled. If the `scale` slot is a vector,
+#' the values of this vector will be applied to scale the `newdata`.
+#'
 #' @seealso \code{\link[ReducedExperiment]{projectData}},
 #' \code{\link[WGCNA]{moduleEigengenes}}
 #'
@@ -700,7 +714,6 @@ setMethod(
 #' # Create ModularExperiment with random data (100 features, 50 samples,
 #' # 10 modules)
 #' me_1 <- ReducedExperiment:::.createRandomisedModularExperiment(100, 50, 10)
-#' me_1
 #'
 #' # Generate a new dataset with the same features (100 rows) but different
 #' # samples/observations (20 columns)
@@ -726,15 +739,16 @@ NULL
 
 #' @rdname calcEigengenes
 #' @export
-setMethod("calcEigengenes", c("ModularExperiment", "matrix"), function(object,
-    newdata,
-    project = FALSE,
-    scale_reduced = TRUE,
-    return_loadings = FALSE,
-    scale_newdata = NULL,
-    center_newdata = NULL,
-    realign = TRUE,
-    min_module_genes = 10) {
+setMethod("calcEigengenes", c("ModularExperiment", "matrix"), function(
+        object,
+        newdata,
+        project = FALSE,
+        scale_reduced = TRUE,
+        return_loadings = FALSE,
+        scale_newdata = NULL,
+        center_newdata = NULL,
+        realign = TRUE,
+        min_module_genes = 10) {
     if (!identical(rownames(object), rownames(newdata))) {
         stop("Rownames of x do not match those of newdata")
     }
@@ -782,16 +796,15 @@ setMethod("calcEigengenes", c("ModularExperiment", "matrix"), function(object,
 
 #' @rdname calcEigengenes
 #' @export
-setMethod("calcEigengenes", c("ModularExperiment", "data.frame"), function(
-        object,
-        newdata,
-        project = FALSE,
-        scale_reduced = TRUE,
-        return_loadings = FALSE,
-        scale_newdata = NULL,
-        center_newdata = NULL,
-        realign = TRUE,
-        min_module_genes = 10) {
+setMethod("calcEigengenes", c("ModularExperiment", "data.frame"), function(object,
+    newdata,
+    project = FALSE,
+    scale_reduced = TRUE,
+    return_loadings = FALSE,
+    scale_newdata = NULL,
+    center_newdata = NULL,
+    realign = TRUE,
+    min_module_genes = 10) {
     return(calcEigengenes(object, as.matrix(newdata),
         project = project, return_loadings = return_loadings,
         scale_newdata = scale_newdata, center_newdata = center_newdata,
@@ -804,16 +817,15 @@ setMethod("calcEigengenes", c("ModularExperiment", "data.frame"), function(
 #' @export
 setMethod(
     "calcEigengenes", c("ModularExperiment", "SummarizedExperiment"),
-    function(
-        object,
-        newdata,
-        project = FALSE,
-        scale_reduced = TRUE,
-        assay_name = "normal",
-        scale_newdata = NULL,
-        center_newdata = NULL,
-        realign = TRUE,
-        min_module_genes = 10) {
+    function(object,
+    newdata,
+    project = FALSE,
+    scale_reduced = TRUE,
+    assay_name = "normal",
+    scale_newdata = NULL,
+    center_newdata = NULL,
+    realign = TRUE,
+    min_module_genes = 10) {
         eig <- calcEigengenes(object, assay(newdata, assay_name),
             project = project, return_loadings = FALSE,
             scale_newdata = scale_newdata, center_newdata = center_newdata,
@@ -839,11 +851,11 @@ setMethod("predict", c("ModularExperiment"), function(object, newdata, ...) {
 #' Get correlation of features with module eigengenes
 #'
 #' Provides a wrapper around \link[WGCNA]{signedKME}. Provides a measure
-#' of module centrality/connectivity of each feature. Essentially just
-#' calculates correlation (Pearson's r) of each feature with the module
-#' eigengene, i.e., the column of `reduced` to which the feature belongs.
+#' of module centrality/connectivity of each feature. Calculates
+#' correlation (Pearson's r) of each feature with the module
+#' eigengene (i.e., the column of `reduced` to which the feature belongs).
 #'
-#' @param object \link[ReducedExperiment]{ModularExperiment} object.
+#' @param object A \link[ReducedExperiment]{ModularExperiment} object.
 #'
 #' @param assay_name The name of the assay to be used for calculation of
 #' module centrality.
@@ -869,7 +881,7 @@ setMethod("predict", c("ModularExperiment"), function(object, newdata, ...) {
 #' me
 #'
 #' # Calculate centrality of each feature for the corresponding module
-#' getCentrality(me)
+#' head(getCentrality(me))
 #'
 #' @rdname getCentrality
 #' @name getCentrality
@@ -878,9 +890,10 @@ NULL
 
 #' @rdname getCentrality
 #' @export
-setMethod("getCentrality", c("ModularExperiment"), function(object,
-    assay_name = "normal",
-    feature_id_col = "rownames") {
+setMethod("getCentrality", c("ModularExperiment"), function(
+        object,
+        assay_name = "normal",
+        feature_id_col = "rownames") {
     # Get module membership (correlation with eigengene)
     signed_kme <- WGCNA::signedKME(
         t(assay(object, assay_name)),

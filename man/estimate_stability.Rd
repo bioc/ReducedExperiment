@@ -89,14 +89,14 @@ can be plotted by \link[ReducedExperiment]{plot_stability}.
 
 This algorithm is similar to the Most Stable Transcriptome
 Dimension (MSTD) approach
-(https://bmcgenomics.biomedcentral.com/articles/10.1186/s12864-017-4112-9).
+(\url{https://bmcgenomics.biomedcentral.com/articles/10.1186/s12864-017-4112-9}).
 
 The function automatically selects a number of components based on
-\code{mean_stability_threshold}. Ideally, this should not be trusted blindly,
-but instead a choice can be made based on visualisation of the
+\code{mean_stability_threshold}. This choice can be made based on
+visualisation of the
 stabilities, as created by \link[ReducedExperiment]{plot_stability}. The
-MSTD paper provides additional context and advice on choosing the number
-of components based on these data.
+aformentioned MSTD paper provides additional context and advice on choosing
+the number of components based on these data.
 }
 \examples{
 # Get a random matrix with rnorm, with 200 rows (features)
@@ -108,7 +108,8 @@ stab_res_1 <- estimate_stability(
     X,
     min_components = 10,
     max_components = 30,
-    n_runs = 5
+    n_runs = 5,
+    verbose = FALSE
 )
 
 # Convert the data matrix to a SummarizedExperiment, then estimate stability
@@ -117,7 +118,8 @@ stab_res_2 <- estimate_stability(
     se,
     min_components = 10,
     max_components = 30,
-    n_runs = 5
+    n_runs = 5,
+    verbose = FALSE
 )
 
 }

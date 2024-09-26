@@ -53,7 +53,13 @@ details of this function for more information.
 X <- ReducedExperiment:::.makeRandomData(200, 100, "feature", "obs")
 
 # Estimate stability across 10 to 30 components
-stab_res <- estimate_stability(X, min_components = 10, max_components = 30, n_runs = 5)
+stab_res <- estimate_stability(
+    X,
+    min_components = 10,
+    max_components = 30,
+    n_runs = 5,
+    verbose = FALSE
+)
 
 # Intracluster stability similar to extracluster since this is random data
 plot_stability(stab_res)$combined_plot
