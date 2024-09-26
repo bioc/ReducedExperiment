@@ -29,12 +29,12 @@ See the \code{filters} argument of \link[biomaRt]{getBM}.}
 See the \code{attributes} argument of \link[biomaRt]{getBM}.}
 
 \item{dataset}{The Ensembl dataset to retrieve. See the \code{dataset} argument
-of \link[biomaRt]{useEnsembl}. If \code{mart} is not NULL, this argument is
+of \link[biomaRt]{useEnsembl}. If \code{mart} is not \code{NULL}, this argument is
 ignored.}
 
 \item{mart}{An optional mart object to use. See the \code{mart} argument of
 \link[biomaRt]{getBM}. If provided, this object is used to query biomart
-for the conversion of gene IDs. If \code{biomart_out} is not NULL, this argument
+for the conversion of gene IDs. If \code{biomart_out} is not \code{NULL}, this argument
 is ignored.}
 
 \item{biomart_out}{An optional \code{data.frame} containing the output of a call

@@ -23,8 +23,8 @@ plot_stability(
 components can be pruned by \link[ReducedExperiment]{run_ica}.}
 
 \item{mean_stability_threshold}{Plots a stability threshold, which is used
-by \link[ReducedExperiment]{estimate_stability} to estimate the optimal
-number of components.}
+by \link[ReducedExperiment]{estimate_stability} to provide a naive estimate
+for the optimal number of components.}
 
 \item{height}{The height of the plot, to be passed to \link[ggplot2]{ggsave}.}
 
@@ -44,8 +44,8 @@ number of components.}
 }
 }
 \description{
-Plots the results of \link[ReducedExperiment]{estimate_stability}. See the
-details of this function for more information.
+Plots the results of \link[ReducedExperiment]{estimate_stability}. See this
+function's documentation for more information.
 }
 \examples{
 # Get a random matrix with rnorm, with 200 rows (features)

@@ -45,7 +45,8 @@ specifies which assay slot is to be used in preservation tests.}
 necessary to specify the module assignments.}
 
 \item{greyName}{The name of the "module" of unassigned genes. Usually
-"module_0" (ReducedExperiment) or "grey" (WGCNA).}
+"module_0" (ReducedExperiment default) or "grey" (WGCNA default). See
+\link[WGCNA]{modulePreservation}.}
 
 \item{goldName}{The name to be used for the "gold" module (which is made up
 of a random sample of all network genes). See
@@ -72,7 +73,11 @@ by \link[WGCNA]{modulePreservation}.
 }
 \description{
 Tests whether a set of modules defined in the reference dataset are
-preserved in the test dataset.
+preserved in the test dataset. Provides a convenient wrapper
+around \link[WGCNA]{modulePreservation} for
+\link[ReducedExperiment]{ModularExperiment} and
+\link[SummarizedExperiment]{SummarizedExperiment}
+objects.
 }
 \examples{
 # Get random ModularExperiments with rnorm, with 100 rows (features),

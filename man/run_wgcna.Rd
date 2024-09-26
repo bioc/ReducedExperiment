@@ -12,7 +12,7 @@ run_wgcna(
   module_labels = "numbers",
   maxBlockSize = 30000,
   verbose = 0,
-  scale_reduced = TRUE,
+  standardise_reduced = TRUE,
   ...
 )
 }
@@ -46,8 +46,8 @@ to calculate networks.}
 
 \item{verbose}{The verbosity, passed to \link[WGCNA]{blockwiseModules}.}
 
-\item{scale_reduced}{If TRUE, the reduced data (eigengenes) are standardised
-to have a mean of 0 and a standard deviation of 1.}
+\item{standardise_reduced}{If \code{TRUE}, the reduced data (eigengenes) are
+standardised to have a mean of 0 and a standard deviation of 1.}
 
 \item{...}{Additional arguments to be passed to
 \link[WGCNA]{blockwiseModules}.}
@@ -71,13 +71,13 @@ into a format convenient for creating a
 from colours to numbers by default.
 }
 \details{
-The function also stores the loadings matrices generated when PCA is
-performed for each module to calculate eigengenes. These loadings can be
-used to recalculate the reduced data matrix (eigengenes).
-
 Note that if \code{module_labels} is set to "numbers", then
 "module_0" represents unclustered genes, whereas if it is set to "colours"
 then "grey" represents unclustered genes.
+
+The function also stores the loadings matrices generated when PCA is
+performed for each module to calculate eigengenes. These loadings can be
+used to recalculate the reduced data matrix (eigengenes).
 }
 \examples{
 # Get the airway data as a SummarizedExperiment (with a subset of features)

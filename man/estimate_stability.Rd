@@ -34,20 +34,20 @@ stability for.}
 \item{by}{The number by which to increment the numbers of components
 tested.}
 
-\item{n_runs}{The number of times to run ICA. Ignored if \code{use_stability} is
-FALSE. See \code{details} for further information.}
+\item{n_runs}{The number of times to run ICA.}
 
-\item{resample}{If TRUE, a boostrap approach is used to estimating factors.
-Else, random initialisation of ICA is employed. Ignored if \code{use_stability}
-is FALSE. See \code{details} for further information.}
+\item{resample}{If \code{TRUE}, a boostrap approach is used to estimate factors
+and quantify stability. Else, only the random initialisation inherent to
+common ICA implementations is used. See the \code{RNGseed} argument of
+\link[BiocParallel]{SerialParam} if you require reproducibility.}
 
-\item{mean_stability_threshold}{The function will return the minimal
-number of components that exceed this stability threshold.}
+\item{mean_stability_threshold}{The function will estimate the optimal number
+of components as the minimal number that exceed this stability threshold.}
 
-\item{center_X}{If TRUE, X is centered (i.e., features / rows are transformed
+\item{center_X}{If \code{TRUE}, \code{X} is centered (i.e., features / rows are transformed
 to have a mean of 0) prior to ICA. Generally recommended.}
 
-\item{scale_X}{If TRUE, X is scaled (i.e., features / rows are transformed
+\item{scale_X}{If \code{TRUE}, \code{X} is scaled (i.e., features / rows are transformed
 to have a standard deviation of 1) before ICA.}
 
 \item{assay_name}{If \code{X} is a
@@ -56,10 +56,9 @@ name of the assay to be subject to ICA.}
 
 \item{BPPARAM}{A class containing parameters for parallel evaluation. Uses
 \link[BiocParallel]{SerialParam} by default, running only a single
-ICA computation at a time. Ignored if \code{use_stability}
-is FALSE. See \code{details} for further information.}
+ICA computation at a time.}
 
-\item{verbose}{If TRUE, shows a progress bar that updates for each
+\item{verbose}{If \code{TRUE}, shows a progress bar that updates for each
 number of components tested. Note that the time taken may not be linear,
 because the time taken to run ICA generally increases with the number
 of components.}
@@ -72,31 +71,32 @@ Returns a list containing:
 \describe{
 \item{stability}{A data.frame indicating factor stabilities as a function
 of the number of components.}
-\item{selected_nc}{the selected number of components based on the
-\code{mean_stability_threshold}.}
+\item{selected_nc}{a naive estimate for the optimal number of components
+based on the \code{mean_stability_threshold}.}
 }
 }
 \description{
 Estimates the stability of factors over a range of component numbers to
-aid in the identification of the optimal factor number.
+aid in the identification of the optimal factor number. Based on the
+Most Stable Transcriptome Dimension (MSTD) approach (see \code{details}).
 }
 \details{
 Runs the stability-based ICA algorithm
 (see \link[ReducedExperiment]{run_ica}) for a range of component numbers.
-Estimates stability for each one, allowing for selection of the optimal
+Estimates stability for each, allowing for selection of the optimal
 number of components to be used for ICA. The results of this function
 can be plotted by \link[ReducedExperiment]{plot_stability}.
 
-This algorithm is similar to the Most Stable Transcriptome
+This algorithm is based on the Most Stable Transcriptome
 Dimension (MSTD) approach
 (\url{https://bmcgenomics.biomedcentral.com/articles/10.1186/s12864-017-4112-9}).
 
 The function automatically selects a number of components based on
-\code{mean_stability_threshold}. This choice can be made based on
-visualisation of the
-stabilities, as created by \link[ReducedExperiment]{plot_stability}. The
-aformentioned MSTD paper provides additional context and advice on choosing
-the number of components based on these data.
+\code{mean_stability_threshold}. However, this choice should be made after
+visualisating the stabilities as a function of the number of components,
+which may be done using \link[ReducedExperiment]{plot_stability}. The
+aformentioned MSTD paper provides additional context and advice for choosing
+the number of components based on these results.
 }
 \examples{
 # Get a random matrix with rnorm, with 200 rows (features)

@@ -597,7 +597,6 @@ whereas modules 5 and 0 (our unclustered genes) display relatively low
 preservation. 
 
 ```{r module_preservation}
-
 # Using a low number of permutations (20) for the vignette
 mod_pres_res <- module_preservation(wave1_me, wave2_se, verbose = 0, nPermutations = 20)
 plot_module_preservation(mod_pres_res)

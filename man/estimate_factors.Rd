@@ -2,7 +2,7 @@
 % Please edit documentation in R/factors.R
 \name{estimate_factors}
 \alias{estimate_factors}
-\title{Apply dimensionality reduction using ICA}
+\title{Perform dimensionality reduction using Independent Component Analysis}
 \usage{
 estimate_factors(
   X,
@@ -22,10 +22,10 @@ features and columns as samples.}
 \link[ReducedExperiment]{estimate_stability} for a method to estimate the
 optimal number of components.}
 
-\item{center_X}{If TRUE, X is centered (i.e., features / rows are transformed
+\item{center_X}{If \code{TRUE}, X is centered (i.e., features / rows are transformed
 to have a mean of 0) prior to ICA. Generally recommended.}
 
-\item{scale_X}{If TRUE, X is scaled (i.e., features / rows are transformed
+\item{scale_X}{If \code{TRUE}, X is scaled (i.e., features / rows are transformed
 to have a standard deviation of 1) before ICA.}
 
 \item{assay_name}{If \code{X} is a
@@ -48,7 +48,9 @@ to \code{estimate_factors}.
 Performs independent component analysis (ICA) and packages both the input
 data and subsequent results into a
 \link[ReducedExperiment]{FactorisedExperiment} container. Calls
-\link[ReducedExperiment]{run_ica} to perform the analysis.
+\link[ReducedExperiment]{run_ica} to perform the analysis; see its
+documentation page for more information on the ICA method, parameters
+and outputs.
 }
 \examples{
 # Get a random matrix with rnorm, with 100 rows (features)

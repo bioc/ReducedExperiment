@@ -30,15 +30,16 @@ indicating a subcategory to be removed from the results of
 data.frame.}
 }
 \value{
-Returns a data.frame, where the "gs_name" column indicates the name
+Returns a data.frame, where the \code{gs_name} column indicates the name
 of a pathway, and the \code{gene_id} column indicates genes that belong to
 said pathway.
 }
 \description{
 Gets pathways from the MSigDB database in the format required by
-\code{clusterProfiler} enrichment functions. May be used as input to
-\link[ReducedExperiment]{runEnrich}. By default, retrieves the C2
-canonical pathways.
+\code{clusterProfiler} enrichment functions, such as
+\link[clusterProfiler]{enricher} and \link[clusterProfiler]{GSEA}.
+May be used as input to \link[ReducedExperiment]{runEnrich}. By default,
+retrieves the C2 canonical pathways.
 }
 \examples{
 pathways <- get_msigdb_t2g(

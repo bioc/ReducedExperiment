@@ -69,13 +69,12 @@
 #'
 #' @rdname factorised_experiment
 #' @export
-FactorisedExperiment <- function(
-        reduced = new("matrix"),
-        scale = TRUE,
-        center = TRUE,
-        loadings = new("matrix"),
-        stability = NULL,
-        ...) {
+FactorisedExperiment <- function(reduced = new("matrix"),
+    scale = TRUE,
+    center = TRUE,
+    loadings = new("matrix"),
+    stability = NULL,
+    ...) {
     re <- ReducedExperiment(
         reduced = reduced,
         scale = scale,
@@ -147,11 +146,10 @@ S4Vectors::setValidity2("FactorisedExperiment", function(object) {
 
 #' @rdname loadings
 #' @export
-setMethod("loadings", "FactorisedExperiment", function(
-        object,
-        scale_loadings = FALSE,
-        center_loadings = FALSE,
-        abs_loadings = FALSE) {
+setMethod("loadings", "FactorisedExperiment", function(object,
+    scale_loadings = FALSE,
+    center_loadings = FALSE,
+    abs_loadings = FALSE) {
     l <- scale(
         object@loadings,
         scale = scale_loadings,
@@ -241,8 +239,9 @@ setReplaceMethod("stability", "FactorisedExperiment", function(object, value) {
 
 #' @rdname component_names
 #' @export
-setReplaceMethod("componentNames", "FactorisedExperiment", function(object,
-    value) {
+setReplaceMethod("componentNames", "FactorisedExperiment", function(
+        object,
+        value) {
     colnames(object@loadings) <- value
     if (!is.null(object@stability)) names(object@stability) <- value
     object <- callNextMethod(object, value)
@@ -459,12 +458,11 @@ NULL
 
 #' @rdname projectData
 #' @export
-setMethod("projectData", c("FactorisedExperiment", "matrix"), function(
-        object,
-        newdata,
-        standardise_reduced = TRUE,
-        scale_newdata = NULL,
-        center_newdata = NULL) {
+setMethod("projectData", c("FactorisedExperiment", "matrix"), function(object,
+    newdata,
+    standardise_reduced = TRUE,
+    scale_newdata = NULL,
+    center_newdata = NULL) {
     if (!identical(rownames(object), rownames(newdata))) {
         stop("Rownames of x do not match those of newdata")
     }
@@ -487,12 +485,11 @@ setMethod("projectData", c("FactorisedExperiment", "matrix"), function(
 
 #' @rdname projectData
 #' @export
-setMethod("projectData", c("FactorisedExperiment", "data.frame"), function(
-        object,
-        newdata,
-        standardise_reduced = TRUE,
-        scale_newdata = NULL,
-        center_newdata = NULL) {
+setMethod("projectData", c("FactorisedExperiment", "data.frame"), function(object,
+    newdata,
+    standardise_reduced = TRUE,
+    scale_newdata = NULL,
+    center_newdata = NULL) {
     return(projectData(
         object,
         as.matrix(newdata),
@@ -506,13 +503,12 @@ setMethod("projectData", c("FactorisedExperiment", "data.frame"), function(
 #' @export
 setMethod(
     "projectData", c("FactorisedExperiment", "SummarizedExperiment"),
-    function(
-        object,
-        newdata,
-        standardise_reduced = TRUE,
-        scale_newdata = NULL,
-        center_newdata = NULL,
-        assay_name = "normal") {
+    function(object,
+    newdata,
+    standardise_reduced = TRUE,
+    scale_newdata = NULL,
+    center_newdata = NULL,
+    assay_name = "normal") {
         projected_data <- projectData(
             object,
             assay(newdata, assay_name),
@@ -601,12 +597,13 @@ NULL
 
 #' @rdname getAlignedFeatures
 #' @export
-setMethod("getAlignedFeatures", c("FactorisedExperiment"), function(object,
-    loading_threshold = 0.5,
-    proportional_threshold = 0.01,
-    feature_id_col = "rownames",
-    format = "list",
-    center_loadings = FALSE) {
+setMethod("getAlignedFeatures", c("FactorisedExperiment"), function(
+        object,
+        loading_threshold = 0.5,
+        proportional_threshold = 0.01,
+        feature_id_col = "rownames",
+        format = "list",
+        center_loadings = FALSE) {
     S <- loadings(
         object,
         scale_loadings = TRUE,
@@ -770,16 +767,15 @@ NULL
 
 #' @rdname enrichment
 #' @export
-setMethod("runEnrich", c("FactorisedExperiment"), function(
-        object,
-        method = "gsea",
-        feature_id_col = "rownames",
-        center_loadings = FALSE,
-        abs_loadings = FALSE,
-        loading_threshold = 0.5,
-        proportional_threshold = 0.01,
-        as_dataframe = FALSE,
-        ...) {
+setMethod("runEnrich", c("FactorisedExperiment"), function(object,
+    method = "gsea",
+    feature_id_col = "rownames",
+    center_loadings = FALSE,
+    abs_loadings = FALSE,
+    loading_threshold = 0.5,
+    proportional_threshold = 0.01,
+    as_dataframe = FALSE,
+    ...) {
     if (method == "gsea") {
         loading_threshold <- NULL
         proportional_threshold <- NULL
