@@ -63,7 +63,7 @@ The key benefit of `SummarizedExperiment` objects is that they allow for both
 assay and metadata to be kept in sync while slicing and reordering the features
 or samples of an object. The `ReducedExperiment` objects inherit methods from
 `SummarizedExperiment`, so the methods available for a `SummarizedExperiment`
-object will also work on `ReducedExperiment`s. 
+object will also work on a `ReducedExperiment`. 
 
 When applying dimensionality reduction to high-dimensional datasets, we 
 introduce additional complexity. In addition to assay, row and column data, we
@@ -74,7 +74,8 @@ loadings or rotation matrix, with features as rows and factors/components as
 columns.
 
 The `ReducedExperiment` containers extend `SummarizedExperiment` by allowing for
-the storage and slicing of these additional matrices. This package implements 
+the storage and slicing of these additional matrices in tandem with our original 
+data. This package implements 
 `ReducedExperiment`, a high-level class that can store an additional matrix 
 with samples as rows and reduced dimensions as columns. We also implemented 
 two additional child classes for working with common dimensionality reduction 
