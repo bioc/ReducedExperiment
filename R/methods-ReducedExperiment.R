@@ -16,12 +16,12 @@
 #' \link[ReducedExperiment]{ModularExperiment}.
 #'
 #' Typically, `ReducedExperiment` objects contain two main assays. The first is,
-#' by default, named "normal" and contains some type of normalised data,
-#' such as gene expression data. The second is "transformed", which is typically
+#' by default, named "normal" and contains some type of normalised assay data,
+#' such as gene expression. The second is "transformed", which is typically
 #' the result of applying scaling and/or centering to the normalised data
 #' matrix.
 #'
-#' @param reduced A data matrix, usually the result of some type of
+#' @param reduced A `matrix`, usually the result of some type of
 #' dimensionality-reduction, with rows representing samples and columns
 #' representing a new set of features.
 #'
@@ -674,7 +674,7 @@ setReplaceMethod(
 #' containing all of the columns in the objects passed to `cbind`.
 #'
 #' @details
-#' cbind assumes that objects have identical features and
+#' `cbind` assumes that objects have identical features and
 #' components (i.e., factors or modules). If they are not, an error is returned.
 #'
 #' So, this means that the feature-level slots should be equivalent, for example
@@ -684,9 +684,9 @@ setReplaceMethod(
 #' should also be equivalent, such as the column names of the `reduced` matrix
 #' or the column names of the aformentioned factor `loadings` matrix.
 #'
-#' rbind assumes that objects have identical samples and components. If they
+#' `rbind` assumes that objects have identical samples and components. If they
 #' are not, an error is returned. This means that the sample-level slots
-#' should be equivalent, including for example the assay column names a
+#' should be equivalent, including for example the assay column names.
 #'
 #' The \link[SummarizedExperiment]{SummarizedExperiment} package includes
 #' separate methods for `cbind`
@@ -939,12 +939,12 @@ setMethod("nFeatures", "ReducedExperiment", function(object) {
 #' See the `attributes` argument of \link[biomaRt]{getBM}.
 #'
 #' @param dataset The Ensembl dataset to retrieve. See the `dataset` argument
-#' of \link[biomaRt]{useEnsembl}. If `mart` is not NULL, this argument is
+#' of \link[biomaRt]{useEnsembl}. If `mart` is not `NULL`, this argument is
 #' ignored.
 #'
 #' @param mart An optional mart object to use. See the `mart` argument of
 #' \link[biomaRt]{getBM}. If provided, this object is used to query biomart
-#' for the conversion of gene IDs. If `biomart_out` is not NULL, this argument
+#' for the conversion of gene IDs. If `biomart_out` is not `NULL`, this argument
 #' is ignored.
 #'
 #' @param biomart_out An optional `data.frame` containing the output of a call
