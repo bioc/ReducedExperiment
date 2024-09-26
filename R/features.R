@@ -162,9 +162,10 @@ reduced_gsea <- function(
 #' Get TERM2GENE dataframe from MSigDB
 #'
 #' Gets pathways from the MSigDB database in the format required by
-#' `clusterProfiler` enrichment functions. May be used as input to
-#' \link[ReducedExperiment]{runEnrich}. By default, retrieves the C2
-#' canonical pathways.
+#' `clusterProfiler` enrichment functions, such as
+#' \link[clusterProfiler]{enricher} and \link[clusterProfiler]{GSEA}.
+#' May be used as input to \link[ReducedExperiment]{runEnrich}. By default,
+#' retrieves the C2 canonical pathways.
 #'
 #' @param species The species for which to obtain MSigDB pathways. See
 #' \link[msigdbr]{msigdbr} for more details.
@@ -182,7 +183,7 @@ reduced_gsea <- function(
 #' @param gene_id The name to be given to the gene_id column of the resulting
 #' data.frame.
 #'
-#' @returns Returns a data.frame, where the "gs_name" column indicates the name
+#' @returns Returns a data.frame, where the `gs_name` column indicates the name
 #' of a pathway, and the `gene_id` column indicates genes that belong to
 #' said pathway.
 #'
@@ -388,7 +389,11 @@ plot_common_features <- function(common_features,
 #' Get module preservation statistics
 #'
 #' Tests whether a set of modules defined in the reference dataset are
-#' preserved in the test dataset.
+#' preserved in the test dataset. Provides a convenient wrapper
+#' around \link[WGCNA]{modulePreservation} for
+#' \link[ReducedExperiment]{ModularExperiment} and
+#' \link[SummarizedExperiment]{SummarizedExperiment}
+#' objects.
 #'
 #' @param reference_dataset The dataset that was used to define the modules.
 #' Must be a `data.frame` or `matrix` with features as rows and samples as
@@ -416,7 +421,8 @@ plot_common_features <- function(common_features,
 #' necessary to specify the module assignments.
 #'
 #' @param greyName The name of the "module" of unassigned genes. Usually
-#' "module_0" (ReducedExperiment) or "grey" (WGCNA).
+#' "module_0" (ReducedExperiment default) or "grey" (WGCNA default). See
+#' \link[WGCNA]{modulePreservation}.
 #'
 #' @param goldName The name to be used for the "gold" module (which is made up
 #' of a random sample of all network genes). See
@@ -509,7 +515,7 @@ module_preservation <- function(reference_dataset, test_dataset,
 #' @param module_preservation_results The output of
 #' \link[ReducedExperiment]{module_preservation}
 #'
-#' @param show_random If TRUE, shows the random module in the plots.
+#' @param show_random If `TRUE`, shows the random module in the plots.
 #'
 #' @param remove_module The name of a module to be hidden from the plots.
 #'
