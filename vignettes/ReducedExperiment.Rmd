@@ -565,7 +565,7 @@ we use `calcEigengenes` to do so, and we look at whether the modules behave
 similarly with respect to COVID-19 status. As we saw for factors, there is a 
 reasonable concordance between the modules in the two datasets.
 
-```{r}
+```{r calc_eigengenes_new_data}
 wave2_me <- calcEigengenes(wave1_me, wave2_se)
 replication_me <- associate_components(wave2_me, method = "lmer", formula = paste0(f, " + (1|individual_id)"))
 
@@ -595,7 +595,9 @@ that modules 1 and 2 have relatively high preservation in the Wave 2 dataset,
 whereas modules 5 and 0 (our unclustered genes) display relatively low 
 preservation. 
 
-```{r}
+```{r module_preservation}
+
+# Using a low number of permutations (20) for the vignette
 mod_pres_res <- module_preservation(wave1_me, wave2_se, verbose = 0, nPermutations = 20)
 plot_module_preservation(mod_pres_res)
 ```
