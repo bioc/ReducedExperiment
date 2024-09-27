@@ -6,7 +6,7 @@ pkgVer <- function(pkg) {
 
 bibentry(
     bibtype="manual",
-    title = "ReducedExperiment: Containers for dimensionally-reduced -omics data",
+    title = "ReducedExperiment: Containers and tools for dimensionally-reduced -omics data",
     author = personList(
         as.person("Jack S. Gisby"),
         as.person("Michael R. Barnes")
