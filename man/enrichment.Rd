@@ -32,28 +32,28 @@
 \link[ReducedExperiment]{ModularExperiment} object.}
 
 \item{method}{The method to use for identifying enriched pathways. One of
-\code{"overrepresentation"} or \code{"gsea"}. The overrepresentation method calls
-\link[clusterProfiler]{enricher} whereas the gsea method calls
-\link[clusterProfiler]{GSEA}. Note that GSEA is not available for modules.}
+"overrepresentation" or "gsea". The "overrepresentation" method calls
+\link[clusterProfiler]{enricher} whereas the "gsea" method calls
+\link[clusterProfiler]{GSEA}. Note that "gsea" is not available for modules.}
 
 \item{feature_id_col}{The column in \code{rowData(object)} that will be used as a
 feature ID. Setting this to \code{"rownames"} (default) instead uses
 \code{rownames(object)}.}
 
-\item{center_loadings}{Factors only: If \code{TRUE}, loadings will be centered
+\item{center_loadings}{If \code{TRUE}, loadings will be centered
 column-wise to have a mean of 0.}
 
-\item{abs_loadings}{Factors only: If \code{TRUE}, the absolute values of the
+\item{abs_loadings}{If \code{TRUE}, the absolute values of the
 loadings will be used for enrichment analysis. If \code{FALSE}, the signed
 loadings will be used for GSEA enrichment. Note that, regardless of the
 value of this term, the process used to select genes for overrepresentation
 analysis will be based on absolute loadings.}
 
-\item{loading_threshold}{Factors only: See
+\item{loading_threshold}{See
 \link[ReducedExperiment]{getAlignedFeatures}. Only relevant for
 overrepresentation analysis.}
 
-\item{proportional_threshold}{Factors only: See
+\item{proportional_threshold}{See
 \link[ReducedExperiment]{getAlignedFeatures}. Only relevant for
 overrepresentation analysis.}
 
@@ -74,7 +74,10 @@ overrepresentation analysis, or \link[clusterProfiler]{GSEA}, in the case of
 GSEA.
 }
 \description{
-Functional enrichment analyses for dimensionally-reduced data
+Method for applying pathway enrichment analysis to components identified
+through dimensionality reduction (e.g., factors or modules).
+Enrichment analyses are applied to each component
+separately.
 }
 \details{
 When running module analysis, the overrepresentation method identifies

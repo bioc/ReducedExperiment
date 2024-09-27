@@ -17,7 +17,7 @@ FactorisedExperiment(
 )
 }
 \arguments{
-\item{reduced}{A data matrix, produced by factor analysis, with rows
+\item{reduced}{A \code{matrix}, produced by factor analysis, with rows
 representing samples and columns representing factors.}
 
 \item{scale}{Either a boolean, representing whether or not the original data
@@ -30,12 +30,12 @@ has been centered to have a mean of 0, or a numeric vector indicating the
 means of the original features (as produced by
 \link[base]{scale}.)}
 
-\item{loadings}{A data matrix, produced by factor analysis, with rows
+\item{loadings}{A \code{matrix}, produced by factor analysis, with rows
 representing features and columns representing factors.}
 
 \item{stability}{A vector containing some measure of stability or variance
 explained for each factor. If factor analysis was performed using
-\link[ReducedExperiment]{estimate_factors} and \code{use_stability = True}, this
+\link[ReducedExperiment]{estimate_factors} and \code{use_stability = TRUE}, this
 slot will indicate the stability of the factors across multiple runs of ICA.}
 
 \item{...}{Additional arguments to be passed to

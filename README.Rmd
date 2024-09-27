@@ -37,7 +37,7 @@ ReducedExperiment provides containers for storing and
 manipulating dimensionally-reduced assay data. The ReducedExperiment
 classes allow users to simultaneously manipulate their original dataset
 and their decomposed data, in addition to other method-specific outputs
-like feature loadings. Implements utilities and specialised classes for the 
+like pathway analysis. Implements utilities and specialised classes for the 
 application of stabilised independent component analysis (sICA) and 
 weighted gene correlation network analysis (WGCNA).
 

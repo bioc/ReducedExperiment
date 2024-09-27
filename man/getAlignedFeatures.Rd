@@ -15,7 +15,7 @@
 )
 }
 \arguments{
-\item{object}{\link[ReducedExperiment]{FactorisedExperiment} object.}
+\item{object}{A \link[ReducedExperiment]{FactorisedExperiment} object.}
 
 \item{loading_threshold}{A value between 0 and 1 indicating the proportion of
 the maximal loading to be used as a threshold. A value of 0.5 (default) means
@@ -40,7 +40,7 @@ See the \code{value} section below.}
 have a mean of 0.}
 }
 \value{
-If the \code{format} argument is \code{"list"}, then a
+If the \code{format} argument is "list", then a
 list will be returned with an entry for each factor, each containing a vector
 of input features. Otherwise, if \code{format} is \code{"data.frame"}, a data.frame is
 returned with a row for each gene-factor combination. The \code{format} argument

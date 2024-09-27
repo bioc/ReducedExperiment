@@ -11,7 +11,7 @@
 #' can be used to both apply factor analysis and generate a
 #' \link[ReducedExperiment]{FactorisedExperiment} from the results.
 #'
-#' @param reduced A data matrix, produced by factor analysis, with rows
+#' @param reduced A `matrix`, produced by factor analysis, with rows
 #' representing samples and columns representing factors.
 #'
 #' @param scale Either a boolean, representing whether or not the original data
@@ -24,12 +24,12 @@
 #' means of the original features (as produced by
 #' \link[base]{scale}.)
 #'
-#' @param loadings A data matrix, produced by factor analysis, with rows
+#' @param loadings A `matrix`, produced by factor analysis, with rows
 #' representing features and columns representing factors.
 #'
 #' @param stability A vector containing some measure of stability or variance
 #' explained for each factor. If factor analysis was performed using
-#' \link[ReducedExperiment]{estimate_factors} and `use_stability = True`, this
+#' \link[ReducedExperiment]{estimate_factors} and `use_stability = TRUE`, this
 #' slot will indicate the stability of the factors across multiple runs of ICA.
 #'
 #' @param ... Additional arguments to be passed to
@@ -70,12 +70,13 @@
 #' @rdname factorised_experiment
 #' @export
 FactorisedExperiment <- function(
-        reduced = new("matrix"),
-        scale = TRUE,
-        center = TRUE,
-        loadings = new("matrix"),
-        stability = NULL,
-        ...) {
+    reduced = new("matrix"),
+    scale = TRUE,
+    center = TRUE,
+    loadings = new("matrix"),
+    stability = NULL,
+    ...
+) {
     re <- ReducedExperiment(
         reduced = reduced,
         scale = scale,
@@ -148,10 +149,11 @@ S4Vectors::setValidity2("FactorisedExperiment", function(object) {
 #' @rdname loadings
 #' @export
 setMethod("loadings", "FactorisedExperiment", function(
-        object,
-        scale_loadings = FALSE,
-        center_loadings = FALSE,
-        abs_loadings = FALSE) {
+    object,
+    scale_loadings = FALSE,
+    center_loadings = FALSE,
+    abs_loadings = FALSE
+) {
     l <- scale(
         object@loadings,
         scale = scale_loadings,
@@ -241,8 +243,9 @@ setReplaceMethod("stability", "FactorisedExperiment", function(object, value) {
 
 #' @rdname component_names
 #' @export
-setReplaceMethod("componentNames", "FactorisedExperiment", function(object,
-    value) {
+setReplaceMethod("componentNames", "FactorisedExperiment", function(
+        object,
+        value) {
     colnames(object@loadings) <- value
     if (!is.null(object@stability)) names(object@stability) <- value
     object <- callNextMethod(object, value)
@@ -260,73 +263,73 @@ setReplaceMethod("componentNames", "FactorisedExperiment", function(object,
 #' @export
 setMethod(
     "[", c("FactorisedExperiment", "ANY", "ANY", "ANY"),
-    function(x, i, j, k, ..., drop = FALSE) {
-        object <- x
+    function(x, i, j, k, ..., drop = FALSE)
+{
+    object <- x
 
-        if (1L != length(drop) || (!missing(drop) && drop)) {
-            warning("'drop' ignored '[,", class(object), ",ANY,ANY-method'")
-        }
-
-        lod <- object@loadings
-        stab <- object@stability
-
-        if (!missing(i)) {
-            i <- .process_char_index(class(object), rownames(object), i, "i")
-            lod <- lod[i, , drop = FALSE]
-        }
-
-        if (!missing(k)) {
-            k <- .process_char_index(class(object), componentNames(object), k, "k")
-            lod <- lod[, k, drop = FALSE]
-            stab <- stab[k, drop = FALSE]
-        }
-
-        out <- callNextMethod(object, i, j, k, ...)
-        BiocGenerics:::replaceSlots(out,
-            loadings = lod, stability = stab,
-            check = FALSE
-        )
+    if (1L != length(drop) || (!missing(drop) && drop)) {
+        warning("'drop' ignored '[,", class(object), ",ANY,ANY-method'")
     }
-)
+
+    lod <- object@loadings
+    stab <- object@stability
+
+    if (!missing(i)) {
+        i <- .process_char_index(class(object), rownames(object), i, "i")
+        lod <- lod[i, , drop = FALSE]
+    }
+
+    if (!missing(k)) {
+        k <- .process_char_index(class(object), componentNames(object), k, "k")
+        lod <- lod[, k, drop = FALSE]
+        stab <- stab[k, drop = FALSE]
+    }
+
+    out <- callNextMethod(object, i, j, k, ...)
+    BiocGenerics:::replaceSlots(out,
+        loadings = lod, stability = stab,
+        check = FALSE
+    )
+})
 
 #' @rdname slice
 #' @export
 setReplaceMethod(
     "[",
     signature(x = "FactorisedExperiment", value = "FactorisedExperiment"),
-    function(x, i, j, k, ..., value) {
-        if (missing(i) & missing(j) & missing(k)) {
-            return(value)
-        }
-
-        object <- x
-        lod <- object@loadings
-        stab <- object@stability
-
-        if (!missing(i)) {
-            i <- .process_char_index(class(object), rownames(object), i, "i")
-        } else {
-            i <- seq_len(nrow(object))
-        }
-
-        if (!missing(k)) {
-            k <- .process_char_index(class(object), componentNames(object), k, "k")
-        } else {
-            k <- seq_len(nComponents(object))
-        }
-
-        stab[k] <- value@stability
-        lod[i, k] <- value@loadings
-
-        out <- callNextMethod(object, i, j, k, ..., value = value)
-        BiocGenerics:::replaceSlots(
-            out,
-            loadings = lod,
-            stability = stab,
-            check = FALSE
-        )
+    function(x, i, j, k, ..., value)
+{
+    if (missing(i) & missing(j) & missing(k)) {
+        return(value)
     }
-)
+
+    object <- x
+    lod <- object@loadings
+    stab <- object@stability
+
+    if (!missing(i)) {
+        i <- .process_char_index(class(object), rownames(object), i, "i")
+    } else {
+        i <- seq_len(nrow(object))
+    }
+
+    if (!missing(k)) {
+        k <- .process_char_index(class(object), componentNames(object), k, "k")
+    } else {
+        k <- seq_len(nComponents(object))
+    }
+
+    stab[k] <- value@stability
+    lod[i, k] <- value@loadings
+
+    out <- callNextMethod(object, i, j, k, ..., value = value)
+    BiocGenerics:::replaceSlots(
+        out,
+        loadings = lod,
+        stability = stab,
+        check = FALSE
+    )
+})
 
 # Same features/compnames, different samples
 #' @rdname cbind_rbind
@@ -395,15 +398,16 @@ setMethod("rbind", "FactorisedExperiment", function(..., deparse.level = 1) {
 #' rows of `newdata` match those of the
 #' \link[ReducedExperiment]{FactorisedExperiment} object.
 #'
-#' @param scale_reduced Whether or not the reduced data should be scaled
+#' @param standardise_reduced Whether or not the reduced data should be standardised
+#' (i.e., transformed to have a mean of 0 and standard deviation of 1)
 #' after calculation.
 #'
-#' @param scale_newdata Controls whether the `newdata` are scaled. If NULL,
+#' @param scale_newdata Controls whether the `newdata` are scaled. If `NULL`,
 #' performs scaling based on the `FactorisedExperiment`
 #' object's `scale` slot. The value of this argument will be passed to the
 #' `scale` argument of \link[base]{scale}.
 #'
-#' @param center_newdata Controls whether the `newdata` are centered If NULL,
+#' @param center_newdata Controls whether the `newdata` are centered If `NULL`,
 #' performs centering based on the
 #' `FactorisedExperiment` object's `center` slot. The
 #' value of this argument will be passed to the `center` argument of
@@ -413,14 +417,14 @@ setMethod("rbind", "FactorisedExperiment", function(..., deparse.level = 1) {
 #' object is passed as new data, this argument indicates which assay should be
 #' used for projection.
 #'
-#' @param ... Additional arguments to be passed to
-#' \link[ReducedExperiment]{projectData}.
+#' @param ... Additional arguments to be passed to `projectData.`
 #'
 #' @returns Calculates a matrix with samples as rows and factors as columns. If
-#' `newdata` was a `matrix` or `data.frame`, this will be returned as a matrix.
+#' `newdata` was a `matrix` or `data.frame`, this will be returned as a
+#' `matrix`.
 #' If a \link[SummarizedExperiment]{SummarizedExperiment} object was passed
-#' instead, then a If a `FactorisedExperiment`
-#' object will be created containing this matrix in its `reduced` slot.
+#' instead, then a `FactorisedExperiment`
+#' object will be created containing this `matrix` in its `reduced` slot.
 #'
 #' @details
 #' If `scale_newdata` and `center_newdata` are left as `NULL`, then the
@@ -458,12 +462,13 @@ NULL
 
 #' @rdname projectData
 #' @export
-setMethod("projectData", c("FactorisedExperiment", "matrix"), function(
-        object,
-        newdata,
-        scale_reduced = TRUE,
-        scale_newdata = NULL,
-        center_newdata = NULL) {
+setMethod("projectData", c("FactorisedExperiment", "matrix"),  function(
+    object,
+    newdata,
+    standardise_reduced = TRUE,
+    scale_newdata = NULL,
+    center_newdata = NULL
+) {
     if (!identical(rownames(object), rownames(newdata))) {
         stop("Rownames of x do not match those of newdata")
     }
@@ -479,7 +484,7 @@ setMethod("projectData", c("FactorisedExperiment", "matrix"), function(
     ))
     red <- .project_ica(newdata, loadings(object))
 
-    if (scale_reduced) red <- scale(red)
+    if (standardise_reduced) red <- scale(red)
 
     return(red)
 })
@@ -487,15 +492,16 @@ setMethod("projectData", c("FactorisedExperiment", "matrix"), function(
 #' @rdname projectData
 #' @export
 setMethod("projectData", c("FactorisedExperiment", "data.frame"), function(
-        object,
-        newdata,
-        scale_reduced = TRUE,
-        scale_newdata = NULL,
-        center_newdata = NULL) {
+    object,
+    newdata,
+    standardise_reduced = TRUE,
+    scale_newdata = NULL,
+    center_newdata = NULL
+) {
     return(projectData(
         object,
         as.matrix(newdata),
-        scale_reduced = scale_reduced,
+        standardise_reduced = standardise_reduced,
         scale_newdata = scale_newdata,
         center_newdata = center_newdata
     ))
@@ -504,32 +510,33 @@ setMethod("projectData", c("FactorisedExperiment", "data.frame"), function(
 #' @rdname projectData
 #' @export
 setMethod(
-    "projectData", c("FactorisedExperiment", "SummarizedExperiment"),
+    "projectData",
+    c("FactorisedExperiment", "SummarizedExperiment"),
     function(
         object,
         newdata,
-        scale_reduced = TRUE,
+        standardise_reduced = TRUE,
         scale_newdata = NULL,
         center_newdata = NULL,
-        assay_name = "normal") {
-        projected_data <- projectData(
-            object,
-            assay(newdata, assay_name),
-            scale_reduced = scale_reduced,
-            scale_newdata = scale_newdata,
-            center_newdata = center_newdata
-        )
+        assay_name = "normal"
+) {
+    projected_data <- projectData(
+        object,
+        assay(newdata, assay_name),
+        standardise_reduced = standardise_reduced,
+        scale_newdata = scale_newdata,
+        center_newdata = center_newdata
+    )
 
-        return(.se_to_fe(
-            newdata,
-            reduced = projected_data,
-            loadings = loadings(object),
-            stability = stability(object),
-            center_X = object@center,
-            scale_X = object@scale
-        ))
-    }
-)
+    return(.se_to_fe(
+        newdata,
+        reduced = projected_data,
+        loadings = loadings(object),
+        stability = stability(object),
+        center_X = object@center,
+        scale_X = object@scale
+    ))
+})
 
 #' @rdname projectData
 #' @export
@@ -543,7 +550,7 @@ setMethod("predict", c("FactorisedExperiment"), function(object, newdata, ...) {
 #' factors. Allows for the selection of features whose alignments are high
 #' relative to other features. Useful for functional interpretation of factors.
 #'
-#' @param object \link[ReducedExperiment]{FactorisedExperiment} object.
+#' @param object A \link[ReducedExperiment]{FactorisedExperiment} object.
 #'
 #' @param loading_threshold A value between 0 and 1 indicating the proportion of
 #' the maximal loading to be used as a threshold. A value of 0.5 (default) means
@@ -567,7 +574,7 @@ setMethod("predict", c("FactorisedExperiment"), function(object, newdata, ...) {
 #' @param center_loadings If `TRUE`, loadings will be centered column-wise to
 #' have a mean of 0.
 #'
-#' @returns If the `format` argument is `"list"`, then a
+#' @returns If the `format` argument is "list", then a
 #' list will be returned with an entry for each factor, each containing a vector
 #' of input features. Otherwise, if `format` is `"data.frame"`, a data.frame is
 #' returned with a row for each gene-factor combination. The `format` argument
@@ -600,21 +607,20 @@ NULL
 
 #' @rdname getAlignedFeatures
 #' @export
-setMethod("getAlignedFeatures", c("FactorisedExperiment"), function(object,
+setMethod("getAlignedFeatures", c("FactorisedExperiment"), function(
+    object,
     loading_threshold = 0.5,
     proportional_threshold = 0.01,
     feature_id_col = "rownames",
     format = "list",
-    center_loadings = FALSE) {
+    center_loadings = FALSE
+) {
     S <- loadings(
-        object,
-        scale_loadings = TRUE,
-        center_loadings = center_loadings
+        object, scale_loadings = TRUE, center_loadings = center_loadings
     )
 
-    if (feature_id_col != "rownames") {
+    if (feature_id_col != "rownames")
         rownames(S) <- rowData(object)[[feature_id_col]]
-    }
 
     abs_thresholds <- apply(S, 2, function(l) {
         max(abs(l)) * loading_threshold
@@ -628,7 +634,7 @@ setMethod("getAlignedFeatures", c("FactorisedExperiment"), function(object,
         abs_loadings <- abs(S[, f])
 
         which_features <- which(abs_loadings >= abs_thresholds[f] &
-            abs_loadings >= perc_thresholds[f])
+                                abs_loadings >= perc_thresholds[f])
 
         if (length(which_features) > 0) {
             factor_features <- rbind(factor_features, data.frame(
@@ -643,9 +649,8 @@ setMethod("getAlignedFeatures", c("FactorisedExperiment"), function(object,
     factor_features$loading_threshold <- loading_threshold
     factor_features$proportional_threshold <- proportional_threshold
 
-    factor_features <- factor_features[order(abs(factor_features$value),
-        decreasing = TRUE
-    ), ]
+    factor_features <- factor_features[
+        order(abs(factor_features$value), decreasing = TRUE), ]
     factor_features <- factor_features[order(factor_features$component), ]
 
     if (is.function(format)) {
@@ -667,13 +672,18 @@ setMethod("getAlignedFeatures", c("FactorisedExperiment"), function(object,
 
 #' Functional enrichment analyses for dimensionally-reduced data
 #'
+#' Method for applying pathway enrichment analysis to components identified
+#' through dimensionality reduction (e.g., factors or modules).
+#' Enrichment analyses are applied to each component
+#' separately.
+#'
 #' @param object \link[ReducedExperiment]{FactorisedExperiment}  or
 #' \link[ReducedExperiment]{ModularExperiment} object.
 #'
 #' @param method The method to use for identifying enriched pathways. One of
-#' `"overrepresentation"` or `"gsea"`. The overrepresentation method calls
-#' \link[clusterProfiler]{enricher} whereas the gsea method calls
-#' \link[clusterProfiler]{GSEA}. Note that GSEA is not available for modules.
+#' "overrepresentation" or "gsea". The "overrepresentation" method calls
+#' \link[clusterProfiler]{enricher} whereas the "gsea" method calls
+#' \link[clusterProfiler]{GSEA}. Note that "gsea" is not available for modules.
 #'
 #' @param feature_id_col The column in `rowData(object)` that will be used as a
 #' feature ID. Setting this to `"rownames"` (default) instead uses
@@ -684,20 +694,20 @@ setMethod("getAlignedFeatures", c("FactorisedExperiment"), function(object,
 #' either \link[clusterProfiler]{enricher}, in the case of overrepresentation
 #' analysis, or \link[clusterProfiler]{GSEA}, in the case of GSEA.
 #'
-#' @param center_loadings Factors only: If `TRUE`, loadings will be centered
+#' @param center_loadings If `TRUE`, loadings will be centered
 #' column-wise to have a mean of 0.
 #'
-#' @param abs_loadings Factors only: If `TRUE`, the absolute values of the
+#' @param abs_loadings If `TRUE`, the absolute values of the
 #' loadings will be used for enrichment analysis. If `FALSE`, the signed
 #' loadings will be used for GSEA enrichment. Note that, regardless of the
 #' value of this term, the process used to select genes for overrepresentation
 #' analysis will be based on absolute loadings.
 #'
-#' @param loading_threshold Factors only: See
+#' @param loading_threshold See
 #' \link[ReducedExperiment]{getAlignedFeatures}. Only relevant for
 #' overrepresentation analysis.
 #'
-#' @param proportional_threshold Factors only: See
+#' @param proportional_threshold See
 #' \link[ReducedExperiment]{getAlignedFeatures}. Only relevant for
 #' overrepresentation analysis.
 #'
@@ -765,31 +775,30 @@ NULL
 #' @rdname enrichment
 #' @export
 setMethod("runEnrich", c("FactorisedExperiment"), function(
-        object,
-        method = "gsea",
-        feature_id_col = "rownames",
-        center_loadings = FALSE,
-        abs_loadings = FALSE,
-        loading_threshold = 0.5,
-        proportional_threshold = 0.01,
-        as_dataframe = FALSE,
-        ...) {
+    object,
+    method = "gsea",
+    feature_id_col = "rownames",
+    center_loadings = FALSE,
+    abs_loadings = FALSE,
+    loading_threshold = 0.5,
+    proportional_threshold = 0.01,
+    as_dataframe = FALSE,
+    ...
+) {
     if (method == "gsea") {
-        loading_threshold <- NULL
-        proportional_threshold <- NULL
+        proportional_threshold <- loading_threshold <- NULL
 
         S <- loadings(
-            object,
-            scale_loadings = TRUE,
+            object, scale_loadings = TRUE,
             center_loadings = center_loadings,
             abs_loadings = abs_loadings
         )
-        if (feature_id_col != "rownames") {
-            rownames(S) <-
-                rowData(object)[[feature_id_col]]
-        }
+
+        if (feature_id_col != "rownames")
+            rownames(S) <- rowData(object)[[feature_id_col]]
 
         enrich_res <- reduced_gsea(S, ...)
+
     } else if (method == "overrepresentation") {
         factor_features <- getAlignedFeatures(object,
             feature_id_col = feature_id_col,
@@ -804,22 +813,19 @@ setMethod("runEnrich", c("FactorisedExperiment"), function(
     }
 
     for (comp in names(enrich_res)) {
-        if (!is.null(enrich_res[[comp]]@result)) {
-            if (nrow(enrich_res[[comp]]@result) >= 1) {
-                enrich_res[[comp]]@result$loading_threshold <- loading_threshold
-                enrich_res[[comp]]@result$proportional_threshold <-
-                    proportional_threshold
-                enrich_res[[comp]]@result$loadings_centered <- center_loadings
-                enrich_res[[comp]]@result$loadings_scaled <- TRUE
-                enrich_res[[comp]]@result$abs_loadings <- abs_loadings
-            }
-        }
+        if (is.null(enrich_res[[comp]]@result)) next
+        if (nrow(enrich_res[[comp]]@result) == 0) next
+
+        enrich_res[[comp]]@result$loading_threshold <- loading_threshold
+        enrich_res[[comp]]@result$proportional_threshold <-
+            proportional_threshold
+        enrich_res[[comp]]@result$loadings_centered <- center_loadings
+        enrich_res[[comp]]@result$loadings_scaled <- TRUE
+        enrich_res[[comp]]@result$abs_loadings <- abs_loadings
     }
 
     if (as_dataframe) {
-        enrich_res <- lapply(enrich_res, function(object) {
-            object@result
-        })
+        enrich_res <- lapply(enrich_res, function(object) {object@result})
         enrich_res <- do.call("rbind", enrich_res)
     }
 

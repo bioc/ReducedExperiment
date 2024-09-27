@@ -16,12 +16,12 @@
 #' \link[ReducedExperiment]{ModularExperiment}.
 #'
 #' Typically, `ReducedExperiment` objects contain two main assays. The first is,
-#' by default, named "normal" and contains some type of normalised data,
-#' such as gene expression data. The second is "transformed", which is typically
+#' by default, named "normal" and contains some type of normalised assay data,
+#' such as gene expression. The second is "transformed", which is typically
 #' the result of applying scaling and/or centering to the normalised data
 #' matrix.
 #'
-#' @param reduced A data matrix, usually the result of some type of
+#' @param reduced A `matrix`, usually the result of some type of
 #' dimensionality-reduction, with rows representing samples and columns
 #' representing a new set of features.
 #'
@@ -71,10 +71,11 @@
 #' @rdname reduced_experiment
 #' @export
 ReducedExperiment <- function(
-        reduced = new("matrix"),
-        scale = TRUE,
-        center = TRUE,
-        ...) {
+    reduced = new("matrix"),
+    scale = TRUE,
+    center = TRUE,
+    ...
+) {
     se <- SummarizedExperiment::SummarizedExperiment(...)
 
     return(.ReducedExperiment(
@@ -179,10 +180,9 @@ NULL
 
 #' @rdname reduced
 #' @export
-setMethod("reduced", "ReducedExperiment", function(
-        object,
-        scale_reduced = FALSE,
-        center_reduced = FALSE) {
+setMethod("reduced", "ReducedExperiment", function(object,
+    scale_reduced = FALSE,
+    center_reduced = FALSE) {
     return(scale(
         object@reduced,
         scale = scale_reduced,
@@ -251,9 +251,8 @@ setMethod("componentNames", "ReducedExperiment", function(object) {
 
 #' @rdname component_names
 #' @export
-setReplaceMethod("componentNames", "ReducedExperiment", function(
-        object,
-        value) {
+setReplaceMethod("componentNames", "ReducedExperiment", function(object,
+    value) {
     colnames(object@reduced) <- value
     validObject(object)
     return(object)
@@ -541,121 +540,115 @@ NULL
 #' @rdname slice
 #' @export
 setMethod(
-    "[", signature(x = "ReducedExperiment"),
-    function(x, i, j, k, ..., drop = FALSE) {
-        if (1L != length(drop) || (!missing(drop) && drop)) {
-            warning("'drop' ignored '[,", class(object), ",ANY,ANY-method'")
-        }
-
-        object <- x
-        red <- object@reduced
-        center <- object@center
-        scale <- object@scale
-
-        if (!missing(i)) {
-            i <- .process_char_index(class(object), rownames(object), i, "i")
-            if (!is.logical(center)) center <- center[i, drop = FALSE]
-            if (!is.logical(scale)) scale <- scale[i, drop = FALSE]
-        }
-
-        if (!missing(j)) {
-            j <- .process_char_index(class(object), colnames(object), j, "j")
-            red <- red[j, , drop = FALSE]
-        }
-
-        if (!missing(k)) {
-            k <- .process_char_index(class(object), componentNames(object), k, "k")
-            red <- red[, k, drop = FALSE]
-        }
-
-        out <- callNextMethod(object, i = i, j = j, ..., drop = drop)
-        BiocGenerics:::replaceSlots(
-            out,
-            reduced = red,
-            center = center,
-            scale = scale,
-            check = FALSE
-        )
+    "[",
+    signature(x = "ReducedExperiment"),
+    function(x, i, j, k, ..., drop = FALSE)
+{
+    if (1L != length(drop) || (!missing(drop) && drop)) {
+        warning("'drop' ignored '[,", class(object), ",ANY,ANY-method'")
     }
-)
+
+    object <- x
+    red <- object@reduced
+    center <- object@center
+    scale <- object@scale
+
+    if (!missing(i)) {
+        i <- .process_char_index(class(object), rownames(object), i, "i")
+        if (!is.logical(center)) center <- center[i, drop = FALSE]
+        if (!is.logical(scale)) scale <- scale[i, drop = FALSE]
+    }
+
+    if (!missing(j)) {
+        j <- .process_char_index(class(object), colnames(object), j, "j")
+        red <- red[j, , drop = FALSE]
+    }
+
+    if (!missing(k)) {
+        k <- .process_char_index(class(object), componentNames(object), k, "k")
+        red <- red[, k, drop = FALSE]
+    }
+
+    out <- callNextMethod(object, i = i, j = j, ..., drop = drop)
+    BiocGenerics:::replaceSlots(
+        out,
+        reduced = red,
+        center = center,
+        scale = scale,
+        check = FALSE
+    )
+})
 
 #' @rdname slice
 #' @export
 setReplaceMethod(
     "[",
     signature(x = "ReducedExperiment", value = "ReducedExperiment"),
-    function(x, i, j, k, ..., value) {
-        if (missing(i) & missing(j) & missing(k)) {
-            return(value)
-        }
+    function(x, i, j, k, ..., value)
+{
+    if (missing(i) & missing(j) & missing(k))
+        return(value)
 
-        object <- x
-        red <- object@reduced
-        center <- object@center
-        scale <- object@scale
+    object <- x
+    red <- object@reduced
+    center <- object@center
+    scale <- object@scale
 
-        if (!missing(i)) {
-            i <- .process_char_index(class(object), rownames(object), i, "i")
-        } else {
-            i <- seq_len(nrow(object))
-        }
-
-        if (!missing(j)) {
-            j <- .process_char_index(class(object), colnames(object), j, "j")
-        } else {
-            j <- seq_len(ncol(object))
-        }
-
-        if (!missing(k)) {
-            k <- .process_char_index(class(object), componentNames(object), k, "k")
-        } else {
-            k <- seq_len(nComponents(object))
-        }
-
-        # Setting new values for center/scale is challenging if the types do
-        # not match up - raise a warning in this case
-        if (!is.logical(center)) {
-            if (is.logical(value@center)) {
-                warning(
-                    "Original object contains a vector indicating the values",
-                    "used to center the data, whereas newdata does not.",
-                    "Setting value to that of newdata: ", value@center
-                )
-            } else {
-                center[i] <- value@center
-            }
-        }
-        if (!is.logical(scale)) {
-            if (is.logical(value@scale)) {
-                warning(
-                    "Original object contains a vector indicating the values",
-                    "used to scale the data, whereas newdata does not.",
-                    "Setting value to that of newdata: ", value@scale
-                )
-            } else {
-                scale[i] <- value@scale
-            }
-        }
-
-        red[j, k] <- value@reduced
-
-        out <- callNextMethod(object, i, j, ..., value = value)
-        out <- BiocGenerics:::replaceSlots(
-            out,
-            reduced = red,
-            center = center,
-            scale = scale,
-            check = FALSE
-        )
-
-        # Ensure names are consistent
-        featureNames(out) <- rownames(out)
-        sampleNames(out) <- rownames(out@reduced)
-        componentNames(out) <- colnames(out@reduced)
-
-        return(out)
+    if (!missing(i)) {
+        i <- .process_char_index(class(object), rownames(object), i, "i")
+    } else {
+        i <- seq_len(nrow(object))
     }
-)
+
+    if (!missing(j)) {
+        j <- .process_char_index(class(object), colnames(object), j, "j")
+    } else {
+        j <- seq_len(ncol(object))
+    }
+
+    if (!missing(k)) {
+        k <- .process_char_index(class(object), componentNames(object), k, "k")
+    } else {
+        k <- seq_len(nComponents(object))
+    }
+
+    # Raise warning if center/scale types are not the same
+    if (!is.logical(center)) {
+        if (is.logical(value@center)) {
+            warning(
+                "Original object contains a vector indicating the values",
+                "used to center the data, whereas newdata does not.",
+                "Setting value to that of newdata: ", value@center
+            )
+        } else {
+            center[i] <- value@center
+        }
+    }
+    if (!is.logical(scale)) {
+        if (is.logical(value@scale)) {
+            warning(
+                "Original object contains a vector indicating the values",
+                "used to scale the data, whereas newdata does not.",
+                "Setting value to that of newdata: ", value@scale
+            )
+        } else {
+            scale[i] <- value@scale
+        }
+    }
+
+    red[j, k] <- value@reduced
+    out <- callNextMethod(object, i, j, ..., value = value)
+    out <- BiocGenerics:::replaceSlots(
+        out, reduced = red, center = center, scale = scale, check = FALSE
+    )
+
+    # Ensure names are consistent
+    featureNames(out) <- rownames(out)
+    sampleNames(out) <- rownames(out@reduced)
+    componentNames(out) <- colnames(out@reduced)
+
+    return(out)
+})
 
 #' Combine ReducedExperiment objects by columns or rows
 #'
@@ -674,7 +667,7 @@ setReplaceMethod(
 #' containing all of the columns in the objects passed to `cbind`.
 #'
 #' @details
-#' cbind assumes that objects have identical features and
+#' `cbind` assumes that objects have identical features and
 #' components (i.e., factors or modules). If they are not, an error is returned.
 #'
 #' So, this means that the feature-level slots should be equivalent, for example
@@ -684,9 +677,9 @@ setReplaceMethod(
 #' should also be equivalent, such as the column names of the `reduced` matrix
 #' or the column names of the aformentioned factor `loadings` matrix.
 #'
-#' rbind assumes that objects have identical samples and components. If they
+#' `rbind` assumes that objects have identical samples and components. If they
 #' are not, an error is returned. This means that the sample-level slots
-#' should be equivalent, including for example the assay column names a
+#' should be equivalent, including for example the assay column names.
 #'
 #' The \link[SummarizedExperiment]{SummarizedExperiment} package includes
 #' separate methods for `cbind`
@@ -784,25 +777,7 @@ setMethod("cbind", "ReducedExperiment", function(..., deparse.level = 1) {
 setMethod("rbind", "ReducedExperiment", function(..., deparse.level = 1) {
     args <- list(...)
 
-    compnames_equal <- vapply(args, function(re) {
-        return(identical(componentNames(re), componentNames(args[[1]])))
-    }, FUN.VALUE = FALSE)
-
-    colnames_equal <- vapply(args, function(re) {
-        return(identical(colnames(re), colnames(args[[1]])))
-    }, FUN.VALUE = FALSE)
-
-    reduced_equal <- vapply(args, function(re) {
-        return(identical(re@reduced, args[[1]]@reduced))
-    }, FUN.VALUE = FALSE)
-
-    if (!all(compnames_equal)) {
-        stop("Row bind expects componentNames are equal")
-    } else if (!all(colnames_equal)) {
-        stop("Column bind expects colnames are equal")
-    } else if (!all(reduced_equal)) {
-        stop("Column bind expects reduced data are identical")
-    }
+    .rbind_checks(args)  # Check equality of other dimensions
 
     # Combine scale/center slots if numeric, else check they are equal
     if (is.logical(args[[1]]@scale)) {
@@ -846,6 +821,32 @@ setMethod("rbind", "ReducedExperiment", function(..., deparse.level = 1) {
 
     return(do.call(callNextMethod, args))
 })
+
+#' Check componentNames, colnames, reduced are identical between objects
+#'
+#' @author Jack Gisby
+#'
+#' @noRd
+#' @keywords internal
+.rbind_checks <- function(args) {
+    compnames_equal <- vapply(args, function(re) {
+        return(identical(componentNames(re), componentNames(args[[1]])))
+    }, FUN.VALUE = FALSE)
+    colnames_equal <- vapply(args, function(re) {
+        return(identical(colnames(re), colnames(args[[1]])))
+    }, FUN.VALUE = FALSE)
+    reduced_equal <- vapply(args, function(re) {
+        return(identical(re@reduced, args[[1]]@reduced))
+    }, FUN.VALUE = FALSE)
+
+    if (!all(compnames_equal)) {
+        stop("Row bind expects componentNames are equal")
+    } else if (!all(colnames_equal)) {
+        stop("Column bind expects colnames are equal")
+    } else if (!all(reduced_equal)) {
+        stop("Column bind expects reduced data are identical")
+    }
+}
 
 #' Get the dimensions of a Reducedexperiment object
 #'
@@ -939,12 +940,12 @@ setMethod("nFeatures", "ReducedExperiment", function(object) {
 #' See the `attributes` argument of \link[biomaRt]{getBM}.
 #'
 #' @param dataset The Ensembl dataset to retrieve. See the `dataset` argument
-#' of \link[biomaRt]{useEnsembl}. If `mart` is not NULL, this argument is
+#' of \link[biomaRt]{useEnsembl}. If `mart` is not `NULL`, this argument is
 #' ignored.
 #'
 #' @param mart An optional mart object to use. See the `mart` argument of
 #' \link[biomaRt]{getBM}. If provided, this object is used to query biomart
-#' for the conversion of gene IDs. If `biomart_out` is not NULL, this argument
+#' for the conversion of gene IDs. If `biomart_out` is not `NULL`, this argument
 #' is ignored.
 #'
 #' @param biomart_out An optional `data.frame` containing the output of a call
@@ -991,13 +992,14 @@ NULL
 #' @rdname get_gene_ids
 #' @export
 setMethod("getGeneIDs", "ReducedExperiment", function(
-        object,
-        gene_id_col = "rownames",
-        gene_id_type = "ensembl_gene_id",
-        ids_to_get = c("hgnc_symbol", "entrezgene_id"),
-        dataset = "hsapiens_gene_ensembl",
-        mart = NULL,
-        biomart_out = NULL) {
+    object,
+    gene_id_col = "rownames",
+    gene_id_type = "ensembl_gene_id",
+    ids_to_get = c("hgnc_symbol", "entrezgene_id"),
+    dataset = "hsapiens_gene_ensembl",
+    mart = NULL,
+    biomart_out = NULL
+) {
     if (gene_id_col == "rownames") {
         rowData(object)[[gene_id_type]] <- rownames(object)
     } else {

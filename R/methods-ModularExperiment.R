@@ -3,13 +3,17 @@
 #' @description
 #' A container inheriting from the \link[ReducedExperiment]{ReducedExperiment}
 #' class, that contains one or more data matrices, to which module analysis
-#' has been applied
-#' to identify a reduced set of features.
+#' has been applied to identify a reduced set of features.  A
+#' \link[ReducedExperiment]{ModularExperiment} can be created directly in
+#' a similar manner to a \link[SummarizedExperiment]{SummarizedExperiment}.
+#' Alternatively, the \link[ReducedExperiment]{identify_modules} function
+#' can be used to both define modules and generate a
+#' \link[ReducedExperiment]{ModularExperiment} from the results.
 #'
-#' @param reduced A data matrix, produced by module analysis, with rows
+#' @param reduced A `matrix`, produced by module analysis, with rows
 #' representing samples and columns representing module expression profiles.
 #' Typically, this matrix contains "eigengenes" produced by the Weighted Gene
-#' Correlation Network Analysis Approach, as is applied by
+#' Correlation Network Analysis (WGCNA) approach, as is applied by
 #' \link[ReducedExperiment]{identify_modules}.
 #'
 #' @param scale Either a boolean, representing whether or not the original data
@@ -31,10 +35,10 @@
 #' the first principal component of each module. The vector names represent
 #' features.
 #'
-#' @param dendrogram Either NULL, or the dendrogram used to identify modules
+#' @param dendrogram Either `NULL`, or the dendrogram used to identify modules
 #' from the original data.
 #'
-#' @param threshold Either NULL, or a matrix produced by
+#' @param threshold Either `NULL`, or a matrix produced by
 #' \link[WGCNA]{pickSoftThreshold} indicating the parameters used for network
 #' construction.
 #'
@@ -77,14 +81,16 @@
 #'
 #' @rdname modular_experiment
 #' @export
-ModularExperiment <- function(reduced = new("matrix"),
+ModularExperiment <- function(
+    reduced = new("matrix"),
     scale = TRUE,
     center = TRUE,
     loadings = NULL,
     assignments = character(),
     dendrogram = NULL,
     threshold = NULL,
-    ...) {
+    ...
+) {
     re <- ReducedExperiment(
         reduced = reduced,
         scale = scale,
@@ -176,9 +182,8 @@ NULL
 
 #' @rdname module_assignments
 #' @export
-setMethod("assignments", "ModularExperiment", function(
-        object,
-        as_list = FALSE) {
+setMethod("assignments", "ModularExperiment", function(object,
+    as_list = FALSE) {
     if (as_list) {
         a <- list()
         for (comp in componentNames(object)) {
@@ -259,10 +264,12 @@ NULL
 
 #' @rdname loadings
 #' @export
-setMethod("loadings", "ModularExperiment", function(object,
+setMethod("loadings", "ModularExperiment", function(
+    object,
     scale_loadings = FALSE,
     center_loadings = FALSE,
-    abs_loadings = FALSE) {
+    abs_loadings = FALSE
+) {
     # Return them if the loadings are NULL
     if (is.null(object@loadings)) {
         return(object@loadings)
@@ -315,8 +322,9 @@ setReplaceMethod("rownames", "ModularExperiment", function(x, value) {
 #' @rdname component_names
 #' @export
 setReplaceMethod("componentNames", "ModularExperiment", function(
-        object,
-        value) {
+    object,
+    value
+) {
     curr_names <- colnames(object@reduced)
     object <- callNextMethod(object, value)
     new_names <- colnames(object@reduced)
@@ -412,63 +420,62 @@ setReplaceMethod("dendrogram", "ModularExperiment", function(object, value) {
 setMethod(
     "[", c("ModularExperiment", "ANY", "ANY", "ANY"),
     function(x, i, j, k, ..., drop = FALSE) {
-        object <- x
+    object <- x
 
-        if (1L != length(drop) || (!missing(drop) && drop)) {
-            warning("'drop' ignored '[,", class(object), ",ANY,ANY-method'")
-        }
-
-        assignments <- object@assignments
-        lod <- object@loadings
-
-        if (!missing(i)) {
-            i <- .process_char_index(class(object), rownames(object), i, "i")
-            assignments <- assignments[i, drop = FALSE]
-            lod <- lod[i, drop = FALSE]
-        }
-
-        out <- callNextMethod(object, i, j, k, ...)
-        BiocGenerics:::replaceSlots(
-            out,
-            loadings = lod,
-            assignments = assignments,
-            check = FALSE
-        )
+    if (1L != length(drop) || (!missing(drop) && drop)) {
+        warning("'drop' ignored '[,", class(object), ",ANY,ANY-method'")
     }
-)
+
+    assignments <- object@assignments
+    lod <- object@loadings
+
+    if (!missing(i)) {
+        i <- .process_char_index(class(object), rownames(object), i, "i")
+        assignments <- assignments[i, drop = FALSE]
+        lod <- lod[i, drop = FALSE]
+    }
+
+    out <- callNextMethod(object, i, j, k, ...)
+    BiocGenerics:::replaceSlots(
+        out,
+        loadings = lod,
+        assignments = assignments,
+        check = FALSE
+    )
+})
 
 #' @rdname slice
 #' @export
 setReplaceMethod(
     "[",
     signature(x = "ModularExperiment", value = "ModularExperiment"),
-    function(x, i, j, k, ..., value) {
-        if (missing(i) & missing(j) & missing(k)) {
-            return(value)
-        }
-
-        object <- x
-        assignments <- object@assignments
-        lod <- object@loadings
-
-        if (!missing(i)) {
-            i <- .process_char_index(class(object), rownames(object), i, "i")
-        } else {
-            i <- seq_len(nrow(object))
-        }
-
-        names(assignments)[i] <- names(value@assignments)
-        lod[i] <- value@loadings
-
-        out <- callNextMethod(object, i, j, k, ..., value = value)
-        BiocGenerics:::replaceSlots(
-            out,
-            loadings = lod,
-            assignments = assignments,
-            check = FALSE
-        )
+    function(x, i, j, k, ..., value)
+{
+    if (missing(i) & missing(j) & missing(k)) {
+        return(value)
     }
-)
+
+    object <- x
+    assignments <- object@assignments
+    lod <- object@loadings
+
+    if (!missing(i)) {
+        i <- .process_char_index(class(object), rownames(object), i, "i")
+    } else {
+        i <- seq_len(nrow(object))
+    }
+
+    names(assignments)[i] <- names(value@assignments)
+    lod[i] <- value@loadings
+
+    out <- callNextMethod(object, i, j, k, ..., value = value)
+    BiocGenerics:::replaceSlots(
+        out,
+        loadings = lod,
+        assignments = assignments,
+        check = FALSE
+    )
+})
 
 # Same features/compnames, different samples
 #' @rdname cbind_rbind
@@ -515,11 +522,12 @@ setMethod("rbind", "ModularExperiment", function(..., deparse.level = 1) {
 #' @rdname enrichment
 #' @export
 setMethod("runEnrich", c("ModularExperiment"), function(
-        object,
-        method = "overrepresentation",
-        feature_id_col = "rownames",
-        as_dataframe = FALSE,
-        ...) {
+    object,
+    method = "overrepresentation",
+    feature_id_col = "rownames",
+    as_dataframe = FALSE,
+    ...
+) {
     if (method == "overrepresentation") {
         if (feature_id_col != "rownames") {
             names(object) <-
@@ -554,13 +562,13 @@ setMethod("runEnrich", c("ModularExperiment"), function(
 #' @param groupLabels Module label axis label. See
 #' \link[WGCNA]{plotDendroAndColors}.
 #'
-#' @param dendroLabels If TRUE, shows feature names in the dendrogram. See
+#' @param dendroLabels If `TRUE`, shows feature names in the dendrogram. See
 #' \link[WGCNA]{plotDendroAndColors}.
 #'
 #' @param hang The fraction of the plot height by which labels should hang
 #' below the rest of the plot. See \link[stats]{plot.hclust}.
 #'
-#' @param addGuide If TRUE, adds vertical guide lines to the dendrogram. See
+#' @param addGuide If `TRUE`, adds vertical guide lines to the dendrogram. See
 #' \link[WGCNA]{plotDendroAndColors}.
 #'
 #' @param guideHang The fraction of the dendrogram's height to leave between
@@ -568,9 +576,9 @@ setMethod("runEnrich", c("ModularExperiment"), function(
 #' \link[WGCNA]{plotDendroAndColors}.
 #'
 #' @param color_func Function for converting module names to colors. Only used
-#' if `modules_are_colors` is FALSE
+#' if `modules_are_colors` is `FALSE`.
 #'
-#' @param modules_are_colors If TRUE, expects the module names to be colors.
+#' @param modules_are_colors If `TRUE`, expects the module names to be colors.
 #' Else, assumes that module names are are numbers that can be converted into
 #' colours by `color_func`.
 #'
@@ -607,62 +615,66 @@ NULL
 #' @rdname plotDendro
 #' @export
 setMethod(
-    "plotDendro", c("ModularExperiment"),
+    "plotDendro",
+    c("ModularExperiment"),
     function(
         object, groupLabels = "Module colors", dendroLabels = FALSE,
         hang = 0.03, addGuide = TRUE, guideHang = 0.05,
-        color_func = WGCNA::labels2colors, modules_are_colors = FALSE, ...) {
-        if (!modules_are_colors) {
-            colors <- as.numeric(gsub(
-                "module_", "",
-                names(assignments(object))
-            ))
-            colors <- color_func(colors)
-        }
-
-        WGCNA::plotDendroAndColors(dendrogram(object), colors,
-            groupLabels = groupLabels,
-            dendroLabels = dendroLabels, hang = hang,
-            addGuide = addGuide, guideHang = guideHang,
-            ...
-        )
+        color_func = WGCNA::labels2colors, modules_are_colors = FALSE, ...
+) {
+    if (!modules_are_colors) {
+        colors <- as.numeric(gsub(
+            "module_", "",
+            names(assignments(object))
+        ))
+        colors <- color_func(colors)
     }
-)
+
+    WGCNA::plotDendroAndColors(dendrogram(object), colors,
+        groupLabels = groupLabels,
+        dendroLabels = dendroLabels, hang = hang,
+        addGuide = addGuide, guideHang = guideHang,
+        ...
+    )
+})
 
 #' Calculate eigengenes for new data
 #'
 #' @description
-#' Calculates eigengenes for modules in new data. If in `project` mode,
-#' functions in a similar fashion to the `predict` method of
-#' \link[stats]{prcomp}. Else, eigengenes are calculated from scratch using PCA,
-#' in a similar manner to the \link[WGCNA]{moduleEigengenes} function.
+#' Calculates eigengenes for modules in new data. By default, eigengenes are
+#' calculated from scratch using PCA, in a similar manner to the
+#' \link[WGCNA]{moduleEigengenes} function. The function also offers a
+#' projection approach, which functions in a similar fashion to the
+#' `predict` method of \link[stats]{prcomp}.
 #'
-#' @param object A \link[ReducedExperiment]{ModularExperiment} object. The
-#' `loadings` slot of this class will be used for projection. Additionally,
-#' by default, the `scale` and `center` slots are used to apply the original
-#' transformation to the new data.
+#' @param object A \link[ReducedExperiment]{ModularExperiment} object. By
+#' default, the `scale` and `center` slots are used to apply the original
+#' transformation to the new data. The
+#' `loadings` slot of this class will be used if `project` is `TRUE`.
 #'
-#' @param newdata New data for eigengenes to be calculates in. Must be a
+#' @param newdata New data for eigengenes to be calculated in. Must be a
 #' `data.frame` or `matrix` with features as rows and samples as columns, or a
 #' \link[SummarizedExperiment]{SummarizedExperiment} object. Assumes that the
 #' rows of `newdata` match those of the
 #' \link[ReducedExperiment]{ModularExperiment} object.
 #'
-#' @param project Whether to perform projection (i.e., using PCA rotation matrix
-#' from the original data to calculate modules) or calculate eigengenes from
-#' scratch in the new data (i.e., performing PCA for each module in `newdata`).
-#' By default, eigengenes are recalculated using an approach similar to
-#' \link[WGCNA]{moduleEigengenes}. Projection approach is experimental.
+#' @param project If `FALSE` (default), calculate
+#' eigengenes from
+#' scratch in the new dataset using an approach similar to
+#' \link[WGCNA]{moduleEigengenes} (i.e., performing PCA for each module in
+#' `newdata`). If `FALSE`, perform projection, using PCA rotation matrix
+#' from the original data to calculate module eigengenes. Projection approach
+#' is experimental.
 #'
 #' @param scale_reduced Whether or not the reduced data should be scaled
 #' after calculation.
 #'
-#' @param scale_newdata Controls whether the `newdata` are scaled. If NULL,
+#' @param scale_newdata Controls whether the `newdata` are scaled. If `NULL`,
 #' performs scaling based on the \link[ReducedExperiment]{ModularExperiment}
 #' object's `scale` slot. The value of this argument will be passed to the
 #' `scale` argument of \link[base]{scale}.
 #'
-#' @param center_newdata Controls whether the `newdata` are centered If NULL,
+#' @param center_newdata Controls whether the `newdata` are centered If `NULL`,
 #' performs centering based on the \link[ReducedExperiment]{ModularExperiment}
 #' object's `center` slot. The value of this argument will be passed to the
 #' `center` argument of \link[base]{scale}.
@@ -671,24 +683,24 @@ setMethod(
 #' object is passed as new data, this argument indicates which assay should be
 #' used for projection.
 #'
-#' @param realign If `project` is TRUE, this argument is ignored. Else, controls
+#' @param realign If `project` is `TRUE`, this argument is ignored. Else, controls
 #' whether eigengenes are realigned after PCA is performed to ensure the
 #' resultant signatures are positively correlated with average expression of the
 #' module. Similar to the `align` argument of \link[WGCNA]{moduleEigengenes}.
 #'
-#' @param min_module_genes If `project` is FALSE, this argument is ignores.
+#' @param min_module_genes If `project` is `FALSE`, this argument is ignores.
 #' Else, controls the minimum number of genes required in a module for
 #' projection. Projected eigengenes are not calculated for modules with sizes
 #' below this threshold.
 #'
-#' @param return_loadings If True, additionally returns the feature loadings for
+#' @param return_loadings If `TRUE`, additionally returns the feature loadings for
 #' the eigengenes.
 #'
 #' @param ... Additional arguments to be passed to
 #' \link[ReducedExperiment]{calcEigengenes}.
 #'
-#' @returns If return_loadings is True, returns a list with the "reduced" matrix
-#' and "loadings" vector (one value per feature). If False, returns only the
+#' @returns If return_loadings is `TRUE`, returns a list with the "reduced" matrix
+#' and "loadings" vector (one value per feature). If `FALSE`, returns only the
 #' reduced matrix.
 #'
 #' The reduced matrix has samples as rows and modules as columns. If
@@ -739,16 +751,15 @@ NULL
 
 #' @rdname calcEigengenes
 #' @export
-setMethod("calcEigengenes", c("ModularExperiment", "matrix"), function(
-        object,
-        newdata,
-        project = FALSE,
-        scale_reduced = TRUE,
-        return_loadings = FALSE,
-        scale_newdata = NULL,
-        center_newdata = NULL,
-        realign = TRUE,
-        min_module_genes = 10) {
+setMethod("calcEigengenes", c("ModularExperiment", "matrix"), function(object,
+    newdata,
+    project = FALSE,
+    scale_reduced = TRUE,
+    return_loadings = FALSE,
+    scale_newdata = NULL,
+    center_newdata = NULL,
+    realign = TRUE,
+    min_module_genes = 10) {
     if (!identical(rownames(object), rownames(newdata))) {
         stop("Rownames of x do not match those of newdata")
     }
@@ -796,7 +807,8 @@ setMethod("calcEigengenes", c("ModularExperiment", "matrix"), function(
 
 #' @rdname calcEigengenes
 #' @export
-setMethod("calcEigengenes", c("ModularExperiment", "data.frame"), function(object,
+setMethod("calcEigengenes", c("ModularExperiment", "data.frame"), function(
+    object,
     newdata,
     project = FALSE,
     scale_reduced = TRUE,
@@ -804,7 +816,8 @@ setMethod("calcEigengenes", c("ModularExperiment", "data.frame"), function(objec
     scale_newdata = NULL,
     center_newdata = NULL,
     realign = TRUE,
-    min_module_genes = 10) {
+    min_module_genes = 10
+) {
     return(calcEigengenes(object, as.matrix(newdata),
         project = project, return_loadings = return_loadings,
         scale_newdata = scale_newdata, center_newdata = center_newdata,
@@ -816,31 +829,27 @@ setMethod("calcEigengenes", c("ModularExperiment", "data.frame"), function(objec
 #' @rdname calcEigengenes
 #' @export
 setMethod(
-    "calcEigengenes", c("ModularExperiment", "SummarizedExperiment"),
-    function(object,
-    newdata,
-    project = FALSE,
-    scale_reduced = TRUE,
-    assay_name = "normal",
-    scale_newdata = NULL,
-    center_newdata = NULL,
-    realign = TRUE,
-    min_module_genes = 10) {
-        eig <- calcEigengenes(object, assay(newdata, assay_name),
-            project = project, return_loadings = FALSE,
-            scale_newdata = scale_newdata, center_newdata = center_newdata,
-            realign = realign,
-            scale_reduced = scale_reduced, min_module_genes = min_module_genes
-        )
+    "calcEigengenes",
+    c("ModularExperiment", "SummarizedExperiment"),
+    function(
+        object, newdata, project = FALSE, scale_reduced = TRUE,
+        assay_name = "normal", scale_newdata = NULL, center_newdata = NULL,
+        realign = TRUE, min_module_genes = 10
+) {
+    eig <- calcEigengenes(object, assay(newdata, assay_name),
+        project = project, return_loadings = FALSE,
+        scale_newdata = scale_newdata, center_newdata = center_newdata,
+        realign = realign,
+        scale_reduced = scale_reduced, min_module_genes = min_module_genes
+    )
 
-        return(.se_to_me(newdata,
-            reduced = as.matrix(eig),
-            loadings = loadings(object),
-            assignments = assignments(object),
-            center_X = object@center, scale_X = object@scale
-        ))
-    }
-)
+    return(.se_to_me(newdata,
+        reduced = as.matrix(eig),
+        loadings = loadings(object),
+        assignments = assignments(object),
+        center_X = object@center, scale_X = object@scale
+    ))
+})
 
 #' @rdname calcEigengenes
 #' @export
@@ -891,9 +900,10 @@ NULL
 #' @rdname getCentrality
 #' @export
 setMethod("getCentrality", c("ModularExperiment"), function(
-        object,
-        assay_name = "normal",
-        feature_id_col = "rownames") {
+    object,
+    assay_name = "normal",
+    feature_id_col = "rownames"
+) {
     # Get module membership (correlation with eigengene)
     signed_kme <- WGCNA::signedKME(
         t(assay(object, assay_name)),

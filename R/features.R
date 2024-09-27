@@ -8,9 +8,11 @@
 #' @noRd
 #' @keywords internal
 reduced_oa <- function(
-        component_features, database = "msigdb_c2_cp",
-        TERM2GENE = NULL, p_cutoff = 1, adj_method = "BH",
-        min_genes = 3, universe = NULL, ...) {
+    component_features, database = "msigdb_c2_cp",
+    TERM2GENE = NULL, p_cutoff = 1, adj_method = "BH",
+    min_genes = 3, universe = NULL,
+    ...
+) {
     TERM2GENE <- .get_t2g(database, TERM2GENE)
     enrich_res <- list()
 
@@ -76,10 +78,9 @@ reduced_oa <- function(
 #' @noRd
 #' @keywords internal
 .format_enrich_res <- function(
-        enrich_res_single,
-        adj_method,
-        p_cutoff,
-        min_genes = NULL) {
+    enrich_res_single, adj_method,
+    p_cutoff, min_genes = NULL
+) {
     if (is.null(enrich_res_single)) {
         return(NULL)
     }
@@ -120,8 +121,10 @@ reduced_oa <- function(
 #' @noRd
 #' @keywords internal
 reduced_gsea <- function(
-        S, database = "msigdb_c2_cp", TERM2GENE = NULL,
-        p_cutoff = 1, adj_method = "BH", nPermSimple = 1000, eps = 1e-10, ...) {
+    S, database = "msigdb_c2_cp", TERM2GENE = NULL,
+    p_cutoff = 1, adj_method = "BH", nPermSimple = 1000, eps = 1e-10,
+    ...
+) {
     TERM2GENE <- .get_t2g(database, TERM2GENE)
     enrich_res <- list()
 
@@ -162,9 +165,10 @@ reduced_gsea <- function(
 #' Get TERM2GENE dataframe from MSigDB
 #'
 #' Gets pathways from the MSigDB database in the format required by
-#' `clusterProfiler` enrichment functions. May be used as input to
-#' \link[ReducedExperiment]{runEnrich}. By default, retrieves the C2
-#' canonical pathways.
+#' `clusterProfiler` enrichment functions, such as
+#' \link[clusterProfiler]{enricher} and \link[clusterProfiler]{GSEA}.
+#' May be used as input to \link[ReducedExperiment]{runEnrich}. By default,
+#' retrieves the C2 canonical pathways.
 #'
 #' @param species The species for which to obtain MSigDB pathways. See
 #' \link[msigdbr]{msigdbr} for more details.
@@ -182,7 +186,7 @@ reduced_gsea <- function(
 #' @param gene_id The name to be given to the gene_id column of the resulting
 #' data.frame.
 #'
-#' @returns Returns a data.frame, where the "gs_name" column indicates the name
+#' @returns Returns a data.frame, where the `gs_name` column indicates the name
 #' of a pathway, and the `gene_id` column indicates genes that belong to
 #' said pathway.
 #'
@@ -200,12 +204,12 @@ reduced_gsea <- function(
 #' head(pathways)
 #'
 #' @export
-get_msigdb_t2g <- function(
-        species = "Homo sapiens",
-        category = "C2",
-        subcategory = NULL,
-        subcategory_to_remove = "CGP",
-        gene_id = "ensembl_gene") {
+get_msigdb_t2g <- function(species = "Homo sapiens",
+    category = "C2",
+    subcategory = NULL,
+    subcategory_to_remove = "CGP",
+    gene_id = "ensembl_gene"
+) {
     t2g <- data.frame(msigdbr::msigdbr(
         species = species,
         category = category,
@@ -349,12 +353,14 @@ get_common_features <- function(factor_features) {
 #' plot_common_features(common_features)
 #'
 #' @export
-plot_common_features <- function(common_features,
+plot_common_features <- function(
+    common_features,
     filename = NA,
     color = grDevices::colorRampPalette(RColorBrewer::brewer.pal(
         n = 7,
         name = "YlOrRd"
-    ))(100)) {
+    ))(100)
+) {
     common_features <- subset(common_features,
         select = c("c_1", "c_2", "intersect_prop")
     )
@@ -388,7 +394,11 @@ plot_common_features <- function(common_features,
 #' Get module preservation statistics
 #'
 #' Tests whether a set of modules defined in the reference dataset are
-#' preserved in the test dataset.
+#' preserved in the test dataset. Provides a convenient wrapper
+#' around \link[WGCNA]{modulePreservation} for
+#' \link[ReducedExperiment]{ModularExperiment} and
+#' \link[SummarizedExperiment]{SummarizedExperiment}
+#' objects.
 #'
 #' @param reference_dataset The dataset that was used to define the modules.
 #' Must be a `data.frame` or `matrix` with features as rows and samples as
@@ -416,7 +426,8 @@ plot_common_features <- function(common_features,
 #' necessary to specify the module assignments.
 #'
 #' @param greyName The name of the "module" of unassigned genes. Usually
-#' "module_0" (ReducedExperiment) or "grey" (WGCNA).
+#' "module_0" (ReducedExperiment default) or "grey" (WGCNA default). See
+#' \link[WGCNA]{modulePreservation}.
 #'
 #' @param goldName The name to be used for the "gold" module (which is made up
 #' of a random sample of all network genes). See
@@ -452,16 +463,13 @@ plot_common_features <- function(common_features,
 #' mp <- module_preservation(me_1, me_2, verbose = 0, nPermutations = 3)
 #'
 #' @export
-module_preservation <- function(reference_dataset, test_dataset,
-    reference_assay_name = "normal",
-    test_assay_name = "normal",
-    module_assignments = NULL,
-    greyName = "module_0",
-    goldName = "random",
-    networkType = "signed",
-    corFnc = "cor",
-    savePermutedStatistics = FALSE,
-    ...) {
+module_preservation <- function(
+    reference_dataset, test_dataset,
+    reference_assay_name = "normal", test_assay_name = "normal",
+    module_assignments = NULL, greyName = "module_0", goldName = "random",
+    networkType = "signed", corFnc = "cor", savePermutedStatistics = FALSE,
+    ...
+) {
     if (inherits(reference_dataset, "ModularExperiment")) {
         module_assignments <- assignments(reference_dataset)
     } else if (is.null(module_assignments)) {
@@ -509,7 +517,7 @@ module_preservation <- function(reference_dataset, test_dataset,
 #' @param module_preservation_results The output of
 #' \link[ReducedExperiment]{module_preservation}
 #'
-#' @param show_random If TRUE, shows the random module in the plots.
+#' @param show_random If `TRUE`, shows the random module in the plots.
 #'
 #' @param remove_module The name of a module to be hidden from the plots.
 #'
@@ -535,8 +543,8 @@ module_preservation <- function(reference_dataset, test_dataset,
 #' @import patchwork
 #' @export
 plot_module_preservation <- function(
-        module_preservation_results,
-        show_random = TRUE, remove_module = NULL) {
+    module_preservation_results, show_random = TRUE, remove_module = NULL
+) {
     mr_df <- module_preservation_results$preservation$observed$ref.reference$
         inColumnsAlsoPresentIn.test
     zs_df <- module_preservation_results$preservation$Z$ref.reference$

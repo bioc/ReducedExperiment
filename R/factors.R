@@ -1,9 +1,11 @@
-#' Apply dimensionality reduction using ICA
+#' Perform dimensionality reduction using Independent Component Analysis
 #'
 #' Performs independent component analysis (ICA) and packages both the input
 #' data and subsequent results into a
 #' \link[ReducedExperiment]{FactorisedExperiment} container. Calls
-#' \link[ReducedExperiment]{run_ica} to perform the analysis.
+#' \link[ReducedExperiment]{run_ica} to perform the analysis; see its
+#' documentation page for more information on the ICA method, parameters
+#' and outputs.
 #'
 #' @param X Either a \link[SummarizedExperiment]{SummarizedExperiment} object
 #' or a matrix containing data to be subject to ICA. `X` should have rows as
@@ -13,10 +15,10 @@
 #' \link[ReducedExperiment]{estimate_stability} for a method to estimate the
 #' optimal number of components.
 #'
-#' @param center_X If TRUE, X is centered (i.e., features / rows are transformed
+#' @param center_X If `TRUE`, X is centered (i.e., features / rows are transformed
 #' to have a mean of 0) prior to ICA. Generally recommended.
 #'
-#' @param scale_X If TRUE, X is scaled (i.e., features / rows are transformed
+#' @param scale_X If `TRUE`, X is scaled (i.e., features / rows are transformed
 #' to have a standard deviation of 1) before ICA.
 #'
 #' @param assay_name If `X` is a
@@ -54,12 +56,13 @@
 #'
 #' @export
 estimate_factors <- function(
-        X,
-        nc,
-        center_X = TRUE,
-        scale_X = FALSE,
-        assay_name = "normal",
-        ...) {
+    X,
+    nc,
+    center_X = TRUE,
+    scale_X = FALSE,
+    assay_name = "normal",
+    ...
+) {
     if (!inherits(X, "SummarizedExperiment")) {
         X <- SummarizedExperiment(assays = list("normal" = X))
     }
@@ -126,11 +129,12 @@ estimate_factors <- function(
     ))
 }
 
-#' Run ICA for a data matrix
+#' Run standard or stabilised Independent Component Analysis
 #'
-#' Runs ICA through \link[ica]{ica}. If `use_stability` is FALSE, then X is
+#' Runs ICA through \link[ica]{ica}. If `use_stability` is FALSE, then `X` is
 #' passed directly to \link[ica]{ica} and a standard ICA analysis is performed.
-#' If `use_stability` is TRUE, then the stabilised ICA procedure is carried out.
+#' If `use_stability` is `TRUE`, then the stabilised ICA procedure is carried
+#' out (see `details`).
 #'
 #' @param X A matrix with features as rows and columns as samples.
 #'
@@ -139,11 +143,11 @@ estimate_factors <- function(
 #' optimal number of components.
 #'
 #' @param use_stability Whether to use a stability-based approach to estimate
-#' factors. See `details` for further information
+#' factors. See `details` for further information.
 #'
-#' @param resample If TRUE, a boostrap approach is used to estimating factors.
-#' Else, random initialisation of ICA is employed. Ignored if `use_stability`
-#' is FALSE. See `details` for further information.
+#' @param resample If `TRUE`, a boostrap approach is used to estimate factors
+#' and quantify stability. Else, random initialisation of ICA is employed.
+#' Ignored if `use_stability` is `FALSE`.
 #'
 #' @param method The ICA method to use. Passed to \link[ica]{ica}, the options
 #' are "fast", "imax" or "jade".
@@ -152,47 +156,61 @@ estimate_factors <- function(
 #' with a stability below this threshold will be removed. If used, the threshold
 #' can lead to fewer factors being returned than that specified by `nc`.
 #'
-#' @param center_X If TRUE, X is centered (i.e., features / rows are transformed
+#' @param center_X If `TRUE`, X is centered (i.e., features / rows are transformed
 #' to have a mean of 0) prior to ICA. Generally recommended.
 #'
-#' @param scale_X If TRUE, X is scaled (i.e., features / rows are transformed
+#' @param scale_X If `TRUE`, X is scaled (i.e., features / rows are transformed
 #' to have a standard deviation of 1) before ICA.
 #'
-#' @param reorient_skewed If TRUE, factors are reorientated to ensure that the
+#' @param reorient_skewed If `TRUE`, factors are reorientated to ensure that the
 #' loadings of each factor (i.e., the source signal matrix) have positive skew.
 #' Helps ensure that the most influential features for each factor are
 #' positively associated with it.
 #'
-#' @param scale_components If TRUE, the loadings are standardised (to have a
+#' @param scale_components If `TRUE`, the loadings are standardised (to have a
 #' mean of 0 and standard deviation of 1).
 #'
-#' @param scale_reduced If TRUE, the reduced data (mixture matrix) are
+#' @param scale_reduced If `TRUE`, the reduced data (mixture matrix) are
 #' standardised (to have a mean of 0 and standard deviation of 1).
 #'
-#' @param n_runs The number of times to run ICA. Ignored if `use_stability` is
-#' FALSE. See `details` for further information.
+#' @param n_runs The number of times to run ICA to estimate factors and quantify
+#' stability. Ignored if `use_stability` is `FALSE`.
 #'
 #' @param BPPARAM A class containing parameters for parallel evaluation. Uses
 #' \link[BiocParallel]{SerialParam} by default, running only a single
 #' ICA computation at a time. Ignored if `use_stability`
-#' is FALSE. See `details` for further information.
+#' is `FALSE`.
 #'
 #' @param ... Additional arguments to be passed to
 #' \link[ica]{ica}.
 #'
 #' @details
-#' Function performs ICA for a data matrix. If `use_stability` is TRUE, then
+#' Function performs ICA for a data matrix. If `use_stability` is `TRUE`, then
 #' ICA is performed multiple times with either: i) random initialisation
-#' (default); or ii) bootstrap resampling of the data (if `resample` is TRUE).
+#' (default); or ii) bootstrap resampling of the data (if `resample` is `TRUE`).
 #'
 #' The stability-based ICA algorithm is similar to the the ICASSO approach
 #' (\url{https://www.cs.helsinki.fi/u/ahyvarin/papers/Himberg03.pd}) that is
 #' implemented in the stabilized-ica Python package
 #' (\url{https://github.com/ncaptier/stabilized-ica/tree/master}).
 #'
+#' In short, the stability-based algorithm consists of:
+#' \itemize{
+#'  \item Running ICA multiple times with either random initialisation or
+#'  bootstrap resampling of the input data.
+#'  \item Clustering the resulting factors across all runs based on the
+#'  signature matrix.
+#'  \item Calculating intra- (aics) and extra- (aecs) cluster
+#'  stability, and defining the final cluster stability as `aics - aecs`.
+#'  \item Calculating the cluster centrotype as the factor with the highest
+#'  intra-cluster stability.
+#'  \item Optionally removing factors below a specified stability threshold
+#' (`stability_threshold`).
+#' }
+#'
 #' Results from this function should be broadly similar to those generated by
-#' stabilized-ica, although they will not be identical. Notable differences
-#' include:
+#' other implementations of stabilised ICA, although they will not be identical.
+#' Notable differences include:
 #' \describe{
 #'  \item{ICA algorithm}{Differences in the underlying implementation of
 #'  ICA.}
@@ -212,20 +230,6 @@ estimate_factors <- function(
 #'  mixture matrix as `M = XS`. After standardisation of `M`, both approaches
 #'  return near-identical results, given that the matrix inverse was
 #'  successfully calculated.}
-#' }
-#'
-#' In short, the stability-based algorithm consists of:
-#' \itemize{
-#'  \item Running ICA multiple times with either random initialisation or
-#'  bootstrap resampling of the input data.
-#'  \item Clustering the resulting factors across all runs based on the
-#'  signature matrix.
-#'  \item Calculating intra- (aics) and extra- (aecs) cluster
-#'  stability, and defining the final cluster stability as `aics - aecs`.
-#'  \item Calculating the cluster centrotype as the factor with the highest
-#'  intra-cluster stability.
-#'  \item Optionally removing factors below a specified stability threshold
-#' (`stability_threshold`).
 #' }
 #'
 #' @returns A list containing the following:
@@ -254,11 +258,18 @@ estimate_factors <- function(
 #'
 #' @import ica
 #' @export
-run_ica <- function(X, nc, use_stability = FALSE, resample = FALSE,
-    method = "fast", stability_threshold = NULL, center_X = TRUE,
-    scale_X = FALSE, reorient_skewed = TRUE, scale_components = TRUE,
-    scale_reduced = TRUE, n_runs = 30,
-    BPPARAM = BiocParallel::SerialParam(RNGseed = 1), ...) {
+run_ica <- function(
+    X, nc,
+    use_stability = FALSE, resample = FALSE,
+    method = "fast",
+    stability_threshold = NULL,
+    center_X = TRUE, scale_X = FALSE,
+    reorient_skewed = TRUE,
+    scale_components = TRUE, scale_reduced = TRUE,
+    n_runs = 30,
+    BPPARAM = BiocParallel::SerialParam(RNGseed = 1),
+    ...
+) {
     if (center_X | scale_X) {
         X <- t(scale(t(X), center = center_X, scale = scale_X))
     }
@@ -314,9 +325,11 @@ run_ica <- function(X, nc, use_stability = FALSE, resample = FALSE,
 #'
 #' @noRd
 #' @keywords internal
-.stability_ica <- function(X, nc, resample, method, n_runs, BPPARAM,
+.stability_ica <- function(
+    X, nc, resample, method, n_runs, BPPARAM,
     stability_threshold, BPOPTIONS = bpoptions(), return_centrotypes = TRUE,
-    ...) {
+    ...
+) {
     # Run stabilized ICA in parallel (depending on BPPARAM)
     S_all <- BiocParallel::bplapply(seq_len(n_runs), .ica_random,
         BPPARAM = BPPARAM, BPOPTIONS = BPOPTIONS, X_mat = X, nc = nc,
@@ -351,12 +364,10 @@ run_ica <- function(X, nc, use_stability = FALSE, resample = FALSE,
         centrotypes[[comp]] <- S_all[, cluster_labels[which_is_centrotype]]
     }
 
-    if (!return_centrotypes) {
+    if (!return_centrotypes)
         return(list(
-            stab = stabilities, S_all = S_all,
-            S_clust = S_clust, S_cor = S_cor
+            stab = stabilities, S_all = S_all, S_clust = S_clust, S_cor = S_cor
         ))
-    }
 
     stability_order <- order(stabilities, decreasing = TRUE)
     centrotypes <- centrotypes[, stability_order]
@@ -403,6 +414,7 @@ run_ica <- function(X, nc, use_stability = FALSE, resample = FALSE,
             "indicating a rank deficiency in the input"
         )
     }
+
     return(S)
 }
 
@@ -418,10 +430,13 @@ run_ica <- function(X, nc, use_stability = FALSE, resample = FALSE,
 #' @noRd
 #' @keywords internal
 .reorient_factors <- function(S) {
+
     skew <- ifelse(apply(S, 2, moments::skewness) >= 0, 1, -1)
+
     for (i in seq_len(ncol(S))) {
         S[, i] <- S[, i] * skew[i]
     }
+
     return(S)
 }
 
@@ -456,7 +471,8 @@ run_ica <- function(X, nc, use_stability = FALSE, resample = FALSE,
 #' Estimate stability of factors as a function of the number of components
 #'
 #' Estimates the stability of factors over a range of component numbers to
-#' aid in the identification of the optimal factor number.
+#' aid in the identification of the optimal factor number. Based on the
+#' Most Stable Transcriptome Dimension (MSTD) approach (see `details`).
 #'
 #' @param X Either a \link[SummarizedExperiment]{SummarizedExperiment} object
 #' or a matrix containing data to be subject to ICA. `X` should have rows as
@@ -471,20 +487,20 @@ run_ica <- function(X, nc, use_stability = FALSE, resample = FALSE,
 #' @param by The number by which to increment the numbers of components
 #' tested.
 #'
-#' @param n_runs The number of times to run ICA. Ignored if `use_stability` is
-#' FALSE. See `details` for further information.
+#' @param n_runs The number of times to run ICA.
 #'
-#' @param resample If TRUE, a boostrap approach is used to estimating factors.
-#' Else, random initialisation of ICA is employed. Ignored if `use_stability`
-#' is FALSE. See `details` for further information.
+#' @param resample If `TRUE`, a boostrap approach is used to estimate factors
+#' and quantify stability. Else, only the random initialisation inherent to
+#' common ICA implementations is used. See the `RNGseed` argument of
+#' \link[BiocParallel]{SerialParam} if you require reproducibility.
 #'
-#' @param mean_stability_threshold The function will return the minimal
-#' number of components that exceed this stability threshold.
+#' @param mean_stability_threshold The function will estimate the optimal number
+#' of components as the minimal number that exceed this stability threshold.
 #'
-#' @param center_X If TRUE, X is centered (i.e., features / rows are transformed
+#' @param center_X If `TRUE`, `X` is centered (i.e., features / rows are transformed
 #' to have a mean of 0) prior to ICA. Generally recommended.
 #'
-#' @param scale_X If TRUE, X is scaled (i.e., features / rows are transformed
+#' @param scale_X If `TRUE`, `X` is scaled (i.e., features / rows are transformed
 #' to have a standard deviation of 1) before ICA.
 #'
 #' @param assay_name If `X` is a
@@ -493,10 +509,9 @@ run_ica <- function(X, nc, use_stability = FALSE, resample = FALSE,
 #'
 #' @param BPPARAM A class containing parameters for parallel evaluation. Uses
 #' \link[BiocParallel]{SerialParam} by default, running only a single
-#' ICA computation at a time. Ignored if `use_stability`
-#' is FALSE. See `details` for further information.
+#' ICA computation at a time.
 #'
-#' @param verbose If TRUE, shows a progress bar that updates for each
+#' @param verbose If `TRUE`, shows a progress bar that updates for each
 #' number of components tested. Note that the time taken may not be linear,
 #' because the time taken to run ICA generally increases with the number
 #' of components.
@@ -507,27 +522,27 @@ run_ica <- function(X, nc, use_stability = FALSE, resample = FALSE,
 #' @details
 #' Runs the stability-based ICA algorithm
 #' (see \link[ReducedExperiment]{run_ica}) for a range of component numbers.
-#' Estimates stability for each one, allowing for selection of the optimal
+#' Estimates stability for each, allowing for selection of the optimal
 #' number of components to be used for ICA. The results of this function
 #' can be plotted by \link[ReducedExperiment]{plot_stability}.
 #'
-#' This algorithm is similar to the Most Stable Transcriptome
+#' This algorithm is based on the Most Stable Transcriptome
 #' Dimension (MSTD) approach
 #' (\url{https://bmcgenomics.biomedcentral.com/articles/10.1186/s12864-017-4112-9}).
 #'
 #' The function automatically selects a number of components based on
-#' `mean_stability_threshold`. This choice can be made based on
-#' visualisation of the
-#' stabilities, as created by \link[ReducedExperiment]{plot_stability}. The
-#' aformentioned MSTD paper provides additional context and advice on choosing
-#' the number of components based on these data.
+#' `mean_stability_threshold`. However, this choice should be made after
+#' visualisating the stabilities as a function of the number of components,
+#' which may be done using \link[ReducedExperiment]{plot_stability}. The
+#' aformentioned MSTD paper provides additional context and advice for choosing
+#' the number of components based on these results.
 #'
 #' @returns Returns a list containing:
 #' \describe{
 #'  \item{stability}{A data.frame indicating factor stabilities as a function
 #'  of the number of components.}
-#'  \item{selected_nc}{the selected number of components based on the
-#'  `mean_stability_threshold`.}
+#'  \item{selected_nc}{a naive estimate for the optimal number of components
+#'  based on the `mean_stability_threshold`.}
 #' }
 #'
 #' @author Jack Gisby
@@ -558,11 +573,12 @@ run_ica <- function(X, nc, use_stability = FALSE, resample = FALSE,
 #'
 #' @export
 estimate_stability <- function(
-        X, min_components = 10,
-        max_components = 60, by = 2, n_runs = 30, resample = FALSE,
-        mean_stability_threshold = NULL, center_X = TRUE, scale_X = FALSE,
-        assay_name = "normal", BPPARAM = BiocParallel::SerialParam(RNGseed = 1),
-        verbose = TRUE, ...) {
+    X, min_components = 10, max_components = 60, by = 2,
+    n_runs = 30, resample = FALSE, mean_stability_threshold = NULL,
+    center_X = TRUE, scale_X = FALSE, assay_name = "normal",
+    BPPARAM = BiocParallel::SerialParam(RNGseed = 1), verbose = TRUE,
+    ...
+) {
     if (inherits(X, "SummarizedExperiment")) {
         X <- assay(X, "normal")
     }
@@ -631,8 +647,8 @@ estimate_stability <- function(
 
 #' Plot component stability as a function of the number of components
 #'
-#' Plots the results of \link[ReducedExperiment]{estimate_stability}. See the
-#' details of this function for more information.
+#' Plots the results of \link[ReducedExperiment]{estimate_stability}. See this
+#' function's documentation for more information.
 #'
 #' @param stability The results of \link[ReducedExperiment]{estimate_stability}.
 #'
@@ -642,8 +658,8 @@ estimate_stability <- function(
 #' components can be pruned by \link[ReducedExperiment]{run_ica}.
 #'
 #' @param mean_stability_threshold Plots a stability threshold, which is used
-#' by \link[ReducedExperiment]{estimate_stability} to estimate the optimal
-#' number of components.
+#' by \link[ReducedExperiment]{estimate_stability} to provide a naive estimate
+#' for the optimal number of components.
 #'
 #' @param height The height of the plot, to be passed to \link[ggplot2]{ggsave}.
 #'
@@ -684,9 +700,12 @@ estimate_stability <- function(
 #' @import patchwork
 #'
 #' @export
-plot_stability <- function(stability, plot_path = NULL,
+plot_stability <- function(
+    stability, plot_path = NULL,
     stability_threshold = NULL, mean_stability_threshold = NULL,
-    height = 4, width = 10, ...) {
+    height = 4, width = 10,
+    ...
+) {
     if (is.list(stability)) stability <- stability[["stability"]]
 
     stab_plot <- ggplot(stability, aes(

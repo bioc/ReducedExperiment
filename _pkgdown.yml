@@ -1,0 +1,4 @@
+template:
+  params:
+    extra_css: 
+      - inst/pkgdown/extra.css

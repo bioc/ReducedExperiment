@@ -40,7 +40,7 @@ Combines \link[ReducedExperiment]{ReducedExperiment} objects by columns
 (samples) or rows (features).
 }
 \details{
-cbind assumes that objects have identical features and
+\code{cbind} assumes that objects have identical features and
 components (i.e., factors or modules). If they are not, an error is returned.
 
 So, this means that the feature-level slots should be equivalent, for example
@@ -50,9 +50,9 @@ the assay rownames and values of the \code{loadings} available in
 should also be equivalent, such as the column names of the \code{reduced} matrix
 or the column names of the aformentioned factor \code{loadings} matrix.
 
-rbind assumes that objects have identical samples and components. If they
+\code{rbind} assumes that objects have identical samples and components. If they
 are not, an error is returned. This means that the sample-level slots
-should be equivalent, including for example the assay column names a
+should be equivalent, including for example the assay column names.
 
 The \link[SummarizedExperiment]{SummarizedExperiment} package includes
 separate methods for \code{cbind}

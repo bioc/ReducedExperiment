@@ -14,7 +14,7 @@ plot_module_preservation(
 \item{module_preservation_results}{The output of
 \link[ReducedExperiment]{module_preservation}}
 
-\item{show_random}{If TRUE, shows the random module in the plots.}
+\item{show_random}{If \code{TRUE}, shows the random module in the plots.}
 
 \item{remove_module}{The name of a module to be hidden from the plots.}
 }

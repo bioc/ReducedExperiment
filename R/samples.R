@@ -44,12 +44,13 @@
 #' @noRd
 #' @keywords internal
 .run_linear_model <- function(
-        X,
-        pheno,
-        formula,
-        method = "lm",
-        type = "II",
-        ...) {
+    X,
+    pheno,
+    formula,
+    method = "lm",
+    type = "II",
+    ...
+) {
     pheno$component <- X
 
     formula <- stats::as.formula(paste0("component", formula))
@@ -78,14 +79,16 @@
 
 #' Runs linear models for components and sample-level data
 #'
-#' Runs either standard linear or linear mixed models between reduced
-#' components (e.g., factors or modules) and sample-level information.
+#' Runs either standard linear or linear mixed models, with reduced components
+#' (e.g., factors or modules) as the outcomes  and sample-level information
+#' (e.g., treatment, disease status) as predictors.
 #'
 #' @param re An object inheriting from
 #' \link[ReducedExperiment]{ReducedExperiment}.
 #'
 #' @param formula The model formula to apply. Only the right hand side of the
-#' model need be specified (e.g., "~ x + y"). The left hand side represents the
+#' model need be specified (e.g., "~ x + y"). The left hand side (outcome)
+#' represents the
 #' components themselves. The variables in this formula should be present in the
 #' `colData` of `re`.
 #'
@@ -94,10 +97,10 @@
 #' model terms). If "lmer", then linear mixed models are run through
 #' \link[lmerTest]{lmer}.
 #'
-#' @param scale_reduced If TRUE, the reduced data are scaled (to have a standard
+#' @param scale_reduced If `TRUE`, the reduced data are scaled (to have a standard
 #' deviation of 1) before modelling.
 #'
-#' @param center_reduced If TRUE, the reduced data are centered (to have a mean
+#' @param center_reduced If `TRUE`, the reduced data are centered (to have a mean
 #' of 0) before modelling.
 #'
 #' @param type The type of anova to be applied to the terms of the linear model.
@@ -180,7 +183,7 @@
 #'     adj_method = "BH"
 #' )
 #'
-#' # And we can check our results again
+#' # We used a different method, but can obtain a similar summary output
 #' print(head(lmm_res$summaries[
 #'     ,
 #'     c("term", "component", "estimate", "stderr", "pvalue", "adj_pvalue")
@@ -188,14 +191,15 @@
 #'
 #' @export
 associate_components <- function(
-        re,
-        formula,
-        method = "lm",
-        scale_reduced = TRUE,
-        center_reduced = TRUE,
-        type = "II",
-        adj_method = "BH",
-        ...) {
+    re,
+    formula,
+    method = "lm",
+    scale_reduced = TRUE,
+    center_reduced = TRUE,
+    type = "II",
+    adj_method = "BH",
+    ...
+) {
     models <- list()
     summaries <- anovas <- data.frame()
 

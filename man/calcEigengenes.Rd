@@ -47,45 +47,47 @@
 \S4method{predict}{ModularExperiment}(object, newdata, ...)
 }
 \arguments{
-\item{object}{A \link[ReducedExperiment]{ModularExperiment} object. The
-\code{loadings} slot of this class will be used for projection. Additionally,
-by default, the \code{scale} and \code{center} slots are used to apply the original
-transformation to the new data.}
+\item{object}{A \link[ReducedExperiment]{ModularExperiment} object. By
+default, the \code{scale} and \code{center} slots are used to apply the original
+transformation to the new data. The
+\code{loadings} slot of this class will be used if \code{project} is \code{TRUE}.}
 
-\item{newdata}{New data for eigengenes to be calculates in. Must be a
+\item{newdata}{New data for eigengenes to be calculated in. Must be a
 \code{data.frame} or \code{matrix} with features as rows and samples as columns, or a
 \link[SummarizedExperiment]{SummarizedExperiment} object. Assumes that the
 rows of \code{newdata} match those of the
 \link[ReducedExperiment]{ModularExperiment} object.}
 
-\item{project}{Whether to perform projection (i.e., using PCA rotation matrix
-from the original data to calculate modules) or calculate eigengenes from
-scratch in the new data (i.e., performing PCA for each module in \code{newdata}).
-By default, eigengenes are recalculated using an approach similar to
-\link[WGCNA]{moduleEigengenes}. Projection approach is experimental.}
+\item{project}{If \code{FALSE} (default), calculate
+eigengenes from
+scratch in the new dataset using an approach similar to
+\link[WGCNA]{moduleEigengenes} (i.e., performing PCA for each module in
+\code{newdata}). If \code{FALSE}, perform projection, using PCA rotation matrix
+from the original data to calculate module eigengenes. Projection approach
+is experimental.}
 
 \item{scale_reduced}{Whether or not the reduced data should be scaled
 after calculation.}
 
-\item{return_loadings}{If True, additionally returns the feature loadings for
+\item{return_loadings}{If \code{TRUE}, additionally returns the feature loadings for
 the eigengenes.}
 
-\item{scale_newdata}{Controls whether the \code{newdata} are scaled. If NULL,
+\item{scale_newdata}{Controls whether the \code{newdata} are scaled. If \code{NULL},
 performs scaling based on the \link[ReducedExperiment]{ModularExperiment}
 object's \code{scale} slot. The value of this argument will be passed to the
 \code{scale} argument of \link[base]{scale}.}
 
-\item{center_newdata}{Controls whether the \code{newdata} are centered If NULL,
+\item{center_newdata}{Controls whether the \code{newdata} are centered If \code{NULL},
 performs centering based on the \link[ReducedExperiment]{ModularExperiment}
 object's \code{center} slot. The value of this argument will be passed to the
 \code{center} argument of \link[base]{scale}.}
 
-\item{realign}{If \code{project} is TRUE, this argument is ignored. Else, controls
+\item{realign}{If \code{project} is \code{TRUE}, this argument is ignored. Else, controls
 whether eigengenes are realigned after PCA is performed to ensure the
 resultant signatures are positively correlated with average expression of the
 module. Similar to the \code{align} argument of \link[WGCNA]{moduleEigengenes}.}
 
-\item{min_module_genes}{If \code{project} is FALSE, this argument is ignores.
+\item{min_module_genes}{If \code{project} is \code{FALSE}, this argument is ignores.
 Else, controls the minimum number of genes required in a module for
 projection. Projected eigengenes are not calculated for modules with sizes
 below this threshold.}
@@ -98,8 +100,8 @@ used for projection.}
 \link[ReducedExperiment]{calcEigengenes}.}
 }
 \value{
-If return_loadings is True, returns a list with the "reduced" matrix
-and "loadings" vector (one value per feature). If False, returns only the
+If return_loadings is \code{TRUE}, returns a list with the "reduced" matrix
+and "loadings" vector (one value per feature). If \code{FALSE}, returns only the
 reduced matrix.
 
 The reduced matrix has samples as rows and modules as columns. If
@@ -109,10 +111,11 @@ instead, then a If a \link[ReducedExperiment]{ModularExperiment}
 object will be created containing this matrix in its \code{reduced} slot.
 }
 \description{
-Calculates eigengenes for modules in new data. If in \code{project} mode,
-functions in a similar fashion to the \code{predict} method of
-\link[stats]{prcomp}. Else, eigengenes are calculated from scratch using PCA,
-in a similar manner to the \link[WGCNA]{moduleEigengenes} function.
+Calculates eigengenes for modules in new data. By default, eigengenes are
+calculated from scratch using PCA, in a similar manner to the
+\link[WGCNA]{moduleEigengenes} function. The function also offers a
+projection approach, which functions in a similar fashion to the
+\code{predict} method of \link[stats]{prcomp}.
 }
 \details{
 If \code{scale_newdata} and \code{center_newdata} are left as \code{NULL}, then the

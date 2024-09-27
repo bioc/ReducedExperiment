@@ -19,10 +19,10 @@ ModularExperiment(
 )
 }
 \arguments{
-\item{reduced}{A data matrix, produced by module analysis, with rows
+\item{reduced}{A \code{matrix}, produced by module analysis, with rows
 representing samples and columns representing module expression profiles.
 Typically, this matrix contains "eigengenes" produced by the Weighted Gene
-Correlation Network Analysis Approach, as is applied by
+Correlation Network Analysis (WGCNA) approach, as is applied by
 \link[ReducedExperiment]{identify_modules}.}
 
 \item{scale}{Either a boolean, representing whether or not the original data
@@ -44,10 +44,10 @@ features.}
 \item{assignments}{A vector of features, named according to the module to
 which the feature belongs.}
 
-\item{dendrogram}{Either NULL, or the dendrogram used to identify modules
+\item{dendrogram}{Either \code{NULL}, or the dendrogram used to identify modules
 from the original data.}
 
-\item{threshold}{Either NULL, or a matrix produced by
+\item{threshold}{Either \code{NULL}, or a matrix produced by
 \link[WGCNA]{pickSoftThreshold} indicating the parameters used for network
 construction.}
 
@@ -61,8 +61,12 @@ Constructor method returns a
 \description{
 A container inheriting from the \link[ReducedExperiment]{ReducedExperiment}
 class, that contains one or more data matrices, to which module analysis
-has been applied
-to identify a reduced set of features.
+has been applied to identify a reduced set of features.  A
+\link[ReducedExperiment]{ModularExperiment} can be created directly in
+a similar manner to a \link[SummarizedExperiment]{SummarizedExperiment}.
+Alternatively, the \link[ReducedExperiment]{identify_modules} function
+can be used to both define modules and generate a
+\link[ReducedExperiment]{ModularExperiment} from the results.
 }
 \examples{
 # Create randomised data with the following dimensions

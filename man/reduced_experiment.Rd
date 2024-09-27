@@ -10,7 +10,7 @@
 ReducedExperiment(reduced = new("matrix"), scale = TRUE, center = TRUE, ...)
 }
 \arguments{
-\item{reduced}{A data matrix, usually the result of some type of
+\item{reduced}{A \code{matrix}, usually the result of some type of
 dimensionality-reduction, with rows representing samples and columns
 representing a new set of features.}
 
@@ -47,8 +47,8 @@ include \link[ReducedExperiment]{FactorisedExperiment} and
 \link[ReducedExperiment]{ModularExperiment}.
 
 Typically, \code{ReducedExperiment} objects contain two main assays. The first is,
-by default, named "normal" and contains some type of normalised data,
-such as gene expression data. The second is "transformed", which is typically
+by default, named "normal" and contains some type of normalised assay data,
+such as gene expression. The second is "transformed", which is typically
 the result of applying scaling and/or centering to the normalised data
 matrix.
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/modules.R
 \name{identify_modules}
 \alias{identify_modules}
-\title{Apply dimensionality reduction using WGCNA}
+\title{Apply dimensionality reduction using Weighted Gene Correlation Network Analysis}
 \usage{
 identify_modules(
   X,
@@ -23,10 +23,10 @@ used to define modules. See the
 \link[ReducedExperiment]{assess_soft_threshold} function for aid in
 selecting this parameter.}
 
-\item{center_X}{If TRUE, X is centered (i.e., features / rows are transformed
+\item{center_X}{If \code{TRUE}, \code{X} is centered (i.e., features / rows are transformed
 to have a mean of 0) prior to WGCNA.}
 
-\item{scale_X}{If TRUE, X is scaled (i.e., features / rows are transformed
+\item{scale_X}{If \code{TRUE}, \code{X} is scaled (i.e., features / rows are transformed
 to have a standard deviation of 1) before WGCNA.}
 
 \item{assay_name}{If \code{X} is a
@@ -46,22 +46,26 @@ the \code{reduced} and \code{assignments} slots. The \code{center_X}, \code{scal
 on the arguments given to \code{identify_modules}.
 }
 \description{
-Performs Weighted gene correlation network analysis (WGCNA).
-Calls \link[ReducedExperiment]{run_wgcna} to perform the analysis.
+Performs Weighted gene correlation network analysis (WGCNA) and packages
+both the input data and subsequent results into a
+\link[ReducedExperiment]{ModularExperiment}. Calls
+\link[ReducedExperiment]{run_wgcna} to perform the analysis; see its
+documentation page for more information on the ICA method, parameters
+and outputs.
 }
 \examples{
 # Get the airway data as a SummarizedExperiment (with a subset of features)
 set.seed(2)
 airway_se <- ReducedExperiment:::.get_airway_data(n_features = 500)
 
-# Select soft-thresholding power to use
+# Select soft-thresholding power to use (use capture.output to hide WGCNA's prints)
 WGCNA::disableWGCNAThreads()
-fit_indices <- assess_soft_threshold(airway_se)
+invisible(capture.output(fit_indices <- assess_soft_threshold(airway_se)))
 estimated_power <- fit_indices$Power[fit_indices$estimated_power]
 
 # Identify modules using WGCNA
-me_1 <- identify_modules(airway_se, verbose = 0, power = estimated_power)
-me_1
+airway_me <- identify_modules(airway_se, verbose = 0, power = estimated_power)
+airway_me
 
 }
 \seealso{

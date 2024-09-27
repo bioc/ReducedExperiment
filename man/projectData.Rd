@@ -11,7 +11,7 @@
 \S4method{projectData}{FactorisedExperiment,matrix}(
   object,
   newdata,
-  scale_reduced = TRUE,
+  standardise_reduced = TRUE,
   scale_newdata = NULL,
   center_newdata = NULL
 )
@@ -19,7 +19,7 @@
 \S4method{projectData}{FactorisedExperiment,data.frame}(
   object,
   newdata,
-  scale_reduced = TRUE,
+  standardise_reduced = TRUE,
   scale_newdata = NULL,
   center_newdata = NULL
 )
@@ -27,7 +27,7 @@
 \S4method{projectData}{FactorisedExperiment,SummarizedExperiment}(
   object,
   newdata,
-  scale_reduced = TRUE,
+  standardise_reduced = TRUE,
   scale_newdata = NULL,
   center_newdata = NULL,
   assay_name = "normal"
@@ -47,15 +47,16 @@ with features as rows and samples as columns, or a
 rows of \code{newdata} match those of the
 \link[ReducedExperiment]{FactorisedExperiment} object.}
 
-\item{scale_reduced}{Whether or not the reduced data should be scaled
+\item{standardise_reduced}{Whether or not the reduced data should be standardised
+(i.e., transformed to have a mean of 0 and standard deviation of 1)
 after calculation.}
 
-\item{scale_newdata}{Controls whether the \code{newdata} are scaled. If NULL,
+\item{scale_newdata}{Controls whether the \code{newdata} are scaled. If \code{NULL},
 performs scaling based on the \code{FactorisedExperiment}
 object's \code{scale} slot. The value of this argument will be passed to the
 \code{scale} argument of \link[base]{scale}.}
 
-\item{center_newdata}{Controls whether the \code{newdata} are centered If NULL,
+\item{center_newdata}{Controls whether the \code{newdata} are centered If \code{NULL},
 performs centering based on the
 \code{FactorisedExperiment} object's \code{center} slot. The
 value of this argument will be passed to the \code{center} argument of
@@ -65,15 +66,15 @@ value of this argument will be passed to the \code{center} argument of
 object is passed as new data, this argument indicates which assay should be
 used for projection.}
 
-\item{...}{Additional arguments to be passed to
-\link[ReducedExperiment]{projectData}.}
+\item{...}{Additional arguments to be passed to \code{projectData.}}
 }
 \value{
 Calculates a matrix with samples as rows and factors as columns. If
-\code{newdata} was a \code{matrix} or \code{data.frame}, this will be returned as a matrix.
+\code{newdata} was a \code{matrix} or \code{data.frame}, this will be returned as a
+\code{matrix}.
 If a \link[SummarizedExperiment]{SummarizedExperiment} object was passed
-instead, then a If a \code{FactorisedExperiment}
-object will be created containing this matrix in its \code{reduced} slot.
+instead, then a \code{FactorisedExperiment}
+object will be created containing this \code{matrix} in its \code{reduced} slot.
 }
 \description{
 Uses a projection approach to calculate factors in new data. Functions in a
