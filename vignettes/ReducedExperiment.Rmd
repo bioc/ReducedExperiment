@@ -165,7 +165,7 @@ We ideally want to pick the maximal number of components with
 acceptable stability. Between 30-40 components, the component stability appears
 to drop off, so we move forward with 35 components.
 
-```{r estimate_stability, message=FALSE, warning=FALSE}
+```{r estimate_stability, message=FALSE, warning=FALSE, include=FALSE}
 stability_res <- estimate_stability(
     wave1_se,
     n_runs = 10,
@@ -178,9 +178,10 @@ stability_plot <- plot_stability(stability_res)
 print(stability_plot$combined_plot)
 ```
 
-These plots were made for a small test dataset. For standard datasets with
-thousands of genes, you might see a stability profile more like the one
-plotted below. You'll commonly observe an elbow in the stability plot on the
+Note that, for the sake of displaying a stability profile representative of 
+real data, the plot above was generated for the full dataset, rather than the 
+smaller test dataset we are using in this vignette. 
+You'll commonly observe an elbow in the stability plot on the
 left, which in this case appears around 30-40 components.
 
 ![](https://raw.githubusercontent.com/jackgisby/ReducedExperiment/devel/inst/stability.png)
