@@ -58,12 +58,10 @@
 #'     [WGCNA::pickSoftThreshold()]
 #'
 #' @export
-identify_modules <- function(X,
-    power,
-    center_X = TRUE,
-    scale_X = TRUE,
-    assay_name = "normal",
-    ...) {
+identify_modules <- function(
+    X, power, center_X = TRUE, scale_X = TRUE, assay_name = "normal",
+    ...
+) {
     if (!inherits(X, "SummarizedExperiment")) {
         X <- SummarizedExperiment(assays = list("normal" = X))
     }
@@ -123,14 +121,9 @@ identify_modules <- function(X,
 #' @noRd
 #' @keywords internal
 .se_to_me <- function(
-        se,
-        reduced,
-        loadings,
-        assignments,
-        center_X,
-        scale_X,
-        dendrogram = NULL,
-        threshold = NULL) {
+    se, reduced, loadings, assignments, center_X, scale_X,
+    dendrogram = NULL, threshold = NULL
+) {
     return(ModularExperiment(
         reduced = reduced, loadings = loadings, assignments = assignments,
         center = center_X, scale = scale_X,
@@ -209,7 +202,8 @@ identify_modules <- function(X,
 #' @author Jack Gisby
 #'
 #' @export
-assess_soft_threshold <- function(X,
+assess_soft_threshold <- function(
+    X,
     assay_name = "normal",
     powerVector = 1:30,
     RsquaredCut = 0.85,
@@ -218,7 +212,8 @@ assess_soft_threshold <- function(X,
     networkType = "signed",
     maxBlockSize = 30000,
     verbose = 0,
-    ...) {
+    ...
+) {
     .max_block_size_check(maxBlockSize, nrow(X))
     cor <- corFnc <- .get_cor_fn(corType) # Get correlation function
 
@@ -356,9 +351,11 @@ assess_soft_threshold <- function(X,
 #'
 #' @export
 run_wgcna <- function(
-        X, power, corType = "pearson",
-        networkType = "signed", module_labels = "numbers", maxBlockSize = 30000,
-        verbose = 0, standardise_reduced = TRUE, ...) {
+    X, power,  corType = "pearson",
+    networkType = "signed", module_labels = "numbers", maxBlockSize = 30000,
+    verbose = 0, standardise_reduced = TRUE,
+    ...
+) {
     .max_block_size_check(maxBlockSize, nrow(X))
     cor <- corFnc <- .get_cor_fn(corType) # Get correlation function
 
@@ -473,10 +470,11 @@ run_wgcna <- function(
 #' @noRd
 #' @keywords internal
 .calculate_eigengenes <- function(
-        newdata,
-        module_names,
-        module_assignments,
-        realign = TRUE) {
+    newdata,
+    module_names,
+    module_assignments,
+    realign = TRUE
+) {
     red <- data.frame(row.names = colnames(newdata))
     lod <- c()
 
@@ -518,11 +516,8 @@ run_wgcna <- function(
 #' @noRd
 #' @keywords internal
 .project_eigengenes <- function(
-        newdata,
-        module_names,
-        module_assignments,
-        lod,
-        min_module_genes) {
+    newdata, module_names, module_assignments, lod, min_module_genes
+) {
     red <- data.frame(row.names = colnames(newdata))
 
     for (m in module_names) {

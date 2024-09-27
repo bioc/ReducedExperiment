@@ -69,12 +69,14 @@
 #'
 #' @rdname factorised_experiment
 #' @export
-FactorisedExperiment <- function(reduced = new("matrix"),
+FactorisedExperiment <- function(
+    reduced = new("matrix"),
     scale = TRUE,
     center = TRUE,
     loadings = new("matrix"),
     stability = NULL,
-    ...) {
+    ...
+) {
     re <- ReducedExperiment(
         reduced = reduced,
         scale = scale,
@@ -146,10 +148,12 @@ S4Vectors::setValidity2("FactorisedExperiment", function(object) {
 
 #' @rdname loadings
 #' @export
-setMethod("loadings", "FactorisedExperiment", function(object,
+setMethod("loadings", "FactorisedExperiment", function(
+    object,
     scale_loadings = FALSE,
     center_loadings = FALSE,
-    abs_loadings = FALSE) {
+    abs_loadings = FALSE
+) {
     l <- scale(
         object@loadings,
         scale = scale_loadings,
@@ -259,73 +263,73 @@ setReplaceMethod("componentNames", "FactorisedExperiment", function(
 #' @export
 setMethod(
     "[", c("FactorisedExperiment", "ANY", "ANY", "ANY"),
-    function(x, i, j, k, ..., drop = FALSE) {
-        object <- x
+    function(x, i, j, k, ..., drop = FALSE)
+{
+    object <- x
 
-        if (1L != length(drop) || (!missing(drop) && drop)) {
-            warning("'drop' ignored '[,", class(object), ",ANY,ANY-method'")
-        }
-
-        lod <- object@loadings
-        stab <- object@stability
-
-        if (!missing(i)) {
-            i <- .process_char_index(class(object), rownames(object), i, "i")
-            lod <- lod[i, , drop = FALSE]
-        }
-
-        if (!missing(k)) {
-            k <- .process_char_index(class(object), componentNames(object), k, "k")
-            lod <- lod[, k, drop = FALSE]
-            stab <- stab[k, drop = FALSE]
-        }
-
-        out <- callNextMethod(object, i, j, k, ...)
-        BiocGenerics:::replaceSlots(out,
-            loadings = lod, stability = stab,
-            check = FALSE
-        )
+    if (1L != length(drop) || (!missing(drop) && drop)) {
+        warning("'drop' ignored '[,", class(object), ",ANY,ANY-method'")
     }
-)
+
+    lod <- object@loadings
+    stab <- object@stability
+
+    if (!missing(i)) {
+        i <- .process_char_index(class(object), rownames(object), i, "i")
+        lod <- lod[i, , drop = FALSE]
+    }
+
+    if (!missing(k)) {
+        k <- .process_char_index(class(object), componentNames(object), k, "k")
+        lod <- lod[, k, drop = FALSE]
+        stab <- stab[k, drop = FALSE]
+    }
+
+    out <- callNextMethod(object, i, j, k, ...)
+    BiocGenerics:::replaceSlots(out,
+        loadings = lod, stability = stab,
+        check = FALSE
+    )
+})
 
 #' @rdname slice
 #' @export
 setReplaceMethod(
     "[",
     signature(x = "FactorisedExperiment", value = "FactorisedExperiment"),
-    function(x, i, j, k, ..., value) {
-        if (missing(i) & missing(j) & missing(k)) {
-            return(value)
-        }
-
-        object <- x
-        lod <- object@loadings
-        stab <- object@stability
-
-        if (!missing(i)) {
-            i <- .process_char_index(class(object), rownames(object), i, "i")
-        } else {
-            i <- seq_len(nrow(object))
-        }
-
-        if (!missing(k)) {
-            k <- .process_char_index(class(object), componentNames(object), k, "k")
-        } else {
-            k <- seq_len(nComponents(object))
-        }
-
-        stab[k] <- value@stability
-        lod[i, k] <- value@loadings
-
-        out <- callNextMethod(object, i, j, k, ..., value = value)
-        BiocGenerics:::replaceSlots(
-            out,
-            loadings = lod,
-            stability = stab,
-            check = FALSE
-        )
+    function(x, i, j, k, ..., value)
+{
+    if (missing(i) & missing(j) & missing(k)) {
+        return(value)
     }
-)
+
+    object <- x
+    lod <- object@loadings
+    stab <- object@stability
+
+    if (!missing(i)) {
+        i <- .process_char_index(class(object), rownames(object), i, "i")
+    } else {
+        i <- seq_len(nrow(object))
+    }
+
+    if (!missing(k)) {
+        k <- .process_char_index(class(object), componentNames(object), k, "k")
+    } else {
+        k <- seq_len(nComponents(object))
+    }
+
+    stab[k] <- value@stability
+    lod[i, k] <- value@loadings
+
+    out <- callNextMethod(object, i, j, k, ..., value = value)
+    BiocGenerics:::replaceSlots(
+        out,
+        loadings = lod,
+        stability = stab,
+        check = FALSE
+    )
+})
 
 # Same features/compnames, different samples
 #' @rdname cbind_rbind
@@ -458,11 +462,13 @@ NULL
 
 #' @rdname projectData
 #' @export
-setMethod("projectData", c("FactorisedExperiment", "matrix"), function(object,
+setMethod("projectData", c("FactorisedExperiment", "matrix"),  function(
+    object,
     newdata,
     standardise_reduced = TRUE,
     scale_newdata = NULL,
-    center_newdata = NULL) {
+    center_newdata = NULL
+) {
     if (!identical(rownames(object), rownames(newdata))) {
         stop("Rownames of x do not match those of newdata")
     }
@@ -485,11 +491,13 @@ setMethod("projectData", c("FactorisedExperiment", "matrix"), function(object,
 
 #' @rdname projectData
 #' @export
-setMethod("projectData", c("FactorisedExperiment", "data.frame"), function(object,
+setMethod("projectData", c("FactorisedExperiment", "data.frame"), function(
+    object,
     newdata,
     standardise_reduced = TRUE,
     scale_newdata = NULL,
-    center_newdata = NULL) {
+    center_newdata = NULL
+) {
     return(projectData(
         object,
         as.matrix(newdata),
@@ -501,32 +509,33 @@ setMethod("projectData", c("FactorisedExperiment", "data.frame"), function(objec
 
 #' @rdname projectData
 #' @export
-setMethod(
-    "projectData", c("FactorisedExperiment", "SummarizedExperiment"),
-    function(object,
+setMethod("projectData",
+          c("FactorisedExperiment", "SummarizedExperiment"),
+          function(
+    object,
     newdata,
     standardise_reduced = TRUE,
     scale_newdata = NULL,
     center_newdata = NULL,
-    assay_name = "normal") {
-        projected_data <- projectData(
-            object,
-            assay(newdata, assay_name),
-            standardise_reduced = standardise_reduced,
-            scale_newdata = scale_newdata,
-            center_newdata = center_newdata
-        )
+    assay_name = "normal"
+) {
+    projected_data <- projectData(
+        object,
+        assay(newdata, assay_name),
+        standardise_reduced = standardise_reduced,
+        scale_newdata = scale_newdata,
+        center_newdata = center_newdata
+    )
 
-        return(.se_to_fe(
-            newdata,
-            reduced = projected_data,
-            loadings = loadings(object),
-            stability = stability(object),
-            center_X = object@center,
-            scale_X = object@scale
-        ))
-    }
-)
+    return(.se_to_fe(
+        newdata,
+        reduced = projected_data,
+        loadings = loadings(object),
+        stability = stability(object),
+        center_X = object@center,
+        scale_X = object@scale
+    ))
+})
 
 #' @rdname projectData
 #' @export
@@ -598,12 +607,13 @@ NULL
 #' @rdname getAlignedFeatures
 #' @export
 setMethod("getAlignedFeatures", c("FactorisedExperiment"), function(
-        object,
-        loading_threshold = 0.5,
-        proportional_threshold = 0.01,
-        feature_id_col = "rownames",
-        format = "list",
-        center_loadings = FALSE) {
+    object,
+    loading_threshold = 0.5,
+    proportional_threshold = 0.01,
+    feature_id_col = "rownames",
+    format = "list",
+    center_loadings = FALSE
+) {
     S <- loadings(
         object,
         scale_loadings = TRUE,
@@ -767,7 +777,8 @@ NULL
 
 #' @rdname enrichment
 #' @export
-setMethod("runEnrich", c("FactorisedExperiment"), function(object,
+setMethod("runEnrich", c("FactorisedExperiment"), function(
+    object,
     method = "gsea",
     feature_id_col = "rownames",
     center_loadings = FALSE,
@@ -775,7 +786,8 @@ setMethod("runEnrich", c("FactorisedExperiment"), function(object,
     loading_threshold = 0.5,
     proportional_threshold = 0.01,
     as_dataframe = FALSE,
-    ...) {
+    ...
+) {
     if (method == "gsea") {
         loading_threshold <- NULL
         proportional_threshold <- NULL

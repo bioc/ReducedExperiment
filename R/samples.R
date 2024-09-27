@@ -43,12 +43,14 @@
 #'
 #' @noRd
 #' @keywords internal
-.run_linear_model <- function(X,
+.run_linear_model <- function(
+    X,
     pheno,
     formula,
     method = "lm",
     type = "II",
-    ...) {
+    ...
+) {
     pheno$component <- X
 
     formula <- stats::as.formula(paste0("component", formula))
@@ -188,14 +190,16 @@
 #' ]))
 #'
 #' @export
-associate_components <- function(re,
+associate_components <- function(
+    re,
     formula,
     method = "lm",
     scale_reduced = TRUE,
     center_reduced = TRUE,
     type = "II",
     adj_method = "BH",
-    ...) {
+    ...
+) {
     models <- list()
     summaries <- anovas <- data.frame()
 

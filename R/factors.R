@@ -55,12 +55,14 @@
 #' fe_2
 #'
 #' @export
-estimate_factors <- function(X,
+estimate_factors <- function(
+    X,
     nc,
     center_X = TRUE,
     scale_X = FALSE,
     assay_name = "normal",
-    ...) {
+    ...
+) {
     if (!inherits(X, "SummarizedExperiment")) {
         X <- SummarizedExperiment(assays = list("normal" = X))
     }
@@ -257,11 +259,17 @@ estimate_factors <- function(X,
 #' @import ica
 #' @export
 run_ica <- function(
-        X, nc, use_stability = FALSE, resample = FALSE,
-        method = "fast", stability_threshold = NULL, center_X = TRUE,
-        scale_X = FALSE, reorient_skewed = TRUE, scale_components = TRUE,
-        scale_reduced = TRUE, n_runs = 30,
-        BPPARAM = BiocParallel::SerialParam(RNGseed = 1), ...) {
+    X, nc,
+    use_stability = FALSE, resample = FALSE,
+    method = "fast",
+    stability_threshold = NULL,
+    center_X = TRUE, scale_X = FALSE,
+    reorient_skewed = TRUE,
+    scale_components = TRUE, scale_reduced = TRUE,
+    n_runs = 30,
+    BPPARAM = BiocParallel::SerialParam(RNGseed = 1),
+    ...
+) {
     if (center_X | scale_X) {
         X <- t(scale(t(X), center = center_X, scale = scale_X))
     }
@@ -318,9 +326,10 @@ run_ica <- function(
 #' @noRd
 #' @keywords internal
 .stability_ica <- function(
-        X, nc, resample, method, n_runs, BPPARAM,
-        stability_threshold, BPOPTIONS = bpoptions(), return_centrotypes = TRUE,
-        ...) {
+    X, nc, resample, method, n_runs, BPPARAM,
+    stability_threshold, BPOPTIONS = bpoptions(), return_centrotypes = TRUE,
+    ...
+) {
     # Run stabilized ICA in parallel (depending on BPPARAM)
     S_all <- BiocParallel::bplapply(seq_len(n_runs), .ica_random,
         BPPARAM = BPPARAM, BPOPTIONS = BPOPTIONS, X_mat = X, nc = nc,
@@ -407,6 +416,7 @@ run_ica <- function(
             "indicating a rank deficiency in the input"
         )
     }
+
     return(S)
 }
 
@@ -422,10 +432,13 @@ run_ica <- function(
 #' @noRd
 #' @keywords internal
 .reorient_factors <- function(S) {
+
     skew <- ifelse(apply(S, 2, moments::skewness) >= 0, 1, -1)
+
     for (i in seq_len(ncol(S))) {
         S[, i] <- S[, i] * skew[i]
     }
+
     return(S)
 }
 
@@ -561,11 +574,13 @@ run_ica <- function(
 #' )
 #'
 #' @export
-estimate_stability <- function(X, min_components = 10,
-    max_components = 60, by = 2, n_runs = 30, resample = FALSE,
-    mean_stability_threshold = NULL, center_X = TRUE, scale_X = FALSE,
-    assay_name = "normal", BPPARAM = BiocParallel::SerialParam(RNGseed = 1),
-    verbose = TRUE, ...) {
+estimate_stability <- function(
+    X, min_components = 10, max_components = 60, by = 2,
+    n_runs = 30, resample = FALSE, mean_stability_threshold = NULL,
+    center_X = TRUE, scale_X = FALSE, assay_name = "normal",
+    BPPARAM = BiocParallel::SerialParam(RNGseed = 1), verbose = TRUE,
+    ...
+) {
     if (inherits(X, "SummarizedExperiment")) {
         X <- assay(X, "normal")
     }
@@ -688,9 +703,11 @@ estimate_stability <- function(X, min_components = 10,
 #'
 #' @export
 plot_stability <- function(
-        stability, plot_path = NULL,
-        stability_threshold = NULL, mean_stability_threshold = NULL,
-        height = 4, width = 10, ...) {
+    stability, plot_path = NULL,
+    stability_threshold = NULL, mean_stability_threshold = NULL,
+    height = 4, width = 10,
+    ...
+) {
     if (is.list(stability)) stability <- stability[["stability"]]
 
     stab_plot <- ggplot(stability, aes(
