@@ -1,4 +1,5 @@
+url: https://jackgisby.github.io/ReducedExperiment/
+
 template:
-  params:
-    extra_css: 
-      - inst/pkgdown/extra.css
+  bootstrap: 5
+  bootswatch: flatly
