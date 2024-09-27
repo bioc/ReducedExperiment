@@ -14,7 +14,8 @@ vignette: >
 
 # Installation
 
-Install the package - currently only available on GitHub. 
+The release version of the package may be installed from Bioconductor, 
+as follows:
 
 ```{r setup, include = FALSE}
 BiocStyle::markdown()
@@ -32,13 +33,18 @@ library(ggplot2)
 theme_set(theme_bw())
 ```
 
-```{r install_package, eval=FALSE}
+```{r install_bioc, eval=FALSE}
 if (!requireNamespace("BiocManager", quietly = TRUE)) {
     install.packages("BiocManager")
 }
 
-# BiocManager::install("ReducedExperiment")
+BiocManager::install("ReducedExperiment")
+```
 
+Or the development version may be installed, from 
+[GitHub](https://github.com/jackgisby/ReducedExperiment):
+
+```{r install_gh, eval=FALSE}
 devtools::install_github("jackgisby/ReducedExperiment")
 ```
 
