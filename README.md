@@ -215,21 +215,20 @@ in R.
 print(citation("ReducedExperiment"), bibtex = TRUE)
 #> To cite package 'ReducedExperiment' in publications use:
 #> 
-#>   jackgisby (2024). _ReducedExperiment_.
+#>   Gisby JS, Barnes MR (2024). _ReducedExperiment: Containers and tools
+#>   for dimensionally-reduced -omics data_.
 #>   doi:10.18129/B9.bioc.ReducedExperiment
-#>   <https://doi.org/10.18129/B9.bioc.ReducedExperiment>,
-#>   https://github.com/jackgisby/ReducedExperiment/ReducedExperiment - R
-#>   package version 0.99.0,
+#>   <https://doi.org/10.18129/B9.bioc.ReducedExperiment>, v0.99.0,
 #>   <http://www.bioconductor.org/packages/ReducedExperiment>.
 #> 
 #> A BibTeX entry for LaTeX users is
 #> 
 #>   @Manual{,
-#>     title = {ReducedExperiment},
-#>     author = {{jackgisby}},
+#>     title = {ReducedExperiment: Containers and tools for dimensionally-reduced -omics data},
+#>     author = {Jack S. Gisby and Michael R. Barnes},
 #>     year = {2024},
 #>     url = {http://www.bioconductor.org/packages/ReducedExperiment},
-#>     note = {https://github.com/jackgisby/ReducedExperiment/ReducedExperiment - R package version 0.99.0},
+#>     note = {v0.99.0},
 #>     doi = {10.18129/B9.bioc.ReducedExperiment},
 #>   }
 ```
