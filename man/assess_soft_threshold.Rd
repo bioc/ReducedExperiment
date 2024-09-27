@@ -81,6 +81,19 @@ The \code{assess_soft_threshold} function mirrors this behaviour when
 specified, however, we additionally require that the selected power
 does not exceed this connectivity threshold.
 }
+\examples{
+# Get the airway data as a SummarizedExperiment (with a subset of features)
+set.seed(2)
+airway_se <- ReducedExperiment:::.get_airway_data(n_features = 500)
+
+# Select soft-thresholding power to use (use capture.output to hide WGCNA's prints)
+WGCNA::disableWGCNAThreads()
+invisible(capture.output(fit_indices <- assess_soft_threshold(airway_se)))
+
+print(fit_indices)
+print(paste0("Estimated power: ", fit_indices$Power[fit_indices$estimated_power]))
+
+}
 \seealso{
 \code{\link[WGCNA:pickSoftThreshold]{WGCNA::pickSoftThreshold()}},
 \code{\link[=run_wgcna]{run_wgcna()}}

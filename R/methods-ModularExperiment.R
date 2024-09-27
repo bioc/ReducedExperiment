@@ -446,10 +446,11 @@ setMethod(
 
 #' @rdname slice
 #' @export
-setReplaceMethod("[",
-                 signature(x = "ModularExperiment",
-                           value = "ModularExperiment"),
-                 function(x, i, j, k, ..., value) {
+setReplaceMethod(
+    "[",
+    signature(x = "ModularExperiment", value = "ModularExperiment"),
+    function(x, i, j, k, ..., value)
+{
     if (missing(i) & missing(j) & missing(k)) {
         return(value)
     }
@@ -613,12 +614,13 @@ NULL
 
 #' @rdname plotDendro
 #' @export
-setMethod("plotDendro", c("ModularExperiment"),
-          function(
-    object, groupLabels = "Module colors", dendroLabels = FALSE,
-    hang = 0.03, addGuide = TRUE, guideHang = 0.05,
-    color_func = WGCNA::labels2colors, modules_are_colors = FALSE,
-    ...
+setMethod(
+    "plotDendro",
+    c("ModularExperiment"),
+    function(
+        object, groupLabels = "Module colors", dendroLabels = FALSE,
+        hang = 0.03, addGuide = TRUE, guideHang = 0.05,
+        color_func = WGCNA::labels2colors, modules_are_colors = FALSE, ...
 ) {
     if (!modules_are_colors) {
         colors <- as.numeric(gsub(
@@ -826,17 +828,13 @@ setMethod("calcEigengenes", c("ModularExperiment", "data.frame"), function(
 
 #' @rdname calcEigengenes
 #' @export
-setMethod("calcEigengenes", c("ModularExperiment", "SummarizedExperiment"),
-          function(
-    object,
-    newdata,
-    project = FALSE,
-    scale_reduced = TRUE,
-    assay_name = "normal",
-    scale_newdata = NULL,
-    center_newdata = NULL,
-    realign = TRUE,
-    min_module_genes = 10
+setMethod(
+    "calcEigengenes",
+    c("ModularExperiment", "SummarizedExperiment"),
+    function(
+        object, newdata, project = FALSE, scale_reduced = TRUE,
+        assay_name = "normal", scale_newdata = NULL, center_newdata = NULL,
+        realign = TRUE, min_module_genes = 10
 ) {
     eig <- calcEigengenes(object, assay(newdata, assay_name),
         project = project, return_loadings = FALSE,

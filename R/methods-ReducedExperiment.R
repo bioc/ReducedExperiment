@@ -539,8 +539,11 @@ NULL
 
 #' @rdname slice
 #' @export
-setMethod("[", signature(x = "ReducedExperiment"),
-          function(x, i, j, k, ..., drop = FALSE) {
+setMethod(
+    "[",
+    signature(x = "ReducedExperiment"),
+    function(x, i, j, k, ..., drop = FALSE)
+{
     if (1L != length(drop) || (!missing(drop) && drop)) {
         warning("'drop' ignored '[,", class(object), ",ANY,ANY-method'")
     }
@@ -578,12 +581,13 @@ setMethod("[", signature(x = "ReducedExperiment"),
 
 #' @rdname slice
 #' @export
-setReplaceMethod("[",
-                 signature(x = "ReducedExperiment", value = "ReducedExperiment"),
-                 function(x, i, j, k, ..., value) {
-    if (missing(i) & missing(j) & missing(k)) {
+setReplaceMethod(
+    "[",
+    signature(x = "ReducedExperiment", value = "ReducedExperiment"),
+    function(x, i, j, k, ..., value)
+{
+    if (missing(i) & missing(j) & missing(k))
         return(value)
-    }
 
     object <- x
     red <- object@reduced
@@ -608,8 +612,7 @@ setReplaceMethod("[",
         k <- seq_len(nComponents(object))
     }
 
-    # Setting new values for center/scale is challenging if the types do
-    # not match up - raise a warning in this case
+    # Raise warning if center/scale types are not the same
     if (!is.logical(center)) {
         if (is.logical(value@center)) {
             warning(
@@ -634,14 +637,9 @@ setReplaceMethod("[",
     }
 
     red[j, k] <- value@reduced
-
     out <- callNextMethod(object, i, j, ..., value = value)
     out <- BiocGenerics:::replaceSlots(
-        out,
-        reduced = red,
-        center = center,
-        scale = scale,
-        check = FALSE
+        out, reduced = red, center = center, scale = scale, check = FALSE
     )
 
     # Ensure names are consistent
@@ -779,25 +777,7 @@ setMethod("cbind", "ReducedExperiment", function(..., deparse.level = 1) {
 setMethod("rbind", "ReducedExperiment", function(..., deparse.level = 1) {
     args <- list(...)
 
-    compnames_equal <- vapply(args, function(re) {
-        return(identical(componentNames(re), componentNames(args[[1]])))
-    }, FUN.VALUE = FALSE)
-
-    colnames_equal <- vapply(args, function(re) {
-        return(identical(colnames(re), colnames(args[[1]])))
-    }, FUN.VALUE = FALSE)
-
-    reduced_equal <- vapply(args, function(re) {
-        return(identical(re@reduced, args[[1]]@reduced))
-    }, FUN.VALUE = FALSE)
-
-    if (!all(compnames_equal)) {
-        stop("Row bind expects componentNames are equal")
-    } else if (!all(colnames_equal)) {
-        stop("Column bind expects colnames are equal")
-    } else if (!all(reduced_equal)) {
-        stop("Column bind expects reduced data are identical")
-    }
+    .rbind_checks(args)  # Check equality of other dimensions
 
     # Combine scale/center slots if numeric, else check they are equal
     if (is.logical(args[[1]]@scale)) {
@@ -841,6 +821,32 @@ setMethod("rbind", "ReducedExperiment", function(..., deparse.level = 1) {
 
     return(do.call(callNextMethod, args))
 })
+
+#' Check componentNames, colnames, reduced are identical between objects
+#'
+#' @author Jack Gisby
+#'
+#' @noRd
+#' @keywords internal
+.rbind_checks <- function(args) {
+    compnames_equal <- vapply(args, function(re) {
+        return(identical(componentNames(re), componentNames(args[[1]])))
+    }, FUN.VALUE = FALSE)
+    colnames_equal <- vapply(args, function(re) {
+        return(identical(colnames(re), colnames(args[[1]])))
+    }, FUN.VALUE = FALSE)
+    reduced_equal <- vapply(args, function(re) {
+        return(identical(re@reduced, args[[1]]@reduced))
+    }, FUN.VALUE = FALSE)
+
+    if (!all(compnames_equal)) {
+        stop("Row bind expects componentNames are equal")
+    } else if (!all(colnames_equal)) {
+        stop("Column bind expects colnames are equal")
+    } else if (!all(reduced_equal)) {
+        stop("Column bind expects reduced data are identical")
+    }
+}
 
 #' Get the dimensions of a Reducedexperiment object
 #'

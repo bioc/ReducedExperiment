@@ -364,12 +364,10 @@ run_ica <- function(
         centrotypes[[comp]] <- S_all[, cluster_labels[which_is_centrotype]]
     }
 
-    if (!return_centrotypes) {
+    if (!return_centrotypes)
         return(list(
-            stab = stabilities, S_all = S_all,
-            S_clust = S_clust, S_cor = S_cor
+            stab = stabilities, S_all = S_all, S_clust = S_clust, S_cor = S_cor
         ))
-    }
 
     stability_order <- order(stabilities, decreasing = TRUE)
     centrotypes <- centrotypes[, stability_order]

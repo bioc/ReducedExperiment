@@ -44,9 +44,9 @@
 #' set.seed(2)
 #' airway_se <- ReducedExperiment:::.get_airway_data(n_features = 500)
 #'
-#' # Select soft-thresholding power to use
+#' # Select soft-thresholding power to use (use capture.output to hide WGCNA's prints)
 #' WGCNA::disableWGCNAThreads()
-#' fit_indices <- assess_soft_threshold(airway_se)
+#' invisible(capture.output(fit_indices <- assess_soft_threshold(airway_se)))
 #' estimated_power <- fit_indices$Power[fit_indices$estimated_power]
 #'
 #' # Identify modules using WGCNA
@@ -196,6 +196,18 @@ identify_modules <- function(
 #' specified, however, we additionally require that the selected power
 #' does not exceed this connectivity threshold.
 #'
+#' @examples
+#' # Get the airway data as a SummarizedExperiment (with a subset of features)
+#' set.seed(2)
+#' airway_se <- ReducedExperiment:::.get_airway_data(n_features = 500)
+#'
+#' # Select soft-thresholding power to use (use capture.output to hide WGCNA's prints)
+#' WGCNA::disableWGCNAThreads()
+#' invisible(capture.output(fit_indices <- assess_soft_threshold(airway_se)))
+#'
+#' print(fit_indices)
+#' print(paste0("Estimated power: ", fit_indices$Power[fit_indices$estimated_power]))
+#'
 #' @seealso [WGCNA::pickSoftThreshold()],
 #'     [ReducedExperiment::run_wgcna()]
 #'
@@ -203,23 +215,15 @@ identify_modules <- function(
 #'
 #' @export
 assess_soft_threshold <- function(
-    X,
-    assay_name = "normal",
-    powerVector = 1:30,
-    RsquaredCut = 0.85,
-    max_mean_connectivity = 100,
-    corType = "pearson",
-    networkType = "signed",
-    maxBlockSize = 30000,
-    verbose = 0,
-    ...
+    X, assay_name = "normal", powerVector = 1:30, RsquaredCut = 0.85,
+    max_mean_connectivity = 100, corType = "pearson", networkType = "signed",
+    maxBlockSize = 30000, verbose = 0, ...
 ) {
     .max_block_size_check(maxBlockSize, nrow(X))
     cor <- corFnc <- .get_cor_fn(corType) # Get correlation function
 
-    if (inherits(X, "SummarizedExperiment")) {
+    if (inherits(X, "SummarizedExperiment"))
         X <- assay(X, assay_name)
-    }
 
     # Apply soft thresholding function
     threshold_output <- WGCNA::pickSoftThreshold(
@@ -239,7 +243,7 @@ assess_soft_threshold <- function(
     } else {
         which_power <- which(
             fit_indices$SFT.R.sq > RsquaredCut &
-                fit_indices$mean.k. < max_mean_connectivity
+            fit_indices$mean.k. < max_mean_connectivity
         )
 
         if (length(which_power) == 0) {
@@ -247,16 +251,14 @@ assess_soft_threshold <- function(
                 "No power with r_squared > ", RsquaredCut,
                 " and mean connectivity < ", max_mean_connectivity
             )
-
             best_power <- NULL
         } else {
             best_power <- min(fit_indices$Power[which_power])
         }
     }
 
-    if (!is.null(best_power)) {
+    if (!is.null(best_power))
         fit_indices$estimated_power <- fit_indices$Power == best_power
-    }
 
     return(fit_indices)
 }
@@ -367,23 +369,19 @@ run_wgcna <- function(
 
     d <- if (length(bwms$dendrograms) == 1) bwms$dendrograms[[1]] else NULL
     wgcna_res <- list(
-        "assignments" = bwms$colors,
-        "E" = bwms$MEs,
-        "dendrogram" = d
+        "assignments" = bwms$colors, "E" = bwms$MEs, "dendrogram" = d
     )
 
     original_E <- wgcna_res$E
     colnames(wgcna_res$E) <- gsub("ME", "", colnames(wgcna_res$E))
 
-    if (module_labels == "numbers") { # Convert colours to numbers
+    if (module_labels == "numbers") {  # Convert colours to numbers
         converter <- .colors2numbers(wgcna_res$assignments)
         wgcna_res$assignments <- vapply(
-            wgcna_res$assignments, converter,
-            FUN.VALUE = 1
+            wgcna_res$assignments, converter, FUN.VALUE = 1
         )
         colnames(wgcna_res$E) <- vapply(
-            colnames(wgcna_res$E), converter,
-            FUN.VALUE = 1
+            colnames(wgcna_res$E), converter, FUN.VALUE = 1
         )
     } else if (!module_labels %in% c("colors", "colours")) {
         stop("Value of `module_labels` does not correspond to a valid option")
@@ -398,10 +396,7 @@ run_wgcna <- function(
 
     original_E <- wgcna_res$E
     recalculated_E <- .calculate_eigengenes(
-        X,
-        colnames(wgcna_res$E),
-        wgcna_res$assignments,
-        realign = TRUE
+        X, colnames(wgcna_res$E), wgcna_res$assignments, realign = TRUE
     )
 
     wgcna_res$E <- recalculated_E$reduced

@@ -58,9 +58,9 @@ and outputs.
 set.seed(2)
 airway_se <- ReducedExperiment:::.get_airway_data(n_features = 500)
 
-# Select soft-thresholding power to use
+# Select soft-thresholding power to use (use capture.output to hide WGCNA's prints)
 WGCNA::disableWGCNAThreads()
-fit_indices <- assess_soft_threshold(airway_se)
+invisible(capture.output(fit_indices <- assess_soft_threshold(airway_se)))
 estimated_power <- fit_indices$Power[fit_indices$estimated_power]
 
 # Identify modules using WGCNA

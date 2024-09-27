@@ -509,15 +509,16 @@ setMethod("projectData", c("FactorisedExperiment", "data.frame"), function(
 
 #' @rdname projectData
 #' @export
-setMethod("projectData",
-          c("FactorisedExperiment", "SummarizedExperiment"),
-          function(
-    object,
-    newdata,
-    standardise_reduced = TRUE,
-    scale_newdata = NULL,
-    center_newdata = NULL,
-    assay_name = "normal"
+setMethod(
+    "projectData",
+    c("FactorisedExperiment", "SummarizedExperiment"),
+    function(
+        object,
+        newdata,
+        standardise_reduced = TRUE,
+        scale_newdata = NULL,
+        center_newdata = NULL,
+        assay_name = "normal"
 ) {
     projected_data <- projectData(
         object,
@@ -615,14 +616,11 @@ setMethod("getAlignedFeatures", c("FactorisedExperiment"), function(
     center_loadings = FALSE
 ) {
     S <- loadings(
-        object,
-        scale_loadings = TRUE,
-        center_loadings = center_loadings
+        object, scale_loadings = TRUE, center_loadings = center_loadings
     )
 
-    if (feature_id_col != "rownames") {
+    if (feature_id_col != "rownames")
         rownames(S) <- rowData(object)[[feature_id_col]]
-    }
 
     abs_thresholds <- apply(S, 2, function(l) {
         max(abs(l)) * loading_threshold
@@ -636,7 +634,7 @@ setMethod("getAlignedFeatures", c("FactorisedExperiment"), function(
         abs_loadings <- abs(S[, f])
 
         which_features <- which(abs_loadings >= abs_thresholds[f] &
-            abs_loadings >= perc_thresholds[f])
+                                abs_loadings >= perc_thresholds[f])
 
         if (length(which_features) > 0) {
             factor_features <- rbind(factor_features, data.frame(
@@ -651,9 +649,8 @@ setMethod("getAlignedFeatures", c("FactorisedExperiment"), function(
     factor_features$loading_threshold <- loading_threshold
     factor_features$proportional_threshold <- proportional_threshold
 
-    factor_features <- factor_features[order(abs(factor_features$value),
-        decreasing = TRUE
-    ), ]
+    factor_features <- factor_features[
+        order(abs(factor_features$value), decreasing = TRUE), ]
     factor_features <- factor_features[order(factor_features$component), ]
 
     if (is.function(format)) {
@@ -789,21 +786,19 @@ setMethod("runEnrich", c("FactorisedExperiment"), function(
     ...
 ) {
     if (method == "gsea") {
-        loading_threshold <- NULL
-        proportional_threshold <- NULL
+        proportional_threshold <- loading_threshold <- NULL
 
         S <- loadings(
-            object,
-            scale_loadings = TRUE,
+            object, scale_loadings = TRUE,
             center_loadings = center_loadings,
             abs_loadings = abs_loadings
         )
-        if (feature_id_col != "rownames") {
-            rownames(S) <-
-                rowData(object)[[feature_id_col]]
-        }
+
+        if (feature_id_col != "rownames")
+            rownames(S) <- rowData(object)[[feature_id_col]]
 
         enrich_res <- reduced_gsea(S, ...)
+
     } else if (method == "overrepresentation") {
         factor_features <- getAlignedFeatures(object,
             feature_id_col = feature_id_col,
@@ -818,22 +813,19 @@ setMethod("runEnrich", c("FactorisedExperiment"), function(
     }
 
     for (comp in names(enrich_res)) {
-        if (!is.null(enrich_res[[comp]]@result)) {
-            if (nrow(enrich_res[[comp]]@result) >= 1) {
-                enrich_res[[comp]]@result$loading_threshold <- loading_threshold
-                enrich_res[[comp]]@result$proportional_threshold <-
-                    proportional_threshold
-                enrich_res[[comp]]@result$loadings_centered <- center_loadings
-                enrich_res[[comp]]@result$loadings_scaled <- TRUE
-                enrich_res[[comp]]@result$abs_loadings <- abs_loadings
-            }
-        }
+        if (is.null(enrich_res[[comp]]@result)) next
+        if (nrow(enrich_res[[comp]]@result) == 0) next
+
+        enrich_res[[comp]]@result$loading_threshold <- loading_threshold
+        enrich_res[[comp]]@result$proportional_threshold <-
+            proportional_threshold
+        enrich_res[[comp]]@result$loadings_centered <- center_loadings
+        enrich_res[[comp]]@result$loadings_scaled <- TRUE
+        enrich_res[[comp]]@result$abs_loadings <- abs_loadings
     }
 
     if (as_dataframe) {
-        enrich_res <- lapply(enrich_res, function(object) {
-            object@result
-        })
+        enrich_res <- lapply(enrich_res, function(object) {object@result})
         enrich_res <- do.call("rbind", enrich_res)
     }
 
