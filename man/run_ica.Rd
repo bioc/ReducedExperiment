@@ -144,8 +144,8 @@ X <- ReducedExperiment:::.makeRandomData(100, 20, "feature", "obs")
 # Run standard ICA on the data with 5 components
 ica_res <- run_ica(X, nc = 5, use_stability = FALSE)
 
-# Run stabilised ICA on the data with 5 components
-ica_res_stab <- run_ica(X, nc = 5, use_stability = TRUE)
+# Run stabilised ICA on the data with 5 components (low runs for example)
+ica_res_stab <- run_ica(X, nc = 5, use_stability = TRUE, n_runs = 5)
 
 }
 \author{

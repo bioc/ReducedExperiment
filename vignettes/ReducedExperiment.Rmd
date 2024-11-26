@@ -168,7 +168,7 @@ to drop off, so we move forward with 35 components.
 ```{r estimate_stability, eval=FALSE, message=FALSE, warning=FALSE, include=TRUE}
 stability_res <- estimate_stability(
     wave1_se,
-    n_runs = 10,
+    n_runs = 100,
     min_components = 10, max_components = 60, by = 2,
     mean_stability_threshold = 0.85,
     verbose = FALSE
