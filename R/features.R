@@ -56,6 +56,11 @@ reduced_oa <- function(
 #' @noRd
 #' @keywords internal
 .get_t2g <- function(database, TERM2GENE) {
+
+    if (!is.null(TERM2GENE)) {
+        return(TERM2GENE)
+    }
+
     if (is.null(database)) {
         TERM2GENE <- TERM2GENE
     } else if (is.data.frame(database)) {
