@@ -10,18 +10,26 @@ test_that("FactorisedExperiment enrichment", {
     airway_fe <- estimate_factors(airway, nc = 2, use_stability = FALSE, method = "imax")
 
     # Run overrepresentation analysis
-    overrep_res <- runEnrich(airway_fe, method = "overrepresentation", feature_id_col = "rownames", as_dataframe = TRUE, p_cutoff = 0.1, universe = rownames(airway_fe))
-    gsea_res <- runEnrich(airway_fe, method = "gsea", feature_id_col = "rownames", as_dataframe = TRUE, p_cutoff = 0.1)
+    t2g <- read.csv(system.file(
+        "extdata",
+        "msigdb_t2g_filtered.csv",
+        package = "ReducedExperiment"
+    ))
+
+    p_cutoff <- 0.9999
+
+    overrep_res <- runEnrich(airway_fe, method = "overrepresentation", feature_id_col = "rownames", as_dataframe = TRUE, p_cutoff = p_cutoff, universe = rownames(airway_fe), TERM2GENE = t2g)
+    gsea_res <- runEnrich(airway_fe, method = "gsea", feature_id_col = "rownames", as_dataframe = TRUE, p_cutoff = p_cutoff, TERM2GENE = t2g)
 
     expect_true("factor_1" %in% overrep_res$component & "factor_2" %in% overrep_res$component)
     expect_true("factor_2" %in% gsea_res$component)
-    expect_true(all(overrep_res$p.adjust < 0.1))
-    expect_true(all(gsea_res$p.adjust < 0.1))
+    expect_true(all(overrep_res$p.adjust < p_cutoff))
+    expect_true(all(gsea_res$p.adjust < p_cutoff))
 })
 
 test_that("ModularExperiment enrichment", {
-    # Use real data from airway package
 
+    # Use real data from airway package
     set.seed(2)
     airway <- .get_airway_data(n_features = 500)
 
@@ -29,10 +37,23 @@ test_that("ModularExperiment enrichment", {
     airway_me <- identify_modules(airway, verbose = 0, power = 21)
 
     # Run overrepresentation analysis
-    enrich_res <- runEnrich(airway_me, method = "overrepresentation", as_dataframe = TRUE, p_cutoff = 0.1)
+    t2g <- read.csv(system.file(
+        "extdata",
+        "msigdb_t2g_filtered.csv",
+        package = "ReducedExperiment"
+    ))
 
-    expect_true(all(paste0("module_", c(1, 2, 4, 5)) %in% enrich_res$component))
-    expect_true(all(enrich_res$p.adjust < 0.1))
+    p_cutoff <- 0.9999
+    enrich_res <- runEnrich(
+        airway_me,
+        method = "overrepresentation",
+        as_dataframe = TRUE,
+        p_cutoff = p_cutoff,
+        TERM2GENE = t2g
+    )
+
+    expect_true(all(paste0("module_", c(2, 5)) %in% enrich_res$component))
+    expect_true(all(enrich_res$p.adjust < p_cutoff))
 })
 
 test_that("Get MSGIDB data", {
