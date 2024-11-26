@@ -732,6 +732,8 @@ setMethod("getAlignedFeatures", c("FactorisedExperiment"), function(
 #' overrepresentation analysis, or \link[clusterProfiler]{GSEA}, in the case of
 #' GSEA.
 #'
+#' @seealso [ReducedExperiment::get_msigdb_t2g()]
+#'
 #' @author Jack Gisby
 #'
 #' @examples
@@ -744,6 +746,13 @@ setMethod("getAlignedFeatures", c("FactorisedExperiment"), function(
 #'     method = "imax"
 #' )
 #'
+#' # Get pathways (e.g., by using ReducedExperiment::get_msigdb_t2g())
+#' t2g <- read.csv(system.file(
+#'     "extdata",
+#'     "msigdb_t2g_filtered.csv",
+#'     package = "ReducedExperiment"
+#' ))
+#'
 #' # Run overrepresentation analysis
 #' overrep_res <- runEnrich(
 #'     airway_fe,
@@ -751,21 +760,11 @@ setMethod("getAlignedFeatures", c("FactorisedExperiment"), function(
 #'     feature_id_col = "rownames",
 #'     as_dataframe = TRUE,
 #'     p_cutoff = 0.1,
+#'     TERM2GENE = t2g,
 #'     universe = rownames(airway_fe)
 #' )
 #'
 #' head(overrep_res)
-#'
-#' # Run gene set enrichment approach
-#' gsea_res <- runEnrich(
-#'     airway_fe,
-#'     method = "gsea",
-#'     feature_id_col = "rownames",
-#'     as_dataframe = TRUE,
-#'     p_cutoff = 0.1
-#' )
-#'
-#' head(gsea_res)
 #'
 #' @rdname enrichment
 #' @name runEnrich

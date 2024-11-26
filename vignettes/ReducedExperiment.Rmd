@@ -165,10 +165,10 @@ We ideally want to pick the maximal number of components with
 acceptable stability. Between 30-40 components, the component stability appears
 to drop off, so we move forward with 35 components.
 
-```{r estimate_stability, message=FALSE, warning=FALSE, include=FALSE}
+```{r estimate_stability, eval=FALSE, message=FALSE, warning=FALSE, include=TRUE}
 stability_res <- estimate_stability(
     wave1_se,
-    n_runs = 10,
+    n_runs = 100,
     min_components = 10, max_components = 60, by = 2,
     mean_stability_threshold = 0.85,
     verbose = FALSE
@@ -179,7 +179,7 @@ print(stability_plot$combined_plot)
 ```
 
 Note that, for the sake of displaying a stability profile representative of 
-real data, the plot above was generated for the full dataset, rather than the 
+real data, the plot was generated for the full dataset, rather than the 
 smaller test dataset we are using in this vignette. 
 You'll commonly observe an elbow in the stability plot on the
 left, which in this case appears around 30-40 components.
@@ -434,36 +434,36 @@ whereas others show strong associations with just a few genes.
 
 We can also perform pathway enrichment analyses for both factors and modules.
 We use the enrichment methods implemented in the `clusterProfiler` package. By
-default, we run gene set enrichment analysis for the factors, whereas we use
-a simple overrepresentation analysis for the modules.
+default, these functions run gene set enrichment analysis (GSEA) and
+overrepresentation tests for the factors and modules, respectively. For
+the purposes of this vignette, we'll just do an overrepresentation analysis
+for factor 5 and module 1.
 
 ```{r run_enrich, message=FALSE, warning=FALSE}
-# We run GSEA for module 5 only as an example
-factor_enrich <- runEnrich(wave1_fe[, , 5], as_dataframe = TRUE)
 
-# We run overrepresentation analysis for all the modules
-module_enrich <- runEnrich(wave1_me, as_dataframe = TRUE)
+TERM2GENE <- get_msigdb_t2g()
+
+factor_5_enrich <- runEnrich(
+    wave1_fe[, , "factor_5"], 
+    method = "overrepresentation", 
+    as_dataframe = TRUE,
+    TERM2GENE = TERM2GENE
+)
+
+module_1_enrich <- runEnrich(
+    wave1_me[, , "module_1"], 
+    method = "overrepresentation", 
+    as_dataframe = TRUE,
+    TERM2GENE = TERM2GENE
+)
 ```
 
-We can again plot summaries of these results. For instance, we see that 
-factor 5 is enriched for the pathway
+Factor 5 is enriched for the pathway
 "WP_NETWORK_MAP_OF_SARSCOV2_SIGNALING_PATHWAY".
 
 ```{r example_factor_enrichment}
-ggplot(
-    factor_enrich[1:5, ],
-    aes(
-        -log10(p.adjust),
-        reorder(substr(ID, 1, 45), -log10(p.adjust)),
-        fill = enrichmentScore
-    )
-) +
-    geom_point(pch = 21, size = 3) +
-    xlab("-log10(p-value)") +
-    ylab("Pathway name (ordered by p-value)") +
-    geom_vline(xintercept = -log10(0.05)) +
-    scale_fill_gradient2(low = "#3A3A98", high = "#832424") +
-    expand_limits(x = 0)
+rownames(factor_5_enrich) <- NULL
+factor_5_enrich[, c("ID", "pvalue", "p.adjust", "geneID")]
 ```
 
 Module 1 was upregulated in COVID-19 patients, and we see that it is
@@ -471,13 +471,8 @@ primarily enriched for pathways related to complement.
 
 ```{r example_module_enrichment}
 
-mod_1_enrich <- module_enrich[
-    module_enrich$component == "module_1" & 
-    module_enrich$p.adjust < 0.05, 
-]
-
 ggplot(
-    mod_1_enrich[1:15, ],
+    module_1_enrich[1:15, ],
     aes(-log10(p.adjust), reorder(substr(ID, 1, 45), -log10(p.adjust)))
 ) +
     geom_point(pch = 21, size = 3) +
@@ -629,12 +624,12 @@ whereas modules 5 and 0 (our unclustered genes) display relatively low
 preservation. 
 
 ```{r module_preservation}
-# Using a low number of permutations (20) for the vignette
+# Using a low number of permutations (10) for the vignette
 mod_pres_res <- module_preservation(
     wave1_me, 
     wave2_se, 
     verbose = 0, 
-    nPermutations = 20
+    nPermutations = 5
 )
 
 plot_module_preservation(mod_pres_res)

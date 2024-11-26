@@ -348,7 +348,7 @@ assess_soft_threshold <- function(
 #'     power = estimated_power
 #' )
 #'
-#' # We find three modules (module_0 indicates unclustered genes)
+#' # We find just one module for this small dataset (module_0 indicates unclustered genes)
 #' table(names(wgcna_res$assignments))
 #'
 #' @export

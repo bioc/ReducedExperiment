@@ -253,8 +253,8 @@ estimate_factors <- function(
 #' # Run standard ICA on the data with 5 components
 #' ica_res <- run_ica(X, nc = 5, use_stability = FALSE)
 #'
-#' # Run stabilised ICA on the data with 5 components
-#' ica_res_stab <- run_ica(X, nc = 5, use_stability = TRUE)
+#' # Run stabilised ICA on the data with 5 components (low runs for example)
+#' ica_res_stab <- run_ica(X, nc = 5, use_stability = TRUE, n_runs = 5)
 #'
 #' @import ica
 #' @export
@@ -553,18 +553,9 @@ run_ica <- function(
 #' X <- ReducedExperiment:::.makeRandomData(200, 100, "feature", "obs")
 #'
 #' # Estimate stability across 10 to 30 components
+#' # Note: We could have provided a SummarizedExperiment object instead of a matrix
 #' stab_res_1 <- estimate_stability(
 #'     X,
-#'     min_components = 10,
-#'     max_components = 30,
-#'     n_runs = 5,
-#'     verbose = FALSE
-#' )
-#'
-#' # Convert the data matrix to a SummarizedExperiment, then estimate stability
-#' se <- SummarizedExperiment(assays = list("normal" = X))
-#' stab_res_2 <- estimate_stability(
-#'     se,
 #'     min_components = 10,
 #'     max_components = 30,
 #'     n_runs = 5,
