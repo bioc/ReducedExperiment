@@ -22,6 +22,7 @@ test_that("Build and subset", {
     expect_equal(nComponents(rrs_subset), nModules(rrs_subset))
     expect_equal(sampleNames(rrs_subset), paste0("sample_", 50:90))
     expect_equal(rownames(reduced(rrs_subset)), sampleNames(rrs_subset))
+    expect_equal(featureNames(rrs_subset), rownames(rrs_subset))
     expect_equal(featureNames(rrs_subset), paste0("gene_", 5:10))
     expect_true(all(assignments(rrs_subset) == featureNames(rrs_subset)))
 
