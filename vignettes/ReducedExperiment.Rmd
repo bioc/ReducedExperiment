@@ -53,7 +53,7 @@ devtools::install_github("jackgisby/ReducedExperiment")
 
 # Introduction
 
-```{r load-packages, message=FALSE, warning=FALSE, include = FALSE}
+```{r load-packages, message=FALSE, warning=FALSE, include=FALSE}
 library(SummarizedExperiment)
 library(ReducedExperiment)
 library(ggplot2)
@@ -104,7 +104,47 @@ class, which additionally allows for the storage of a loadings matrix. The
 such as "Weighted Gene Correlation Network Analysis" (WGCNA), a popular method 
 used to analyse transcriptomic datasets.
 
-# Introducing ReducedExperiment containers with a case study
+## Relationship to existing Bioconductor packages
+
+Several Bioconductor packages provide functionality for storing reduced 
+dimensional representations alongside experimental data. These include 
+packages designed for single-cell analysis, proteomics data, and other 
+high-dimensional omics data types. Among these, the SingleCellExperiment 
+package is particularly notable as it provides the `reducedDims` slot for 
+storing dimensionality reduction results.
+
+While there is some overlap in capabilities, ReducedExperiment serves 
+different use cases than existing frameworks:
+
+- **Purpose**: Most existing packages use dimensionality reduction primarily 
+to enable visualisation and facilitate downstream analyses like clustering. 
+SingleCellExperiment, for example, is designed for single-cell workflows 
+where reduced dimensions help manage technical noise and enable cell type 
+identification. In contrast, ReducedExperiment focuses on methods where 
+interpreting the components themselves is the primary goal, such as 
+Independent Component Analysis or gene module analysis.
+
+- **Structure**: While packages like SingleCellExperiment allow storage of 
+multiple dimensionality reduction results with minimal assumptions about their 
+generation method, ReducedExperiment implements method-specific containers 
+(e.g., `FactorisedExperiment`, `ModularExperiment`) that enforce strict 
+relationships between features, samples, and components to enable
+specialised analyses.
+
+- **Analysis Methods**: ReducedExperiment provides integrated workflows for 
+specific analysis approaches. For example, when working with ICA, 
+it offers methods for assessing component stability and interpreting 
+feature loadings. Some methods, like enrichment analysis, are available for
+multiple analysis types, with specific considerations for each.
+
+For workflows focused primarily on visualisation, clustering, or other 
+downstream analyses, other Bioconductor containers may be more 
+appropriate depending on your data type and analysis goals. 
+ReducedExperiment is best suited for analyses where the interpretation of 
+the components themselves (such as ICA factors or gene modules) is 
+central to the research question.
+
+# Introducing `ReducedExperiment` containers with a case study
 
 There are two ways to build a `ReducedExperiment` object. Firstly, we provide
 convenience functions that both perform dimensionality reduction and package
@@ -461,8 +501,8 @@ for factor 5 and module 1.
 
 TERM2GENE <- getMsigdbT2G()
 
-factor_5_enrich <- runEnrich(
-    wave1_fe[, , "factor_5"], 
+factor_6_enrich <- runEnrich(
+    wave1_fe[, , "factor_6"], 
     method = "overrepresentation", 
     as_dataframe = TRUE,
     TERM2GENE = TERM2GENE
@@ -476,12 +516,12 @@ module_1_enrich <- runEnrich(
 )
 ```
 
-Factor 5 is enriched for the pathway
+Factor 6 is enriched for the pathway
 "WP_NETWORK_MAP_OF_SARSCOV2_SIGNALING_PATHWAY".
 
 ```{r example-factor-enrichment}
-rownames(factor_5_enrich) <- NULL
-factor_5_enrich[, c("ID", "pvalue", "p.adjust", "geneID")]
+rownames(factor_6_enrich) <- NULL
+factor_6_enrich[, c("ID", "pvalue", "p.adjust", "geneID")]
 ```
 
 Module 1 was upregulated in COVID-19 patients, and we see that it is
@@ -535,7 +575,7 @@ wave2_fe
 ```
 
 The new `FactorisedExperiment` created by projecting the wave 2 data (above) 
-has the same genes (2184) and factors (34) as the original 
+has the same genes (500) and factors (34) as the original 
 `FactorisedExperiment` (below),
 but with different samples (83 vs. 65). 
 
@@ -658,10 +698,10 @@ mod_pres_res <- modulePreservation(
 plotModulePreservation(mod_pres_res)
 ```
 
-# Extending the ReducedExperiment class
+# Extending the `ReducedExperiment` class
 
 The `SummarizedExperiment` package includes a detailed vignette explaining
-how to derive new containers from the SummarizedExperiment class.
+how to derive new containers from the `SummarizedExperiment` class.
 
 ```{r extension-vignette, eval=FALSE}
 vignette("Extensions", package = "SummarizedExperiment")
