@@ -42,14 +42,14 @@ test_that("Stability", {
 
     plot_stability(stability_res)
 
-    airway_fe <- estimate_factors(airway, nc = 2, use_stability = TRUE, n_runs = 5)
+    airway_fe <- estimate_factors(airway, nc = 2, use_stability = TRUE, n_runs = 5, BPPARAM = BiocParallel::SerialParam(RNGseed = 1))
 
     expect_equal(reduced(airway_fe)[1, ], c("factor_1" = -1.11680, "factor_2" = 0.00221), tolerance = 1e-3)
     expect_equal(loadings(airway_fe)[1, ], c("factor_1" = -0.0196, "factor_2" = -0.6465), tolerance = 1e-3)
     expect_equal(names(stability(airway_fe)), componentNames(airway_fe))
     expect_true(all(stability(airway_fe) > 0.99))
 
-    airway_fe_bootstrap <- estimate_factors(airway, nc = 2, use_stability = TRUE, n_runs = 5, resample = TRUE)
+    airway_fe_bootstrap <- estimate_factors(airway, nc = 2, use_stability = TRUE, n_runs = 5, resample = TRUE, BPPARAM = BiocParallel::SerialParam(RNGseed = 1))
 
     expect_equal(reduced(airway_fe_bootstrap)[1, ], c("factor_1" = -0.6462, "factor_2" = -1.2427), tolerance = 1e-2)
     expect_equal(loadings(airway_fe_bootstrap)[1, ], c("factor_1" = -0.6539, "factor_2" = -0.0837), tolerance = 1e-2)

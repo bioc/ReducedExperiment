@@ -46,11 +46,13 @@
 #' X <- ReducedExperiment:::.makeRandomData(100, 20, "feature", "obs")
 #'
 #' # Estimate 5 factors based on the data matrix
+#' set.seed(1)
 #' fe_1 <- estimate_factors(X, nc = 5)
 #' fe_1
 #'
 #' # Convert the data matrix to a SummarizedExperiment, then estimate 5 factors
 #' se <- SummarizedExperiment(assays = list("normal" = X))
+#' set.seed(1)
 #' fe_2 <- estimate_factors(se, nc = 5)
 #' fe_2
 #'
@@ -189,6 +191,11 @@ estimate_factors <- function(
 #' ICA is performed multiple times with either: i) random initialisation
 #' (default); or ii) bootstrap resampling of the data (if `resample` is `TRUE`).
 #'
+#' Note that the seed must be set if reproducibility is needed. Specifically,
+#' one can use `set.seed` prior to running standard ICA
+#' (`use_stability = FALSE`) or set the `RNGseed` argument of `BPPARAM` when
+#' running stabilised ICA (`use_stability = TRUE`).
+#'
 #' The stability-based ICA algorithm is similar to the the ICASSO approach
 #' (\url{https://www.cs.helsinki.fi/u/ahyvarin/papers/Himberg03.pd}) that is
 #' implemented in the stabilized-ica Python package
@@ -251,10 +258,12 @@ estimate_factors <- function(
 #' X <- ReducedExperiment:::.makeRandomData(100, 20, "feature", "obs")
 #'
 #' # Run standard ICA on the data with 5 components
+#' set.seed(1)
 #' ica_res <- run_ica(X, nc = 5, use_stability = FALSE)
 #'
 #' # Run stabilised ICA on the data with 5 components (low runs for example)
-#' ica_res_stab <- run_ica(X, nc = 5, use_stability = TRUE, n_runs = 5)
+#' ica_res_stab <- run_ica(X, nc = 5, use_stability = TRUE, n_runs = 5,
+#'                         BIOCPARAM = BiocParallel::SerialParam(RNGseed = 1))
 #'
 #' @import ica
 #' @export
@@ -267,7 +276,7 @@ run_ica <- function(
     reorient_skewed = TRUE,
     scale_components = TRUE, scale_reduced = TRUE,
     n_runs = 30,
-    BPPARAM = BiocParallel::SerialParam(RNGseed = 1),
+    BPPARAM = BiocParallel::SerialParam(),
     ...
 ) {
     if (center_X | scale_X) {
@@ -567,7 +576,7 @@ estimate_stability <- function(
     X, min_components = 10, max_components = 60, by = 2,
     n_runs = 30, resample = FALSE, mean_stability_threshold = NULL,
     center_X = TRUE, scale_X = FALSE, assay_name = "normal",
-    BPPARAM = BiocParallel::SerialParam(RNGseed = 1), verbose = TRUE,
+    BPPARAM = BiocParallel::SerialParam(), verbose = TRUE,
     ...
 ) {
     if (inherits(X, "SummarizedExperiment")) {

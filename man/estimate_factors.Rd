@@ -58,11 +58,13 @@ and outputs.
 X <- ReducedExperiment:::.makeRandomData(100, 20, "feature", "obs")
 
 # Estimate 5 factors based on the data matrix
+set.seed(1)
 fe_1 <- estimate_factors(X, nc = 5)
 fe_1
 
 # Convert the data matrix to a SummarizedExperiment, then estimate 5 factors
 se <- SummarizedExperiment(assays = list("normal" = X))
+set.seed(1)
 fe_2 <- estimate_factors(se, nc = 5)
 fe_2
 

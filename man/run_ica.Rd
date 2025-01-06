@@ -17,7 +17,7 @@ run_ica(
   scale_components = TRUE,
   scale_reduced = TRUE,
   n_runs = 30,
-  BPPARAM = BiocParallel::SerialParam(RNGseed = 1),
+  BPPARAM = BiocParallel::SerialParam(),
   ...
 )
 }
@@ -93,6 +93,11 @@ Function performs ICA for a data matrix. If \code{use_stability} is \code{TRUE},
 ICA is performed multiple times with either: i) random initialisation
 (default); or ii) bootstrap resampling of the data (if \code{resample} is \code{TRUE}).
 
+Note that the seed must be set if reproducibility is needed. Specifically,
+one can use \code{set.seed} prior to running standard ICA
+(\code{use_stability = FALSE}) or set the \code{RNGseed} argument of \code{BPPARAM} when
+running stabilised ICA (\code{use_stability = TRUE}).
+
 The stability-based ICA algorithm is similar to the the ICASSO approach
 (\url{https://www.cs.helsinki.fi/u/ahyvarin/papers/Himberg03.pd}) that is
 implemented in the stabilized-ica Python package
@@ -142,10 +147,12 @@ successfully calculated.}
 X <- ReducedExperiment:::.makeRandomData(100, 20, "feature", "obs")
 
 # Run standard ICA on the data with 5 components
+set.seed(1)
 ica_res <- run_ica(X, nc = 5, use_stability = FALSE)
 
 # Run stabilised ICA on the data with 5 components (low runs for example)
-ica_res_stab <- run_ica(X, nc = 5, use_stability = TRUE, n_runs = 5)
+ica_res_stab <- run_ica(X, nc = 5, use_stability = TRUE, n_runs = 5,
+                        BIOCPARAM = BiocParallel::SerialParam(RNGseed = 1))
 
 }
 \author{
