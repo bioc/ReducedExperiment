@@ -3,7 +3,7 @@
 #' Performs Weighted gene correlation network analysis (WGCNA) and packages
 #' both the input data and subsequent results into a
 #' \link[ReducedExperiment]{ModularExperiment}. Calls
-#' \link[ReducedExperiment]{run_wgcna} to perform the analysis; see its
+#' \link[ReducedExperiment]{runWGCNA} to perform the analysis; see its
 #' documentation page for more information on the ICA method, parameters
 #' and outputs.
 #'
@@ -13,7 +13,7 @@
 #'
 #' @param power An integer representing the soft-thresholding power to be
 #' used to define modules. See the
-#' \link[ReducedExperiment]{assess_soft_threshold} function for aid in
+#' \link[ReducedExperiment]{assessSoftThreshold} function for aid in
 #' selecting this parameter.
 #'
 #' @param center_X If `TRUE`, `X` is centered (i.e., features / rows are transformed
@@ -27,7 +27,7 @@
 #' name of the assay to be subject to WGCNA.
 #'
 #' @param ... Additional arguments to be passed to
-#' \link[ReducedExperiment]{run_wgcna}.
+#' \link[ReducedExperiment]{runWGCNA}.
 #'
 #' @returns A \link[ReducedExperiment]{ModularExperiment} is returned
 #' containing the input data (i.e., the original data matrix in addition to
@@ -35,30 +35,30 @@
 #' as input). Additionally contains the results of module analysis, stored in
 #' the `reduced` and `assignments` slots. The `center_X`, `scale_X`,
 #' `loadings`, `threshold` and `dendrogram` slots may also be filled depending
-#' on the arguments given to `identify_modules`.
+#' on the arguments given to `identifyModules`.
 #'
 #' @author Jack Gisby
 #'
 #' @examples
 #' # Get the airway data as a SummarizedExperiment (with a subset of features)
 #' set.seed(2)
-#' airway_se <- ReducedExperiment:::.get_airway_data(n_features = 500)
+#' airway_se <- ReducedExperiment:::.getAirwayData(n_features = 500)
 #'
 #' # Select soft-thresholding power to use (use capture.output to hide WGCNA's prints)
 #' WGCNA::disableWGCNAThreads()
-#' invisible(capture.output(fit_indices <- assess_soft_threshold(airway_se)))
+#' invisible(capture.output(fit_indices <- assessSoftThreshold(airway_se)))
 #' estimated_power <- fit_indices$Power[fit_indices$estimated_power]
 #'
 #' # Identify modules using WGCNA
-#' airway_me <- identify_modules(airway_se, verbose = 0, power = estimated_power)
+#' airway_me <- identifyModules(airway_se, verbose = 0, power = estimated_power)
 #' airway_me
 #'
-#' @seealso [ReducedExperiment::run_wgcna()],
+#' @seealso [ReducedExperiment::runWGCNA()],
 #'     [WGCNA::blockwiseModules()],
 #'     [WGCNA::pickSoftThreshold()]
 #'
 #' @export
-identify_modules <- function(
+identifyModules <- function(
     X, power, center_X = TRUE, scale_X = TRUE, assay_name = "normal",
     ...
 ) {
@@ -79,8 +79,8 @@ identify_modules <- function(
     if (center_X) center_X <- attr(assay(X, "transformed"), "scaled:center")
     if (scale_X) scale_X <- attr(assay(X, "transformed"), "scaled:scale")
 
-    wgcna_res <- run_wgcna(assay(X, "transformed"), power = power, ...)
-    reduced_set <- .se_to_me(
+    wgcna_res <- runWGCNA(assay(X, "transformed"), power = power, ...)
+    reduced_set <- .seToMe(
         X,
         reduced = wgcna_res$E,
         loadings = wgcna_res$L,
@@ -120,7 +120,7 @@ identify_modules <- function(
 #'
 #' @noRd
 #' @keywords internal
-.se_to_me <- function(
+.seToMe <- function(
     se, reduced, loadings, assignments, center_X, scale_X,
     dendrogram = NULL, threshold = NULL
 ) {
@@ -191,7 +191,7 @@ identify_modules <- function(
 #' The \link[WGCNA]{pickSoftThreshold} function estimates the power by
 #' selecting the lowest value with
 #' a minimum scale free topology fitting index exceeding `RsquaredCut`.
-#' The `assess_soft_threshold` function mirrors this behaviour when
+#' The `assessSoftThreshold` function mirrors this behaviour when
 #' `max_mean_connectivity` is `NULL`. When `max_mean_connectivity` is
 #' specified, however, we additionally require that the selected power
 #' does not exceed this connectivity threshold.
@@ -199,28 +199,28 @@ identify_modules <- function(
 #' @examples
 #' # Get the airway data as a SummarizedExperiment (with a subset of features)
 #' set.seed(2)
-#' airway_se <- ReducedExperiment:::.get_airway_data(n_features = 500)
+#' airway_se <- ReducedExperiment:::.getAirwayData(n_features = 500)
 #'
 #' # Select soft-thresholding power to use (use capture.output to hide WGCNA's prints)
 #' WGCNA::disableWGCNAThreads()
-#' invisible(capture.output(fit_indices <- assess_soft_threshold(airway_se)))
+#' invisible(capture.output(fit_indices <- assessSoftThreshold(airway_se)))
 #'
 #' print(fit_indices)
 #' print(paste0("Estimated power: ", fit_indices$Power[fit_indices$estimated_power]))
 #'
 #' @seealso [WGCNA::pickSoftThreshold()],
-#'     [ReducedExperiment::run_wgcna()]
+#'     [ReducedExperiment::runWGCNA()]
 #'
 #' @author Jack Gisby
 #'
 #' @export
-assess_soft_threshold <- function(
+assessSoftThreshold <- function(
     X, assay_name = "normal", powerVector = 1:30, RsquaredCut = 0.85,
     max_mean_connectivity = 100, corType = "pearson", networkType = "signed",
     maxBlockSize = 30000, verbose = 0, ...
 ) {
-    .max_block_size_check(maxBlockSize, nrow(X))
-    cor <- corFnc <- .get_cor_fn(corType) # Get correlation function
+    .maxBlockSizeCheck(maxBlockSize, nrow(X))
+    cor <- corFnc <- .getCorFn(corType) # Get correlation function
 
     if (inherits(X, "SummarizedExperiment"))
         X <- assay(X, assay_name)
@@ -275,7 +275,7 @@ assess_soft_threshold <- function(
 #'
 #' @param power An integer representing the soft-thresholding power to be
 #' used to define modules. See the
-#' \link[ReducedExperiment]{assess_soft_threshold} function for aid in
+#' \link[ReducedExperiment]{assessSoftThreshold} function for aid in
 #' selecting this parameter.
 #'
 #' @param corType The type of correlation to be used to generate a correlation
@@ -326,7 +326,7 @@ assess_soft_threshold <- function(
 #' }
 #'
 #' @seealso [WGCNA::blockwiseModules()],
-#'     [ReducedExperiment::assess_soft_threshold()],
+#'     [ReducedExperiment::assessSoftThreshold()],
 #'     [WGCNA::pickSoftThreshold()],
 #'
 #' @author Jack Gisby
@@ -334,15 +334,15 @@ assess_soft_threshold <- function(
 #' @examples
 #' # Get the airway data as a SummarizedExperiment (with a subset of features)
 #' set.seed(2)
-#' airway_se <- ReducedExperiment:::.get_airway_data(n_features = 500)
+#' airway_se <- ReducedExperiment:::.getAirwayData(n_features = 500)
 #'
 #' # Choose an appropriate soft-thresholding power
 #' WGCNA::disableWGCNAThreads()
-#' fit_indices <- assess_soft_threshold(airway_se)
+#' fit_indices <- assessSoftThreshold(airway_se)
 #' estimated_power <- fit_indices$Power[fit_indices$estimated_power]
 #'
 #' # Identify modules using the airway expression matrix
-#' wgcna_res <- run_wgcna(
+#' wgcna_res <- runWGCNA(
 #'     assay(airway_se, "normal"),
 #'     verbose = 0,
 #'     power = estimated_power
@@ -352,14 +352,14 @@ assess_soft_threshold <- function(
 #' table(names(wgcna_res$assignments))
 #'
 #' @export
-run_wgcna <- function(
+runWGCNA <- function(
     X, power,  corType = "pearson",
     networkType = "signed", module_labels = "numbers", maxBlockSize = 30000,
     verbose = 0, standardise_reduced = TRUE,
     ...
 ) {
-    .max_block_size_check(maxBlockSize, nrow(X))
-    cor <- corFnc <- .get_cor_fn(corType) # Get correlation function
+    .maxBlockSizeCheck(maxBlockSize, nrow(X))
+    cor <- corFnc <- .getCorFn(corType) # Get correlation function
 
     bwms <- WGCNA::blockwiseModules(
         t(X),
@@ -376,7 +376,7 @@ run_wgcna <- function(
     colnames(wgcna_res$E) <- gsub("ME", "", colnames(wgcna_res$E))
 
     if (module_labels == "numbers") {  # Convert colours to numbers
-        converter <- .colors2numbers(wgcna_res$assignments)
+        converter <- .colorsToNumbers(wgcna_res$assignments)
         wgcna_res$assignments <- vapply(
             wgcna_res$assignments, converter, FUN.VALUE = 1
         )
@@ -395,7 +395,7 @@ run_wgcna <- function(
     wgcna_res$E <- wgcna_res$E[, order(colnames(wgcna_res$E))]
 
     original_E <- wgcna_res$E
-    recalculated_E <- .calculate_eigengenes(
+    recalculated_E <- .calculateEigengenes(
         X, colnames(wgcna_res$E), wgcna_res$assignments, realign = TRUE
     )
 
@@ -411,7 +411,7 @@ run_wgcna <- function(
 #'
 #' @noRd
 #' @keywords internal
-.get_cor_fn <- function(corType) {
+.getCorFn <- function(corType) {
     if (corType == "pearson") {
         return(WGCNA::cor)
     } else if (corType == "bicor") {
@@ -427,7 +427,7 @@ run_wgcna <- function(
 #'
 #' @noRd
 #' @keywords internal
-.max_block_size_check <- function(max_block_size, n_rows) {
+.maxBlockSizeCheck <- function(max_block_size, n_rows) {
     if (max_block_size < n_rows) {
         warning(
             "maxBlockSize < total features, module detection will be ",
@@ -442,7 +442,7 @@ run_wgcna <- function(
 #'
 #' @noRd
 #' @keywords internal
-.colors2numbers <- function(colors) {
+.colorsToNumbers <- function(colors) {
     color_table <- table(colors)
     color_table <- color_table[order(color_table, decreasing = TRUE)]
     color_table <- color_table[which(names(color_table) != "grey")]
@@ -464,7 +464,7 @@ run_wgcna <- function(
 #'
 #' @noRd
 #' @keywords internal
-.calculate_eigengenes <- function(
+.calculateEigengenes <- function(
     newdata,
     module_names,
     module_assignments,
@@ -510,7 +510,7 @@ run_wgcna <- function(
 #'
 #' @noRd
 #' @keywords internal
-.project_eigengenes <- function(
+.projectEigengenes <- function(
     newdata, module_names, module_assignments, lod, min_module_genes
 ) {
     red <- data.frame(row.names = colnames(newdata))

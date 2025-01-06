@@ -99,7 +99,7 @@ X_1 <- ReducedExperiment:::.makeRandomData(100, 20, "feature", "obs")
 X_2 <- ReducedExperiment:::.makeRandomData(100, 30, "feature", "obs")
 
 # Estimate 5 factors based on the data matrix
-fe_1 <- estimate_factors(X_1, nc = 5)
+fe_1 <- estimateFactors(X_1, nc = 5)
 fe_1
 
 # Project the fe_1 factors for the samples in X_2

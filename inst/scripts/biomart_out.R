@@ -1,6 +1,6 @@
 library(ReducedExperiment)
 
-airway <- ReducedExperiment:::.get_airway_data()
+airway <- ReducedExperiment:::.getAirwayData()
 
 dataset = "hsapiens_gene_ensembl"
 ids_to_get = c("hgnc_symbol", "entrezgene_id")

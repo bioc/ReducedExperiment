@@ -103,10 +103,10 @@ and samples (234).
 We can perform a factor analysis on these data, the result of which is a set
 of reduced components and feature loadings. 
 
-```{r estimate_factors, eval=requireNamespace('ReducedExperiment'), message=FALSE, warning=FALSE}
+```{r estimateFactors, eval=requireNamespace('ReducedExperiment'), message=FALSE, warning=FALSE}
 library("ReducedExperiment")
 
-fe <- estimate_factors(se, nc = 35)
+fe <- estimateFactors(se, nc = 35)
 fe
 ```
 
@@ -119,7 +119,7 @@ This `FactorisedExperiment` object has an additional dimension representing the
 
 The `ReducedExperiment` objects allow users to simultaneously slice and modify the 
 `assays`, `rowData`, `colData`, `reduced` and `loadings` matrices. Here, we 
-provided a `SummarizedExperiment` object to `estimate_factors`, but we could 
+provided a `SummarizedExperiment` object to `estimateFactors`, but we could 
 just have easily provided a simple expression matrix.
 
 Alternatively, you may have already applied dimensionality reduction to your 

@@ -115,7 +115,7 @@ set of reduced components and feature loadings.
 ``` r
 library("ReducedExperiment")
 
-fe <- estimate_factors(se, nc = 35)
+fe <- estimateFactors(se, nc = 35)
 fe
 #> class: FactorisedExperiment 
 #> dim: 500 83 35 
@@ -142,7 +142,7 @@ representing the 35 factors. It also has additional slots, including:
 The `ReducedExperiment` objects allow users to simultaneously slice and
 modify the `assays`, `rowData`, `colData`, `reduced` and `loadings`
 matrices. Here, we provided a `SummarizedExperiment` object to
-`estimate_factors`, but we could just have easily provided a simple
+`estimateFactors`, but we could just have easily provided a simple
 expression matrix.
 
 Alternatively, you may have already applied dimensionality reduction to

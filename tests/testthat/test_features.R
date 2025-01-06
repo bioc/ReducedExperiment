@@ -4,10 +4,10 @@ test_that("FactorisedExperiment enrichment and common features", {
     # Use real data from airway package
 
     set.seed(2)
-    airway <- ReducedExperiment:::.get_airway_data(n_features = 2000)
+    airway <- ReducedExperiment:::.getAirwayData(n_features = 2000)
 
     set.seed(1)
-    airway_fe <- estimate_factors(airway, nc = 2, use_stability = FALSE, method = "imax")
+    airway_fe <- estimateFactors(airway, nc = 2, use_stability = FALSE, method = "imax")
 
     # Run overrepresentation analysis
     t2g <- read.csv(system.file(
@@ -27,21 +27,21 @@ test_that("FactorisedExperiment enrichment and common features", {
     expect_true(all(gsea_res$p.adjust < p_cutoff))
 
     set.seed(1)
-    airway_fe <- estimate_factors(airway, nc = 3, use_stability = FALSE, method = "imax")
-    cf <- get_common_features(getAlignedFeatures(airway_fe, format = "data.frame"))
+    airway_fe <- estimateFactors(airway, nc = 3, use_stability = FALSE, method = "imax")
+    cf <- getCommonFeatures(getAlignedFeatures(airway_fe, format = "data.frame"))
 
     expect_equal(dim(cf), c(9, 7))
     expect_equal(cf$intersect, c(NA, 5, 1, 5, NA, 1, 1, 1, NA))
     expect_equal(cf$total_feat_1, c(20, 20, 20, 20, 20, 20, 16, 16, 16))
 
-    plot_common_features(cf)
+    plotCommonFeatures(cf)
 })
 
 test_that("ModularExperiment enrichment and preservation", {
 
     # Use real data from airway package with random modules
     set.seed(2)
-    airway <- ReducedExperiment:::.get_airway_data(n_features = 500)
+    airway <- ReducedExperiment:::.getAirwayData(n_features = 500)
     airway_me <- ReducedExperiment:::.createRandomisedModularExperiment(dim(airway)[1], dim(airway)[2], 4)
 
     colnames(airway_me) <- colnames(airway)
@@ -72,14 +72,14 @@ test_that("ModularExperiment enrichment and preservation", {
     assay(airway_me, "noised") <- assay(airway_me, "normal") + matrix(rnorm(nrow(airway_me) * ncol(airway_me), mean = 0, sd = 0.3), nrow = nrow(airway_me), ncol = ncol(airway_me))
 
     # Test module preservation
-    mp <- module_preservation(airway_me, airway_me, reference_assay_name = "normal", test_assay_name = "noised", verbose = 0, nPermutations = 2)
-    plot_module_preservation(mp)
+    mp <- modulePreservation(airway_me, airway_me, reference_assay_name = "normal", test_assay_name = "noised", verbose = 0, nPermutations = 2)
+    plotModulePreservation(mp)
 
     expect_equal(mp$preservation$Z$ref.reference$inColumnsAlsoPresentIn.test$Zsummary.pres, c(6.17, 13.28, 15.55), tolerance = 0.01)
 })
 
 test_that("Get MSGIDB data", {
-    t2g <- get_msigdb_t2g()
+    t2g <- getMsigdbT2G()
 
     expect_equal(ncol(t2g), 2)
     expect_true(nrow(t2g) > 100000)

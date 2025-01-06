@@ -109,8 +109,8 @@ used to analyse transcriptomic datasets.
 There are two ways to build a `ReducedExperiment` object. Firstly, we provide
 convenience functions that both perform dimensionality reduction and package
 the results into the appropriate container class. We implement a method,
-`estimate_factors`, for identifying factors through Independent Component
-Analysis. We also provide a wrapper for applying WGCNA, `identify_modules`.
+`estimateFactors`, for identifying factors through Independent Component
+Analysis. We also provide a wrapper for applying WGCNA, `identifyModules`.
 
 In this section of the vignette, we will apply both of these methods to 
 some sample RNA sequencing data. Alternatively, if you have already applied 
@@ -153,11 +153,11 @@ wave1_se
 ## Applying factor analysis
 
 The first step in performing independent component analysis is to estimate the
-optimal number of components. We can do this with the `estimate_stability` 
-function. The results of this may be plotted with `plot_stability`.
+optimal number of components. We can do this with the `estimateStability` 
+function. The results of this may be plotted with `plotStability`.
 
 Note that this can take a long time to run. To make this faster, we could
-change the `BPPARAM` term of `estimate_stability` to run the analysis in 
+change the `BPPARAM` term of `estimateStability` to run the analysis in 
 parallel.
 
 The component estimation procedure is based on the maximally stable 
@@ -181,7 +181,7 @@ RNA-seq (500). The drop-off in stability is more pronounced for the full
 dataset, making it easier to identify the elbow.
 
 ```{r estimate-stability, eval=FALSE, message=FALSE, warning=FALSE, include=TRUE}
-stability_res <- estimate_stability(
+stability_res <- estimateStability(
     wave1_se,
     n_runs = 100,
     min_components = 10, max_components = 60, by = 2,
@@ -190,7 +190,7 @@ stability_res <- estimate_stability(
     BPPARAM = BiocParallel::SerialParam(RNGseed = 1)
 )
 
-stability_plot <- plot_stability(stability_res)
+stability_plot <- plotStability(stability_res)
 print(stability_plot$combined_plot)
 ```
 ```{r stability-image, echo=FALSE}
@@ -203,7 +203,7 @@ stability threshold of 0.25 to remove components with low stability. This
 results in the identification of 34 factors.
 
 ```{r run-factor-analysis}
-wave1_fe <- estimate_factors(
+wave1_fe <- estimateFactors(
     wave1_se,
     nc = 35,
     use_stability = TRUE,
@@ -253,7 +253,7 @@ The ReducedExperiment package provides wrapper functions for running
 such an analysis, before packaging them into a ModularExperiment
 class. 
 
-First, we use the `assess_soft_threshold` function to determine the 
+First, we use the `assessSoftThreshold` function to determine the 
 soft-thresholding power appropriate for our dataset. By default, the function
 selects the minimal power satisfying a minimal scale free topology fitting
 index of `0.85` and a maximal average connectivity of `100`. See
@@ -262,14 +262,14 @@ WGCNA's `pickSoftThreshold` function for more details.
 ```{r assess-threshold}
 WGCNA::disableWGCNAThreads()
 
-wave1_fit_indices <- assess_soft_threshold(wave1_se)
+wave1_fit_indices <- assessSoftThreshold(wave1_se)
 
 wave1_estimated_power <- 
     wave1_fit_indices$Power[wave1_fit_indices$estimated_power]
 print(paste0("Estimated power: ", wave1_estimated_power))
 ```
 
-Now we can pass our data with the selected power to the `identify_modules`
+Now we can pass our data with the selected power to the `identifyModules`
 function. Since for this example we've filtered out most of the genes that were 
 in the original dataset, we allow for the identification of smaller modules of 
 genes (10). The dendrogram is also stored in this object, allowing us to plot 
@@ -278,7 +278,7 @@ the clusters of genes that are identified.
 ```{r plot-dendro}
 #| fig.cap = "Dendrogram of the modules identified in the first wave COVID-19 data."
 
-wave1_me <- identify_modules(
+wave1_me <- identifyModules(
     wave1_se,
     verbose = 0,
     power = wave1_estimated_power,
@@ -294,7 +294,7 @@ the plot above). Far more modules were identified in the
 original paper: https://www.nature.com/articles/s41467-022-35454-4#Fig4
 
 This is likely because we are only using a subset of samples and genes,
-and we've used a different soft thresholding power. While `identify_modules`
+and we've used a different soft thresholding power. While `identifyModules`
 can suggest a soft thresholding power automatically, it is generally recommended
 that the user carefully consider the parameters used
 to generate modules (e.g., by considering the output of 
@@ -337,7 +337,7 @@ loadings(wave1_me)[1:5]
 ## Identifying factor and module associations
 One thing we might be interested in doing is identifying factors that are 
 associated with disease outcomes. We can do this with the 
-`associate_components` function. First, we can look at the sample-level data 
+`associateComponents` function. First, we can look at the sample-level data 
 available in the `SummarizedExperiment` container.
 
 ```{r show-coldata}
@@ -359,8 +359,8 @@ models that are adjusted for for sex and age.
 ```{r associate-components}
 f <- "~ case_control + sex + calc_age"
 
-associations_me <- associate_components(wave1_me, method = "lm", formula = f)
-associations_fe <- associate_components(wave1_fe, method = "lm", formula = f)
+associations_me <- associateComponents(wave1_me, method = "lm", formula = f)
+associations_fe <- associateComponents(wave1_fe, method = "lm", formula = f)
 ```
 
 Below is a table for the significant associations between the factors and the 
@@ -459,7 +459,7 @@ for factor 5 and module 1.
 
 ```{r run-enrich, message=FALSE, warning=FALSE}
 
-TERM2GENE <- get_msigdb_t2g()
+TERM2GENE <- getMsigdbT2G()
 
 factor_5_enrich <- runEnrich(
     wave1_fe[, , "factor_5"], 
@@ -551,7 +551,7 @@ there are multiple samples for each patient, so we use a linear mixed model
 also add a random intercept for the patient ID in the model formula.
 
 ```{r replicating-associations}
-replication_fe <- associate_components(
+replication_fe <- associateComponents(
     wave2_fe, 
     method = "lmer", 
     formula = paste0(f, " + (1|individual_id)")
@@ -612,7 +612,7 @@ reasonable concordance between the modules in the two datasets.
 ```{r calc-eigengenes-new-data}
 wave2_me <- calcEigengenes(wave1_me, wave2_se)
 
-replication_me <- associate_components(
+replication_me <- associateComponents(
     wave2_me, 
     method = "lmer", 
     formula = paste0(f, " + (1|individual_id)")
@@ -633,7 +633,7 @@ cor.test(original_estimates, replication_estimates)
 We can also consider the preservation of modules. Below, we take our modules
 calculated in the Wave 1 dataset, and assess their reproducibility in the
 Wave 2 dataset. A variety of statistics are calculated by WGCNA's
-`modulePreservation`. By default, the `plot_module_preservation` function 
+`modulePreservation`. By default, the `plotModulePreservation` function 
 shows us the "medianRank" and "Zsummary" statistics. You can find out more
 about these in the corresponding 
 [publication](https://doi.org/10.1371/journal.pcbi.1001057), but in general
@@ -648,14 +648,14 @@ preservation.
 #| fig.cap = "Module preservation between the Wave 1 and Wave 2 datasets."
 
 # Using a low number of permutations for the vignette
-mod_pres_res <- module_preservation(
+mod_pres_res <- modulePreservation(
     wave1_me, 
     wave2_se, 
     verbose = 0, 
     nPermutations = 5
 )
 
-plot_module_preservation(mod_pres_res)
+plotModulePreservation(mod_pres_res)
 ```
 
 # Extending the ReducedExperiment class
@@ -833,7 +833,7 @@ can be found below:
     (https://github.com/ncaptier/stabilized-ica) 
     - Nicolas Captier
 
-The `estimate_stability` function is based on the related Most Stable
+The `estimateStability` function is based on the related Most Stable
 Transcriptome Dimension approach, which also has a Python implementation 
 provided by the stabilized-ica Python package.
 

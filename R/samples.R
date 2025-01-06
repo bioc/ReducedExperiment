@@ -7,7 +7,7 @@
 #'
 #' @noRd
 #' @keywords internal
-.single_lmer <- function(data, formula_string, REML = TRUE, ...) {
+.singleLmer <- function(data, formula_string, REML = TRUE, ...) {
     out_model <- tryCatch(
         lmerTest::lmer(
             stats::as.formula(formula_string),
@@ -43,7 +43,7 @@
 #'
 #' @noRd
 #' @keywords internal
-.run_linear_model <- function(
+.runLinearModel <- function(
     X,
     pheno,
     formula,
@@ -56,7 +56,7 @@
     formula <- stats::as.formula(paste0("component", formula))
 
     if (method == "lmer") {
-        linear_model <- .single_lmer(pheno, formula, ...)
+        linear_model <- .singleLmer(pheno, formula, ...)
 
         anova_res <- data.frame(stats::anova(linear_model, type = type))
         summary_res <- data.frame(summary(linear_model)$coefficients)
@@ -151,7 +151,7 @@
 #' colData(fe)$age[colData(fe)$treated == "treatment"] <- rnorm(25, mean = 40, sd = 8)
 #'
 #' # Associate the factors with sample-level variable in the colData
-#' lm_res <- associate_components(
+#' lm_res <- associateComponents(
 #'     fe,
 #'     formula = "~ treated + age", # Our model formula
 #'     method = "lm", # Use a linear model
@@ -176,7 +176,7 @@
 #' colData(fe)$patient_id <- c(paste0("patient_", 1:25), paste0("patient_", 1:25))
 #'
 #' # Then we run the linear mixed model with a random intercept for patient
-#' lmm_res <- associate_components(
+#' lmm_res <- associateComponents(
 #'     fe,
 #'     formula = "~ treated + age + (1 | patient_id)", # Add a random intercept
 #'     method = "lmer", # Use a linear mixed model
@@ -190,7 +190,7 @@
 #' ]))
 #'
 #' @export
-associate_components <- function(
+associateComponents <- function(
     re,
     formula,
     method = "lm",
@@ -209,7 +209,7 @@ associate_components <- function(
     )
 
     for (comp in componentNames(re)) {
-        linear_model <- .run_linear_model(
+        linear_model <- .runLinearModel(
             X = red[, comp],
             pheno = data.frame(colData(re)),
             formula = formula,
@@ -225,14 +225,14 @@ associate_components <- function(
         summaries <- rbind(summaries, linear_model$summary)
     }
 
-    colnames(anovas) <- .rename_results_table(colnames(anovas))
-    colnames(summaries) <- .rename_results_table(colnames(summaries))
+    colnames(anovas) <- .renameResultsTable(colnames(anovas))
+    colnames(summaries) <- .renameResultsTable(colnames(summaries))
 
     rownames(anovas) <- paste(anovas$component, anovas$term, sep = "_")
     rownames(summaries) <- paste(summaries$component, summaries$term, sep = "_")
 
-    anovas$adj_pvalue <- .adjust_by_term(anovas, method = adj_method)
-    summaries$adj_pvalue <- .adjust_by_term(summaries, method = adj_method)
+    anovas$adj_pvalue <- .adjustByTerm(anovas, method = adj_method)
+    summaries$adj_pvalue <- .adjustByTerm(summaries, method = adj_method)
 
     return(list("models" = models, "anovas" = anovas, "summaries" = summaries))
 }
@@ -243,7 +243,7 @@ associate_components <- function(
 #'
 #' @noRd
 #' @keywords internal
-.adjust_by_term <- function(res, method = "BH") {
+.adjustByTerm <- function(res, method = "BH") {
     res$adj_pvalue <- NA
 
     for (term in unique(res$term)) {
@@ -262,7 +262,7 @@ associate_components <- function(
 #'
 #' @noRd
 #' @keywords internal
-.rename_results_table <- function(cnames) {
+.renameResultsTable <- function(cnames) {
     cname_conversions <- list(
         "Sum.Sq" = "sum_sq",
         "Mean.Sq" = "mean_sq",

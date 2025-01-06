@@ -92,15 +92,15 @@ pathways that are overrepresented in the tails of this distribution.
 }
 \examples{
 set.seed(2)
-airway <- ReducedExperiment:::.get_airway_data(n_features = 2000)
-airway_fe <- estimate_factors(
+airway <- ReducedExperiment:::.getAirwayData(n_features = 2000)
+airway_fe <- estimateFactors(
     airway,
     nc = 2,
     use_stability = FALSE,
     method = "imax"
 )
 
-# Get pathways (e.g., by using ReducedExperiment::get_msigdb_t2g())
+# Get pathways (e.g., by using ReducedExperiment::getMsigdbT2G())
 t2g <- read.csv(system.file(
     "extdata",
     "msigdb_t2g_filtered.csv",
@@ -122,7 +122,7 @@ head(overrep_res)
 
 }
 \seealso{
-\code{\link[=get_msigdb_t2g]{get_msigdb_t2g()}}
+\code{\link[=getMsigdbT2G]{getMsigdbT2G()}}
 }
 \author{
 Jack Gisby

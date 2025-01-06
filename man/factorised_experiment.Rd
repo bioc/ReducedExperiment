@@ -35,7 +35,7 @@ representing features and columns representing factors.}
 
 \item{stability}{A vector containing some measure of stability or variance
 explained for each factor. If factor analysis was performed using
-\link[ReducedExperiment]{estimate_factors} and \code{use_stability = TRUE}, this
+\link[ReducedExperiment]{estimateFactors} and \code{use_stability = TRUE}, this
 slot will indicate the stability of the factors across multiple runs of ICA.}
 
 \item{...}{Additional arguments to be passed to
@@ -52,7 +52,7 @@ contains one or more data matrices, to which factor analysis has been applied
 to identify a reduced set of features. A
 \link[ReducedExperiment]{FactorisedExperiment} can be created directly in
 a similar manner to a \link[SummarizedExperiment]{SummarizedExperiment}.
-Alternatively, the \link[ReducedExperiment]{estimate_factors} function
+Alternatively, the \link[ReducedExperiment]{estimateFactors} function
 can be used to both apply factor analysis and generate a
 \link[ReducedExperiment]{FactorisedExperiment} from the results.
 }
@@ -81,7 +81,7 @@ fe
 \seealso{
 \code{\link[=ReducedExperiment]{ReducedExperiment()}},
 \code{\link[=ModularExperiment]{ModularExperiment()}},
-\code{\link[=estimate_factors]{estimate_factors()}}
+\code{\link[=estimateFactors]{estimateFactors()}}
 }
 \author{
 Jack Gisby
