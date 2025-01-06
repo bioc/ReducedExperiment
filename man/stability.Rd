@@ -19,7 +19,7 @@
 \value{
 A vector with a value for each factor indicating the factor
 stability. More details are available from the
-\link[ReducedExperiment]{estimate_stability} help page.
+\link[ReducedExperiment]{estimateStability} help page.
 }
 \description{
 Get and setting the stability values for factors
@@ -30,7 +30,7 @@ Get and setting the stability values for factors
 X <- ReducedExperiment:::.makeRandomData(100, 20, "feature", "obs")
 
 # Run stabilised ICA on the data with 5 components
-fe <- estimate_factors(X, nc = 5, use_stability = TRUE)
+fe <- estimateFactors(X, nc = 5, use_stability = TRUE)
 
 stability(fe)
 
@@ -39,7 +39,7 @@ stability(fe)
 
 }
 \seealso{
-\code{\link[=estimate_stability]{estimate_stability()}}
+\code{\link[=estimateStability]{estimateStability()}}
 }
 \author{
 Jack Gisby

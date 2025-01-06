@@ -162,10 +162,10 @@ test_that("Access and replace stability", {
 
 test_that("Predict and project", {
     # Use real data from airway package
-    airway <- .get_airway_data()
+    airway <- .getAirwayData()
 
     set.seed(1)
-    airway_fe <- estimate_factors(airway, nc = 2, scale_components = FALSE, reorient_skewed = FALSE)
+    airway_fe <- estimateFactors(airway, nc = 2, scale_components = FALSE, reorient_skewed = FALSE)
 
     # Check that projecting the data reproduces the original results
     for (input_type in c("se", "matrix", "data.frame")) {
@@ -262,10 +262,10 @@ test_that("Get aligned features", {
 
 test_that("Get gene IDs", {
     set.seed(2)
-    airway <- .get_airway_data(n_features = 500)
+    airway <- .getAirwayData(n_features = 500)
 
     set.seed(1)
-    airway_fe <- estimate_factors(airway, nc = 2, use_stability = FALSE, method = "imax")
+    airway_fe <- estimateFactors(airway, nc = 2, use_stability = FALSE, method = "imax")
 
     # Test `getGeneIDs` with preloaded `biomart_out` to avoid actually querying
     # ensembl during testing

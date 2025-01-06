@@ -1,6 +1,6 @@
 Package: ReducedExperiment
 Type: Package
-Title: Containers and tools for dimensionally-reduced -omics data
+Title: Containers and tools for dimensionally-reduced -omics representations
 Version: 0.99.3
 Authors@R: c(
     person("Jack", "Gisby", , "jackgisby@gmail.com", role = c("aut", "cre"),

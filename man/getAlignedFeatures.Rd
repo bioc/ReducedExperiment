@@ -58,7 +58,7 @@ relative to other features. Useful for functional interpretation of factors.
 X <- ReducedExperiment:::.makeRandomData(100, 20, "feature", "obs")
 
 # Estimate 5 factors based on the data matrix
-fe <- estimate_factors(X, nc = 5)
+fe <- estimateFactors(X, nc = 5)
 
 # Get the genes highly aligned with each factor as a list
 aligned_features <- getAlignedFeatures(fe, proportional_threshold = 0.03)
@@ -69,7 +69,7 @@ head(getAlignedFeatures(fe, format = "data.frame", proportional_threshold = 0.03
 
 }
 \seealso{
-\code{\link[=get_common_features]{get_common_features()}}
+\code{\link[=getCommonFeatures]{getCommonFeatures()}}
 }
 \author{
 Jack Gisby

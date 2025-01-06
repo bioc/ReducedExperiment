@@ -6,7 +6,7 @@
 #' has been applied to identify a reduced set of features.  A
 #' \link[ReducedExperiment]{ModularExperiment} can be created directly in
 #' a similar manner to a \link[SummarizedExperiment]{SummarizedExperiment}.
-#' Alternatively, the \link[ReducedExperiment]{identify_modules} function
+#' Alternatively, the \link[ReducedExperiment]{identifyModules} function
 #' can be used to both define modules and generate a
 #' \link[ReducedExperiment]{ModularExperiment} from the results.
 #'
@@ -14,17 +14,7 @@
 #' representing samples and columns representing module expression profiles.
 #' Typically, this matrix contains "eigengenes" produced by the Weighted Gene
 #' Correlation Network Analysis (WGCNA) approach, as is applied by
-#' \link[ReducedExperiment]{identify_modules}.
-#'
-#' @param scale Either a boolean, representing whether or not the original data
-#' has been scaled to unit variance, or a numeric vector indicating the
-#' standard deviations of the original features (as produced by
-#' \link[base]{scale}.)
-#'
-#' @param center Either a boolean, representing whether or not the original data
-#' has been centered to have a mean of 0, or a numeric vector indicating the
-#' means of the original features (as produced by
-#' \link[base]{scale}.)
+#' \link[ReducedExperiment]{identifyModules}.
 #'
 #' @param assignments A vector of features, named according to the module to
 #' which the feature belongs.
@@ -45,12 +35,14 @@
 #' @param ... Additional arguments to be passed to
 #' \link[ReducedExperiment]{ReducedExperiment}.
 #'
+#' @inheritParams ReducedExperiment
+#'
 #' @returns Constructor method returns a
 #' `ModularExperiment` object.
 #'
 #' @seealso [ReducedExperiment::ReducedExperiment()],
 #' [ReducedExperiment::FactorisedExperiment()],
-#' [ReducedExperiment::identify_modules()]
+#' [ReducedExperiment::identifyModules()]
 #'
 #' @author Jack Gisby
 #'
@@ -536,7 +528,7 @@ setMethod("runEnrich", c("ModularExperiment"), function(
 
         modules <- assignments(object, as_list = TRUE)
 
-        enrich_res <- reduced_oa(modules, ...)
+        enrich_res <- reducedOA(modules, ...)
     } else {
         stop("Enrichment method not recognised")
     }
@@ -776,7 +768,7 @@ setMethod("calcEigengenes", c("ModularExperiment", "matrix"), function(object,
     ))
 
     if (project) {
-        red <- .project_eigengenes(
+        red <- .projectEigengenes(
             newdata,
             moduleNames(object),
             assignments(object),
@@ -788,7 +780,7 @@ setMethod("calcEigengenes", c("ModularExperiment", "matrix"), function(object,
             "loadings" = loadings(object)
         )
     } else {
-        eigengenes <- .calculate_eigengenes(
+        eigengenes <- .calculateEigengenes(
             newdata,
             moduleNames(object),
             assignments(object),
@@ -843,7 +835,7 @@ setMethod(
         scale_reduced = scale_reduced, min_module_genes = min_module_genes
     )
 
-    return(.se_to_me(newdata,
+    return(.seToMe(newdata,
         reduced = as.matrix(eig),
         loadings = loadings(object),
         assignments = assignments(object),

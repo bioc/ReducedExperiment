@@ -1,4 +1,4 @@
-#' ReducedExperiment: A container for dimensionally-reduced data
+#' ReducedExperiment: A container for dimensionally-reduced representations
 #'
 #' @description
 #' Inherits from \link[SummarizedExperiment]{SummarizedExperiment}, a
@@ -961,10 +961,10 @@ setMethod("nFeatures", "ReducedExperiment", function(object) {
 #'
 #' @examples
 #' set.seed(2)
-#' airway <- ReducedExperiment:::.get_airway_data(n_features = 500)
+#' airway <- ReducedExperiment:::.getAirwayData(n_features = 500)
 #'
 #' set.seed(1)
-#' airway_fe <- estimate_factors(airway, nc = 2, use_stability = FALSE, method = "imax")
+#' airway_fe <- estimateFactors(airway, nc = 2, use_stability = FALSE, method = "imax")
 #'
 #' # rowData before getting additional gene IDs
 #' rowData(airway_fe)

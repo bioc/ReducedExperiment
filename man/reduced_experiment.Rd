@@ -5,7 +5,7 @@
 \alias{ReducedExperiment-class}
 \alias{.ReducedExperiment}
 \alias{ReducedExperiment}
-\title{ReducedExperiment: A container for dimensionally-reduced data}
+\title{ReducedExperiment: A container for dimensionally-reduced representations}
 \usage{
 ReducedExperiment(reduced = new("matrix"), scale = TRUE, center = TRUE, ...)
 }

@@ -44,10 +44,11 @@ weighted gene correlation network analysis (WGCNA).
 ## Installation
 
 Get the latest stable `R` release from [CRAN](http://cran.r-project.org/). 
-Then install `ReducedExperiment` from [Bioconductor](http://bioconductor.org/) 
+Then install `ReducedExperiment` from 
+[Bioconductor](https://bioconductor.org/packages/release/bioc/html/ReducedExperiment.html) 
 using the following code:
 
-```{r 'install', eval = FALSE}
+```{r install, eval = FALSE}
 if (!requireNamespace("BiocManager", quietly = TRUE)) {
     install.packages("BiocManager")
 }
@@ -55,9 +56,13 @@ if (!requireNamespace("BiocManager", quietly = TRUE)) {
 BiocManager::install("ReducedExperiment")
 ```
 
-Alternatively, the development version of `ReducedExperiment` is available from [GitHub](https://github.com/jackgisby/ReducedExperiment) with:
+Alternatively, the development version of `ReducedExperiment` is available from 
+[Bioconductor](https://bioconductor.org/packages/devel/bioc/html/ReducedExperiment.html) 
+or [GitHub](https://github.com/jackgisby/ReducedExperiment) with:
 
-```{r 'install_dev', eval = FALSE}
+```{r install_dev, eval = FALSE}
+BiocManager::install("ReducedExperiment", version = "devel")
+
 devtools::install_github("jackgisby/ReducedExperiment")
 ```
 
@@ -98,10 +103,10 @@ and samples (234).
 We can perform a factor analysis on these data, the result of which is a set
 of reduced components and feature loadings. 
 
-```{r estimate_factors, eval=requireNamespace('ReducedExperiment'), message=FALSE, warning=FALSE}
+```{r estimateFactors, eval=requireNamespace('ReducedExperiment'), message=FALSE, warning=FALSE}
 library("ReducedExperiment")
 
-fe <- estimate_factors(se, nc = 35)
+fe <- estimateFactors(se, nc = 35)
 fe
 ```
 
@@ -114,7 +119,7 @@ This `FactorisedExperiment` object has an additional dimension representing the
 
 The `ReducedExperiment` objects allow users to simultaneously slice and modify the 
 `assays`, `rowData`, `colData`, `reduced` and `loadings` matrices. Here, we 
-provided a `SummarizedExperiment` object to `estimate_factors`, but we could 
+provided a `SummarizedExperiment` object to `estimateFactors`, but we could 
 just have easily provided a simple expression matrix.
 
 Alternatively, you may have already applied dimensionality reduction to your 

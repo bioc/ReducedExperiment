@@ -2,13 +2,13 @@ context("modules")
 
 test_that("Identify modules", {
     set.seed(2)
-    airway <- .get_airway_data(n_features = 500)
+    airway <- .getAirwayData(n_features = 500)
 
     WGCNA::disableWGCNAThreads()
-    fit_indices <- assess_soft_threshold(airway)
+    fit_indices <- assessSoftThreshold(airway)
     estimated_power <- fit_indices$Power[fit_indices$estimated_power]
 
-    airway_me <- identify_modules(airway, verbose = 0, power = 21)
+    airway_me <- identifyModules(airway, verbose = 0, power = 21)
 
     expect_equal(dim(airway_me), c("Features" = 500, "Samples" = 8, "Components" = 6))
     expect_equal(componentNames(airway_me), paste0("module_", 0:5))

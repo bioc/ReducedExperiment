@@ -1,8 +1,8 @@
 library(ReducedExperiment)
 
 set.seed(2)
-airway <- ReducedExperiment:::.get_airway_data(n_features = 2000)
-airway_fe <- estimate_factors(
+airway <- ReducedExperiment:::.getAirwayData(n_features = 2000)
+airway_fe <- estimateFactors(
     airway,
     nc = 2,
     use_stability = FALSE,
@@ -18,7 +18,7 @@ overrep_res <- runEnrich(
     universe = rownames(airway_fe)
 )
 
-t2g <- ReducedExperiment::get_msigdb_t2g()
+t2g <- ReducedExperiment::getMsigdbT2G()
 t2g <- t2g[t2g$gs_name %in% overrep_res$ID, ]
 t2g <- rbind(t2g, data.frame(gs_name = "universe", ensembl_gene = rownames(airway_fe)))
 write.csv(t2g, "inst/extdata/msigdb_t2g_filtered.csv", row.names = FALSE)

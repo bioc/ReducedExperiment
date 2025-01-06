@@ -23,7 +23,7 @@ ModularExperiment(
 representing samples and columns representing module expression profiles.
 Typically, this matrix contains "eigengenes" produced by the Weighted Gene
 Correlation Network Analysis (WGCNA) approach, as is applied by
-\link[ReducedExperiment]{identify_modules}.}
+\link[ReducedExperiment]{identifyModules}.}
 
 \item{scale}{Either a boolean, representing whether or not the original data
 has been scaled to unit variance, or a numeric vector indicating the
@@ -64,7 +64,7 @@ class, that contains one or more data matrices, to which module analysis
 has been applied to identify a reduced set of features.  A
 \link[ReducedExperiment]{ModularExperiment} can be created directly in
 a similar manner to a \link[SummarizedExperiment]{SummarizedExperiment}.
-Alternatively, the \link[ReducedExperiment]{identify_modules} function
+Alternatively, the \link[ReducedExperiment]{identifyModules} function
 can be used to both define modules and generate a
 \link[ReducedExperiment]{ModularExperiment} from the results.
 }
@@ -95,7 +95,7 @@ me
 \seealso{
 \code{\link[=ReducedExperiment]{ReducedExperiment()}},
 \code{\link[=FactorisedExperiment]{FactorisedExperiment()}},
-\code{\link[=identify_modules]{identify_modules()}}
+\code{\link[=identifyModules]{identifyModules()}}
 }
 \author{
 Jack Gisby

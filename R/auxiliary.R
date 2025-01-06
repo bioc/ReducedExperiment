@@ -110,7 +110,7 @@
 #'
 #' @noRd
 #' @keywords internal
-.get_airway_data <- function(n_features = NULL) {
+.getAirwayData <- function(n_features = NULL) {
     # Get data
     utils::data("airway", package = "airway", envir = environment())
 

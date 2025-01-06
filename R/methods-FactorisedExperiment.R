@@ -7,40 +7,32 @@
 #' to identify a reduced set of features. A
 #' \link[ReducedExperiment]{FactorisedExperiment} can be created directly in
 #' a similar manner to a \link[SummarizedExperiment]{SummarizedExperiment}.
-#' Alternatively, the \link[ReducedExperiment]{estimate_factors} function
+#' Alternatively, the \link[ReducedExperiment]{estimateFactors} function
 #' can be used to both apply factor analysis and generate a
 #' \link[ReducedExperiment]{FactorisedExperiment} from the results.
 #'
 #' @param reduced A `matrix`, produced by factor analysis, with rows
 #' representing samples and columns representing factors.
 #'
-#' @param scale Either a boolean, representing whether or not the original data
-#' has been scaled to unit variance, or a numeric vector indicating the
-#' standard deviations of the original features (as produced by
-#' \link[base]{scale}.)
-#'
-#' @param center Either a boolean, representing whether or not the original data
-#' has been centered to have a mean of 0, or a numeric vector indicating the
-#' means of the original features (as produced by
-#' \link[base]{scale}.)
-#'
 #' @param loadings A `matrix`, produced by factor analysis, with rows
 #' representing features and columns representing factors.
 #'
 #' @param stability A vector containing some measure of stability or variance
 #' explained for each factor. If factor analysis was performed using
-#' \link[ReducedExperiment]{estimate_factors} and `use_stability = TRUE`, this
+#' \link[ReducedExperiment]{estimateFactors} and `use_stability = TRUE`, this
 #' slot will indicate the stability of the factors across multiple runs of ICA.
 #'
 #' @param ... Additional arguments to be passed to
 #' \link[ReducedExperiment]{ReducedExperiment}.
+#'
+#' @inheritParams ReducedExperiment
 #'
 #' @returns Constructor method returns a
 #' \link[ReducedExperiment]{FactorisedExperiment} object.
 #'
 #' @seealso [ReducedExperiment::ReducedExperiment()],
 #' [ReducedExperiment::ModularExperiment()],
-#' [ReducedExperiment::estimate_factors()]
+#' [ReducedExperiment::estimateFactors()]
 #'
 #' @author Jack Gisby
 #'
@@ -202,9 +194,9 @@ setReplaceMethod("rownames", "FactorisedExperiment", function(x, value) {
 #'
 #' @returns A vector with a value for each factor indicating the factor
 #' stability. More details are available from the
-#' \link[ReducedExperiment]{estimate_stability} help page.
+#' \link[ReducedExperiment]{estimateStability} help page.
 #'
-#' @seealso [ReducedExperiment::estimate_stability()]
+#' @seealso [ReducedExperiment::estimateStability()]
 #'
 #' @author Jack Gisby
 #'
@@ -214,7 +206,7 @@ setReplaceMethod("rownames", "FactorisedExperiment", function(x, value) {
 #' X <- ReducedExperiment:::.makeRandomData(100, 20, "feature", "obs")
 #'
 #' # Run stabilised ICA on the data with 5 components
-#' fe <- estimate_factors(X, nc = 5, use_stability = TRUE)
+#' fe <- estimateFactors(X, nc = 5, use_stability = TRUE)
 #'
 #' stability(fe)
 #'
@@ -448,7 +440,7 @@ setMethod("rbind", "FactorisedExperiment", function(..., deparse.level = 1) {
 #' X_2 <- ReducedExperiment:::.makeRandomData(100, 30, "feature", "obs")
 #'
 #' # Estimate 5 factors based on the data matrix
-#' fe_1 <- estimate_factors(X_1, nc = 5)
+#' fe_1 <- estimateFactors(X_1, nc = 5)
 #' fe_1
 #'
 #' # Project the fe_1 factors for the samples in X_2
@@ -482,7 +474,7 @@ setMethod("projectData", c("FactorisedExperiment", "matrix"),  function(
         scale = scale_newdata,
         center = center_newdata
     ))
-    red <- .project_ica(newdata, loadings(object))
+    red <- .projectICA(newdata, loadings(object))
 
     if (standardise_reduced) red <- scale(red)
 
@@ -528,7 +520,7 @@ setMethod(
         center_newdata = center_newdata
     )
 
-    return(.se_to_fe(
+    return(.seToFe(
         newdata,
         reduced = projected_data,
         loadings = loadings(object),
@@ -581,7 +573,7 @@ setMethod("predict", c("FactorisedExperiment"), function(object, newdata, ...) {
 #' can also be a function to be applied to the output data.frame before
 #' returning the results.
 #'
-#' @seealso [ReducedExperiment::get_common_features()]
+#' @seealso [ReducedExperiment::getCommonFeatures()]
 #'
 #' @author Jack Gisby
 #'
@@ -591,7 +583,7 @@ setMethod("predict", c("FactorisedExperiment"), function(object, newdata, ...) {
 #' X <- ReducedExperiment:::.makeRandomData(100, 20, "feature", "obs")
 #'
 #' # Estimate 5 factors based on the data matrix
-#' fe <- estimate_factors(X, nc = 5)
+#' fe <- estimateFactors(X, nc = 5)
 #'
 #' # Get the genes highly aligned with each factor as a list
 #' aligned_features <- getAlignedFeatures(fe, proportional_threshold = 0.03)
@@ -732,21 +724,21 @@ setMethod("getAlignedFeatures", c("FactorisedExperiment"), function(
 #' overrepresentation analysis, or \link[clusterProfiler]{GSEA}, in the case of
 #' GSEA.
 #'
-#' @seealso [ReducedExperiment::get_msigdb_t2g()]
+#' @seealso [ReducedExperiment::getMsigdbT2G()]
 #'
 #' @author Jack Gisby
 #'
 #' @examples
 #' set.seed(2)
-#' airway <- ReducedExperiment:::.get_airway_data(n_features = 2000)
-#' airway_fe <- estimate_factors(
+#' airway <- ReducedExperiment:::.getAirwayData(n_features = 2000)
+#' airway_fe <- estimateFactors(
 #'     airway,
 #'     nc = 2,
 #'     use_stability = FALSE,
 #'     method = "imax"
 #' )
 #'
-#' # Get pathways (e.g., by using ReducedExperiment::get_msigdb_t2g())
+#' # Get pathways (e.g., by using ReducedExperiment::getMsigdbT2G())
 #' t2g <- read.csv(system.file(
 #'     "extdata",
 #'     "msigdb_t2g_filtered.csv",
@@ -796,7 +788,7 @@ setMethod("runEnrich", c("FactorisedExperiment"), function(
         if (feature_id_col != "rownames")
             rownames(S) <- rowData(object)[[feature_id_col]]
 
-        enrich_res <- reduced_gsea(S, ...)
+        enrich_res <- reducedGSEA(S, ...)
 
     } else if (method == "overrepresentation") {
         factor_features <- getAlignedFeatures(object,
@@ -806,7 +798,7 @@ setMethod("runEnrich", c("FactorisedExperiment"), function(
             proportional_threshold = proportional_threshold
         )
 
-        enrich_res <- reduced_oa(factor_features, ...)
+        enrich_res <- reducedOA(factor_features, ...)
     } else {
         stop("Enrichment method not recognised")
     }
