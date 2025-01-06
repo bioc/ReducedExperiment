@@ -167,24 +167,23 @@ We ideally want to pick the maximal number of components with
 acceptable stability. Between 30-40 components, the component stability appears
 to drop off, so we move forward with 35 components.
 
+Note that the data subset we are using here has relatively few features for an
+RNA-seq (500). The drop-off in stability is more pronounced for the full
+dataset, making it easier to identify the elbow.
+
 ```{r estimate_stability, eval=FALSE, message=FALSE, warning=FALSE, include=TRUE}
 stability_res <- estimate_stability(
     wave1_se,
     n_runs = 100,
     min_components = 10, max_components = 60, by = 2,
     mean_stability_threshold = 0.85,
-    verbose = FALSE
+    verbose = FALSE, 
+    BPPARAM = BiocParallel::SerialParam(RNGseed = 1)
 )
 
 stability_plot <- plot_stability(stability_res)
 print(stability_plot$combined_plot)
 ```
-
-Note that, for the sake of displaying a stability profile representative of 
-real data, the plot was generated for the full dataset, rather than the 
-smaller test dataset we are using in this vignette. 
-You'll commonly observe an elbow in the stability plot on the
-left, which in this case appears around 30-40 components.
 
 ![](https://raw.githubusercontent.com/jackgisby/ReducedExperiment/devel/inst/stability.png)
 
