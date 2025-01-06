@@ -16,16 +16,6 @@
 #' Correlation Network Analysis (WGCNA) approach, as is applied by
 #' \link[ReducedExperiment]{identifyModules}.
 #'
-#' @param scale Either a boolean, representing whether or not the original data
-#' has been scaled to unit variance, or a numeric vector indicating the
-#' standard deviations of the original features (as produced by
-#' \link[base]{scale}.)
-#'
-#' @param center Either a boolean, representing whether or not the original data
-#' has been centered to have a mean of 0, or a numeric vector indicating the
-#' means of the original features (as produced by
-#' \link[base]{scale}.)
-#'
 #' @param assignments A vector of features, named according to the module to
 #' which the feature belongs.
 #'
@@ -44,6 +34,8 @@
 #'
 #' @param ... Additional arguments to be passed to
 #' \link[ReducedExperiment]{ReducedExperiment}.
+#'
+#' @inheritParams ReducedExperiment
 #'
 #' @returns Constructor method returns a
 #' `ModularExperiment` object.

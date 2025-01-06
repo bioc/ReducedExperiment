@@ -7,7 +7,7 @@
 runWGCNA(
   X,
   power,
-  corType = "pearson",
+  cor_type = "pearson",
   networkType = "signed",
   module_labels = "numbers",
   maxBlockSize = 30000,
@@ -17,20 +17,18 @@ runWGCNA(
 )
 }
 \arguments{
-\item{X}{A matrix with features as rows and columns as samples.}
+\item{X}{Either a \link[SummarizedExperiment]{SummarizedExperiment} object
+or a matrix containing data to be subject to WGCNA. \code{X} should have rows as
+features and columns as samples.}
 
-\item{power}{An integer representing the soft-thresholding power to be
-used to define modules. See the
-\link[ReducedExperiment]{assessSoftThreshold} function for aid in
-selecting this parameter.}
+\item{power}{ soft-thresholding power for network construction. }
 
-\item{corType}{The type of correlation to be used to generate a correlation
+\item{cor_type}{The type of correlation to be used to generate a correlation
 matrix during network formation. One of "pearson" (\link[WGCNA]{cor}) and
 "bicor" (\link[WGCNA]{bicor}).}
 
-\item{networkType}{The type of network to be generated, either "unsigned",
-"signed" or "signed hybrid". See \link[WGCNA]{blockwiseModules} for
-more details.}
+\item{networkType}{ network type. Allowed values are (unique abbreviations of) \code{"unsigned"},
+\code{"signed"}, \code{"signed hybrid"}. See \code{\link[WGCNA]{adjacency}}. }
 
 \item{module_labels}{Specifies whether the modules should be named based on
 "numbers" or "colours. If \code{module_labels} is set to "numbers", then
@@ -44,7 +42,8 @@ datasets in a single chunk. Results may differ if the number of features
 exceeds the chunk size. Lower values of this parameter may use less memory
 to calculate networks.}
 
-\item{verbose}{The verbosity, passed to \link[WGCNA]{blockwiseModules}.}
+\item{verbose}{ integer level of verbosity. Zero means silent, higher values make the output
+progressively more and more verbose. }
 
 \item{standardise_reduced}{If \code{TRUE}, the reduced data (eigengenes) are
 standardised to have a mean of 0 and a standard deviation of 1.}

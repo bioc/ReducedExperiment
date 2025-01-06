@@ -138,12 +138,6 @@ estimateFactors <- function(
 #' If `use_stability` is `TRUE`, then the stabilised ICA procedure is carried
 #' out (see `details`).
 #'
-#' @param X A matrix with features as rows and columns as samples.
-#'
-#' @param nc The number of components to be identified. See
-#' \link[ReducedExperiment]{estimateStability} for a method to estimate the
-#' optimal number of components.
-#'
 #' @param use_stability Whether to use a stability-based approach to estimate
 #' factors. See `details` for further information.
 #'
@@ -157,12 +151,6 @@ estimateFactors <- function(
 #' @param stability_threshold A stability threshold for pruning factors. Factors
 #' with a stability below this threshold will be removed. If used, the threshold
 #' can lead to fewer factors being returned than that specified by `nc`.
-#'
-#' @param center_X If `TRUE`, X is centered (i.e., features / rows are transformed
-#' to have a mean of 0) prior to ICA. Generally recommended.
-#'
-#' @param scale_X If `TRUE`, X is scaled (i.e., features / rows are transformed
-#' to have a standard deviation of 1) before ICA.
 #'
 #' @param reorient_skewed If `TRUE`, factors are reorientated to ensure that the
 #' loadings of each factor (i.e., the source signal matrix) have positive skew.
@@ -185,6 +173,10 @@ estimateFactors <- function(
 #'
 #' @param ... Additional arguments to be passed to
 #' \link[ica]{ica}.
+#'
+#' @inheritParams estimateFactors
+#'
+#' @seealso [ica::ica()], [ReducedExperiment::estimateStability()]
 #'
 #' @details
 #' Function performs ICA for a data matrix. If `use_stability` is `TRUE`, then
@@ -263,7 +255,7 @@ estimateFactors <- function(
 #'
 #' # Run stabilised ICA on the data with 5 components (low runs for example)
 #' ica_res_stab <- runICA(X, nc = 5, use_stability = TRUE, n_runs = 5,
-#'                         BIOCPARAM = BiocParallel::SerialParam(RNGseed = 1))
+#'                         BPPARAM = BiocParallel::SerialParam(RNGseed = 1))
 #'
 #' @import ica
 #' @export
@@ -483,10 +475,6 @@ runICA <- function(
 #' aid in the identification of the optimal factor number. Based on the
 #' Most Stable Transcriptome Dimension (MSTD) approach (see `details`).
 #'
-#' @param X Either a \link[SummarizedExperiment]{SummarizedExperiment} object
-#' or a matrix containing data to be subject to ICA. `X` should have rows as
-#' features and columns as samples.
-#'
 #' @param min_components The minimum number of components to estimate the
 #' stability for.
 #'
@@ -496,29 +484,7 @@ runICA <- function(
 #' @param by The number by which to increment the numbers of components
 #' tested.
 #'
-#' @param n_runs The number of times to run ICA.
-#'
-#' @param resample If `TRUE`, a boostrap approach is used to estimate factors
-#' and quantify stability. Else, only the random initialisation inherent to
-#' common ICA implementations is used. See the `RNGseed` argument of
-#' \link[BiocParallel]{SerialParam} if you require reproducibility.
-#'
-#' @param mean_stability_threshold The function will estimate the optimal number
-#' of components as the minimal number that exceed this stability threshold.
-#'
-#' @param center_X If `TRUE`, `X` is centered (i.e., features / rows are transformed
-#' to have a mean of 0) prior to ICA. Generally recommended.
-#'
-#' @param scale_X If `TRUE`, `X` is scaled (i.e., features / rows are transformed
-#' to have a standard deviation of 1) before ICA.
-#'
-#' @param assay_name If `X` is a
-#' \link[SummarizedExperiment]{SummarizedExperiment}, then this should be the
-#' name of the assay to be subject to ICA.
-#'
-#' @param BPPARAM A class containing parameters for parallel evaluation. Uses
-#' \link[BiocParallel]{SerialParam} by default, running only a single
-#' ICA computation at a time.
+#' @param mean_stability_threshold A threshold for the mean stability of factors.
 #'
 #' @param verbose If `TRUE`, shows a progress bar that updates for each
 #' number of components tested. Note that the time taken may not be linear,
@@ -527,6 +493,11 @@ runICA <- function(
 #'
 #' @param ... Additional arguments to be passed to
 #' \link[ReducedExperiment]{runICA}.
+#'
+#' @inheritParams runICA
+#' @inheritParams estimateFactors
+#'
+#' @seealso [ReducedExperiment::runICA()], [ReducedExperiment::plotStability()]
 #'
 #' @details
 #' Runs the stability-based ICA algorithm

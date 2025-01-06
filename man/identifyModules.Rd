@@ -21,7 +21,7 @@ features and columns as samples.}
 \item{power}{An integer representing the soft-thresholding power to be
 used to define modules. See the
 \link[ReducedExperiment]{assessSoftThreshold} function for aid in
-selecting this parameter.}
+determining this parameter.}
 
 \item{center_X}{If \code{TRUE}, \code{X} is centered (i.e., features / rows are transformed
 to have a mean of 0) prior to WGCNA.}

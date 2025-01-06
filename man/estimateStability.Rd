@@ -34,20 +34,19 @@ stability for.}
 \item{by}{The number by which to increment the numbers of components
 tested.}
 
-\item{n_runs}{The number of times to run ICA.}
+\item{n_runs}{The number of times to run ICA to estimate factors and quantify
+stability. Ignored if \code{use_stability} is \code{FALSE}.}
 
 \item{resample}{If \code{TRUE}, a boostrap approach is used to estimate factors
-and quantify stability. Else, only the random initialisation inherent to
-common ICA implementations is used. See the \code{RNGseed} argument of
-\link[BiocParallel]{SerialParam} if you require reproducibility.}
+and quantify stability. Else, random initialisation of ICA is employed.
+Ignored if \code{use_stability} is \code{FALSE}.}
 
-\item{mean_stability_threshold}{The function will estimate the optimal number
-of components as the minimal number that exceed this stability threshold.}
+\item{mean_stability_threshold}{A threshold for the mean stability of factors.}
 
-\item{center_X}{If \code{TRUE}, \code{X} is centered (i.e., features / rows are transformed
+\item{center_X}{If \code{TRUE}, X is centered (i.e., features / rows are transformed
 to have a mean of 0) prior to ICA. Generally recommended.}
 
-\item{scale_X}{If \code{TRUE}, \code{X} is scaled (i.e., features / rows are transformed
+\item{scale_X}{If \code{TRUE}, X is scaled (i.e., features / rows are transformed
 to have a standard deviation of 1) before ICA.}
 
 \item{assay_name}{If \code{X} is a
@@ -56,7 +55,8 @@ name of the assay to be subject to ICA.}
 
 \item{BPPARAM}{A class containing parameters for parallel evaluation. Uses
 \link[BiocParallel]{SerialParam} by default, running only a single
-ICA computation at a time.}
+ICA computation at a time. Ignored if \code{use_stability}
+is \code{FALSE}.}
 
 \item{verbose}{If \code{TRUE}, shows a progress bar that updates for each
 number of components tested. Note that the time taken may not be linear,
@@ -113,6 +113,9 @@ stab_res_1 <- estimateStability(
     verbose = FALSE
 )
 
+}
+\seealso{
+\code{\link[=runICA]{runICA()}}, \code{\link[=plotStability]{plotStability()}}
 }
 \author{
 Jack Gisby

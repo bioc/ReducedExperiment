@@ -1,4 +1,4 @@
-#' ReducedExperiment: A container for dimensionally-reduced data
+#' ReducedExperiment: A container for dimensionally-reduced representations
 #'
 #' @description
 #' Inherits from \link[SummarizedExperiment]{SummarizedExperiment}, a

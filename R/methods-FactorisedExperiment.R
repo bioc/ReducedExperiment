@@ -14,16 +14,6 @@
 #' @param reduced A `matrix`, produced by factor analysis, with rows
 #' representing samples and columns representing factors.
 #'
-#' @param scale Either a boolean, representing whether or not the original data
-#' has been scaled to unit variance, or a numeric vector indicating the
-#' standard deviations of the original features (as produced by
-#' \link[base]{scale}.)
-#'
-#' @param center Either a boolean, representing whether or not the original data
-#' has been centered to have a mean of 0, or a numeric vector indicating the
-#' means of the original features (as produced by
-#' \link[base]{scale}.)
-#'
 #' @param loadings A `matrix`, produced by factor analysis, with rows
 #' representing features and columns representing factors.
 #'
@@ -34,6 +24,8 @@
 #'
 #' @param ... Additional arguments to be passed to
 #' \link[ReducedExperiment]{ReducedExperiment}.
+#'
+#' @inheritParams ReducedExperiment
 #'
 #' @returns Constructor method returns a
 #' \link[ReducedExperiment]{FactorisedExperiment} object.

@@ -10,7 +10,7 @@ assessSoftThreshold(
   powerVector = 1:30,
   RsquaredCut = 0.85,
   max_mean_connectivity = 100,
-  corType = "pearson",
+  cor_type = "pearson",
   networkType = "signed",
   maxBlockSize = 30000,
   verbose = 0,
@@ -26,32 +26,30 @@ features and columns as samples.}
 \link[SummarizedExperiment]{SummarizedExperiment}, then this should be the
 name of the assay to be subject to WGCNA.}
 
-\item{powerVector}{A vector of integers indicating soft-thresholding powers
-to be assessed. See \link[WGCNA]{pickSoftThreshold}.}
+\item{powerVector}{ a vector of soft thresholding powers for which the scale free topology fit indices
+are to be calculated. }
 
-\item{RsquaredCut}{The minimum scale free topology fitting index required.
-Used to select the soft-thresholding power.
-See \link[WGCNA]{pickSoftThreshold}.}
+\item{RsquaredCut}{ desired minimum scale free topology fitting index \eqn{R^2}. }
 
 \item{max_mean_connectivity}{The maximal mean connectivity required. Used
 to select the soft-thresholding power.}
 
-\item{corType}{The type of correlation to be used to generate a correlation
+\item{cor_type}{The type of correlation to be used to generate a correlation
 matrix during network formation. One of "pearson" (\link[WGCNA]{cor}) and
 "bicor" (\link[WGCNA]{bicor}).}
 
-\item{networkType}{The type of network to be generated, either "unsigned",
-"signed" or "signed hybrid". See \link[WGCNA]{pickSoftThreshold} for
-more details.}
+\item{networkType}{ network type. Allowed values are (unique abbreviations of) \code{"unsigned"},
+\code{"signed"}, \code{"signed hybrid"}. See \code{\link[WGCNA]{adjacency}}. }
 
 \item{maxBlockSize}{The chunk size (in terms of the number of features/genes)
-to process the data. See \link[WGCNA]{pickSoftThreshold} for
-more details. The default (30000) should process standard transcriptomic
+to process the data. The default (30000) should process standard
+transcriptomic
 datasets in a single chunk. Results may differ if the number of features
 exceeds the chunk size. Lower values of this parameter will use less memory
 to calculate networks.}
 
-\item{verbose}{The verbosity, passed to \link[WGCNA]{pickSoftThreshold}.}
+\item{verbose}{ integer level of verbosity. Zero means silent, higher values make the output
+progressively more and more verbose. }
 
 \item{...}{Additional arguments to be passed to
 \link[WGCNA]{pickSoftThreshold}.}

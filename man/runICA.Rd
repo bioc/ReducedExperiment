@@ -22,7 +22,9 @@ runICA(
 )
 }
 \arguments{
-\item{X}{A matrix with features as rows and columns as samples.}
+\item{X}{Either a \link[SummarizedExperiment]{SummarizedExperiment} object
+or a matrix containing data to be subject to ICA. \code{X} should have rows as
+features and columns as samples.}
 
 \item{nc}{The number of components to be identified. See
 \link[ReducedExperiment]{estimateStability} for a method to estimate the
@@ -152,8 +154,11 @@ ica_res <- runICA(X, nc = 5, use_stability = FALSE)
 
 # Run stabilised ICA on the data with 5 components (low runs for example)
 ica_res_stab <- runICA(X, nc = 5, use_stability = TRUE, n_runs = 5,
-                        BIOCPARAM = BiocParallel::SerialParam(RNGseed = 1))
+                        BPPARAM = BiocParallel::SerialParam(RNGseed = 1))
 
+}
+\seealso{
+\code{\link[ica:ica]{ica::ica()}}, \code{\link[=estimateStability]{estimateStability()}}
 }
 \author{
 Jack Gisby
