@@ -44,10 +44,11 @@ weighted gene correlation network analysis (WGCNA).
 ## Installation
 
 Get the latest stable `R` release from [CRAN](http://cran.r-project.org/). 
-Then install `ReducedExperiment` from [Bioconductor](http://bioconductor.org/) 
+Then install `ReducedExperiment` from 
+[Bioconductor](https://bioconductor.org/packages/release/bioc/html/ReducedExperiment.html) 
 using the following code:
 
-```{r 'install', eval = FALSE}
+```{r install, eval = FALSE}
 if (!requireNamespace("BiocManager", quietly = TRUE)) {
     install.packages("BiocManager")
 }
@@ -55,9 +56,13 @@ if (!requireNamespace("BiocManager", quietly = TRUE)) {
 BiocManager::install("ReducedExperiment")
 ```
 
-Alternatively, the development version of `ReducedExperiment` is available from [GitHub](https://github.com/jackgisby/ReducedExperiment) with:
+Alternatively, the development version of `ReducedExperiment` is available from 
+[Bioconductor](https://bioconductor.org/packages/devel/bioc/html/ReducedExperiment.html) 
+or [GitHub](https://github.com/jackgisby/ReducedExperiment) with:
 
-```{r 'install_dev', eval = FALSE}
+```{r install_dev, eval = FALSE}
+BiocManager::install("ReducedExperiment", version = "devel")
+
 devtools::install_github("jackgisby/ReducedExperiment")
 ```
 

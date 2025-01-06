@@ -37,7 +37,9 @@ weighted gene correlation network analysis (WGCNA).
 
 Get the latest stable `R` release from
 [CRAN](http://cran.r-project.org/). Then install `ReducedExperiment`
-from [Bioconductor](http://bioconductor.org/) using the following code:
+from
+[Bioconductor](https://bioconductor.org/packages/release/bioc/html/ReducedExperiment.html)
+using the following code:
 
 ``` r
 if (!requireNamespace("BiocManager", quietly = TRUE)) {
@@ -48,10 +50,13 @@ BiocManager::install("ReducedExperiment")
 ```
 
 Alternatively, the development version of `ReducedExperiment` is
-available from [GitHub](https://github.com/jackgisby/ReducedExperiment)
-with:
+available from
+[Bioconductor](https://bioconductor.org/packages/devel/bioc/html/ReducedExperiment.html)
+or [GitHub](https://github.com/jackgisby/ReducedExperiment) with:
 
 ``` r
+BiocManager::install("ReducedExperiment", version = "devel")
+
 devtools::install_github("jackgisby/ReducedExperiment")
 ```
 
@@ -215,10 +220,10 @@ in R.
 print(citation("ReducedExperiment"), bibtex = TRUE)
 #> To cite package 'ReducedExperiment' in publications use:
 #> 
-#>   Gisby JS, Barnes MR (2024). _ReducedExperiment: Containers and tools
+#>   Gisby JS, Barnes MR (2025). _ReducedExperiment: Containers and tools
 #>   for dimensionally-reduced -omics data_.
 #>   doi:10.18129/B9.bioc.ReducedExperiment
-#>   <https://doi.org/10.18129/B9.bioc.ReducedExperiment>, v0.99.0,
+#>   <https://doi.org/10.18129/B9.bioc.ReducedExperiment>, v0.99.3,
 #>   <http://www.bioconductor.org/packages/ReducedExperiment>.
 #> 
 #> A BibTeX entry for LaTeX users is
@@ -226,9 +231,9 @@ print(citation("ReducedExperiment"), bibtex = TRUE)
 #>   @Manual{,
 #>     title = {ReducedExperiment: Containers and tools for dimensionally-reduced -omics data},
 #>     author = {Jack S. Gisby and Michael R. Barnes},
-#>     year = {2024},
+#>     year = {2025},
 #>     url = {http://www.bioconductor.org/packages/ReducedExperiment},
-#>     note = {v0.99.0},
+#>     note = {v0.99.3},
 #>     doi = {10.18129/B9.bioc.ReducedExperiment},
 #>   }
 ```

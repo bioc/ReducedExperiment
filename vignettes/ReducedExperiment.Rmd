@@ -12,11 +12,6 @@ vignette: >
     %\VignetteEncoding{UTF-8}  
 ---
 
-# Installation
-
-The release version of the package may be installed from Bioconductor, 
-as follows:
-
 ```{r setup, include = FALSE}
 BiocStyle::markdown()
 
@@ -25,15 +20,12 @@ dir.create("tempOutput")
 set.seed(1)
 ```
 
-```{r load_packages, message=FALSE, warning=FALSE}
-library(SummarizedExperiment)
-library(ReducedExperiment)
-library(ggplot2)
+# Installation
 
-theme_set(theme_bw())
-```
+The release version of the package may be installed from Bioconductor, 
+as follows:
 
-```{r install_bioc, eval=FALSE}
+```{r install_release, eval=FALSE}
 if (!requireNamespace("BiocManager", quietly = TRUE)) {
     install.packages("BiocManager")
 }
@@ -41,14 +33,24 @@ if (!requireNamespace("BiocManager", quietly = TRUE)) {
 BiocManager::install("ReducedExperiment")
 ```
 
-Or the development version may be installed, from 
-[GitHub](https://github.com/jackgisby/ReducedExperiment):
+Alternatively, the development version may be installed from Bioconductor
+or [GitHub](https://github.com/jackgisby/ReducedExperiment):
 
-```{r install_gh, eval=FALSE}
+```{r install_devel, eval=FALSE}
+BiocManager::install("ReducedExperiment", version = "devel")
+
 devtools::install_github("jackgisby/ReducedExperiment")
 ```
 
 # Introduction
+
+```{r load_packages, message=FALSE, warning=FALSE}
+library(SummarizedExperiment)
+library(ReducedExperiment)
+library(ggplot2)
+
+theme_set(theme_bw())
+```
 
 Dimensionality reduction approaches are often applied to reduce the complexity
 of high-dimensional datasets, such as gene expression data produced by 
