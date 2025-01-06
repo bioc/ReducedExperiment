@@ -15,8 +15,6 @@ vignette: >
 ```{r setup, include = FALSE}
 BiocStyle::markdown()
 
-dir.create("tempOutput")
-
 set.seed(1)
 ```
 
