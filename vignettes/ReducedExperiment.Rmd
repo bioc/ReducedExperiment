@@ -184,8 +184,9 @@ stability_res <- estimate_stability(
 stability_plot <- plot_stability(stability_res)
 print(stability_plot$combined_plot)
 ```
-
-![](https://raw.githubusercontent.com/jackgisby/ReducedExperiment/devel/inst/stability.png)
+```{r stability_image, echo=FALSE}
+knitr::include_graphics(system.file("stability.png", package = "ReducedExperiment")) 
+```
 
 Now we run the factor analysis with these components. We additionally set a 
 stability threshold of 0.25 to remove components with low stability. This
