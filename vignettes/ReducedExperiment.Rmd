@@ -13,8 +13,19 @@ vignette: >
 ---
 
 ```{r setup, include = FALSE}
+# Bioc markdown style
 BiocStyle::markdown()
 
+# Knitr options
+knitr::opts_chunk$set(
+  fig.width = 7,
+  fig.height = 5,
+  out.width = "70%",
+  fig.align = "center",
+  dpi = 300
+)
+
+# Seed
 set.seed(1)
 ```
 
@@ -23,7 +34,7 @@ set.seed(1)
 The release version of the package may be installed from Bioconductor, 
 as follows:
 
-```{r install_release, eval=FALSE}
+```{r install-release, eval=FALSE}
 if (!requireNamespace("BiocManager", quietly = TRUE)) {
     install.packages("BiocManager")
 }
@@ -34,7 +45,7 @@ BiocManager::install("ReducedExperiment")
 Alternatively, the development version may be installed from Bioconductor
 or [GitHub](https://github.com/jackgisby/ReducedExperiment):
 
-```{r install_devel, eval=FALSE}
+```{r install-devel, eval=FALSE}
 BiocManager::install("ReducedExperiment", version = "devel")
 
 devtools::install_github("jackgisby/ReducedExperiment")
@@ -42,7 +53,7 @@ devtools::install_github("jackgisby/ReducedExperiment")
 
 # Introduction
 
-```{r load_packages, message=FALSE, warning=FALSE}
+```{r load-packages, message=FALSE, warning=FALSE, include = FALSE}
 library(SummarizedExperiment)
 library(ReducedExperiment)
 library(ggplot2)
@@ -61,7 +72,7 @@ first reading through the package vignette, either through the
 [Bioconductor website](https://bioconductor.org/packages/release/bioc/html/SummarizedExperiment.html) 
 or by installing the package and running the following.
 
-```{r se_vignette, eval=FALSE}
+```{r se-vignette, eval=FALSE}
 vignette("SummarizedExperiment", package = "SummarizedExperiment")
 ```
 
@@ -126,7 +137,7 @@ COVID-19 (early-mid 2020) and another for the second (early 2021). In this
 vignette, we will mainly use the first cohort, whereas the second cohort
 will be used as a validation dataset.
 
-```{r load_data}
+```{r load-data}
 wave1_se <- readRDS(system.file(
     "extdata", "wave1.rds",
     package = "ReducedExperiment"
@@ -169,7 +180,7 @@ Note that the data subset we are using here has relatively few features for an
 RNA-seq (500). The drop-off in stability is more pronounced for the full
 dataset, making it easier to identify the elbow.
 
-```{r estimate_stability, eval=FALSE, message=FALSE, warning=FALSE, include=TRUE}
+```{r estimate-stability, eval=FALSE, message=FALSE, warning=FALSE, include=TRUE}
 stability_res <- estimate_stability(
     wave1_se,
     n_runs = 100,
@@ -182,15 +193,16 @@ stability_res <- estimate_stability(
 stability_plot <- plot_stability(stability_res)
 print(stability_plot$combined_plot)
 ```
-```{r stability_image, echo=FALSE}
-knitr::include_graphics(system.file("stability.png", package = "ReducedExperiment")) 
+```{r stability-image, echo=FALSE}
+#| fig.cap = "Stability of components as a function of the number of components."
+knitr::include_graphics(system.file("stability.png", package = "ReducedExperiment"))
 ```
 
 Now we run the factor analysis with these components. We additionally set a 
 stability threshold of 0.25 to remove components with low stability. This
 results in the identification of 34 factors.
 
-```{r run_factor_analysis}
+```{r run-factor-analysis}
 wave1_fe <- estimate_factors(
     wave1_se,
     nc = 35,
@@ -210,14 +222,14 @@ loadings (i.e., genes vs. factors).
 
 We can get the reduced data as so.
 
-```{r get_factor_reduced}
+```{r get-factor-reduced}
 # get reduced data for first 5 samples and factors
 reduced(wave1_fe)[1:5, 1:5]
 ```
 
 And we get the factor loadings below.
 
-```{r get_factor_loadings}
+```{r get-factor-loadings}
 # get loadings for first 5 genes and factors
 loadings(wave1_fe)[1:5, 1:5]
 ```
@@ -227,7 +239,7 @@ objects
 can also be performed on FactorisedExperiments. We can slice them by samples,
 features and components, like so.
 
-```{r slice_fe}
+```{r slice-fe}
 dim(wave1_fe[1:20, 1:10, 1:5])
 ```
 
@@ -247,7 +259,7 @@ selects the minimal power satisfying a minimal scale free topology fitting
 index of `0.85` and a maximal average connectivity of `100`. See
 WGCNA's `pickSoftThreshold` function for more details.
 
-```{r assess_threshold}
+```{r assess-threshold}
 WGCNA::disableWGCNAThreads()
 
 wave1_fit_indices <- assess_soft_threshold(wave1_se)
@@ -263,7 +275,9 @@ in the original dataset, we allow for the identification of smaller modules of
 genes (10). The dendrogram is also stored in this object, allowing us to plot 
 the clusters of genes that are identified.
 
-```{r}
+```{r plot-dendro}
+#| fig.cap = "Dendrogram of the modules identified in the first wave COVID-19 data."
+
 wave1_me <- identify_modules(
     wave1_se,
     verbose = 0,
@@ -287,7 +301,7 @@ to generate modules (e.g., by considering the output of
 WGCNA::pickSoftThreshold). For now, however, we will move 
 forward with our 8 modules.
 
-```{r print_me}
+```{r print-me}
 wave1_me
 ```
 
@@ -300,14 +314,14 @@ The reduced data contain expression profiles for each module that are
 representative of the member genes, also referred to as an "eigengene". We can
 get these data as in the following chunk.
 
-```{r get_module_reduced}
+```{r get-module-reduced}
 # get reduced data for first 5 samples and factors
 reduced(wave1_me)[1:5, 1:5]
 ```
 
 We can also find out which module each feature is assigned to.
 
-```{r get_module_assignments}
+```{r get-module-assignments}
 # get assignments for first 5 genes
 assignments(wave1_me)[1:5]
 ```
@@ -315,7 +329,7 @@ assignments(wave1_me)[1:5]
 The `ModularExperiment` object also stores the loadings, indicating the 
 alignment of each feature with the corresponding eigengene. 
 
-```{r get_module_loadings}
+```{r get-module-loadings}
 # get loadings for first 5 genes
 loadings(wave1_me)[1:5]
 ```
@@ -326,7 +340,7 @@ associated with disease outcomes. We can do this with the
 `associate_components` function. First, we can look at the sample-level data 
 available in the `SummarizedExperiment` container.
 
-```{r show_coldata}
+```{r show-coldata}
 selected_cols <- c(
     "sample_id", 
     "individual_id", 
@@ -342,7 +356,7 @@ In this case, we will focus on the `case_control` variable, indicating whether
 patients are COVID-19 positive or negative. For each component, we apply linear 
 models that are adjusted for for sex and age.  
 
-```{r associate_components}
+```{r associate-components}
 f <- "~ case_control + sex + calc_age"
 
 associations_me <- associate_components(wave1_me, method = "lm", formula = f)
@@ -352,7 +366,7 @@ associations_fe <- associate_components(wave1_fe, method = "lm", formula = f)
 Below is a table for the significant associations between the factors and the 
 `case_control` variable, encoding COVID-19 infection status.
 
-```{r associate_table}
+```{r associate-table}
 associations_fe$summaries[
     associations_fe$summaries$term == "case_controlPOSITIVE" &
         associations_fe$summaries$adj_pvalue < 0.05,
@@ -366,7 +380,9 @@ in blue. The vertical line indicates significance (i.e., adjusted p-values
 less than 0.05). There are a number of factors that are significantly up- or 
 down-regulated in COVID-19.
 
-```{r plot_factor_associations}
+```{r plot-factor-associations}
+#| fig.cap = "Associations between factors and COVID-19 status."
+
 ggplot(
     associations_fe$summaries[
         associations_fe$summaries$term == "case_controlPOSITIVE",
@@ -377,8 +393,8 @@ ggplot(
     )
 ) +
     geom_point(pch = 21, size = 3) +
-    xlab("-log10(p-value)") +
-    ylab("Factor name (ordered by p-value)") +
+    xlab("-log10(adjusted p-value)") +
+    ylab("Factor name (ordered by adjusted p-value)") +
     geom_vline(xintercept = -log10(0.05)) +
     scale_fill_gradient2(low = "#3A3A98", high = "#832424")
 ```
@@ -386,7 +402,9 @@ ggplot(
 A similar plot for our modules shows significant upregulation of modules 1,
 2, 7 and 8, along with down-regulation of modules 3 and 5.
 
-```{r plot_module_associations}
+```{r plot-module-associations}
+#| fig.cap = "Associations between modules and COVID-19 status."
+
 ggplot(
     associations_me$summaries[
         associations_me$summaries$term == "case_controlPOSITIVE",
@@ -397,8 +415,8 @@ ggplot(
     )
 ) +
     geom_point(pch = 21, size = 3) +
-    xlab("-log10(p-value)") +
-    ylab("Module name (ordered by p-value)") +
+    xlab("-log10(adjusted p-value)") +
+    ylab("Module name (ordered by adjusted p-value)") +
     geom_vline(xintercept = -log10(0.05)) +
     scale_fill_gradient2(low = "#3A3A98", high = "#832424")
 ```
@@ -414,7 +432,7 @@ the module assignments in the ModularExperiment object. We can also estimate
 the centrality of the genes in the module, based on the `WGCNA::signedKME` 
 function.
 
-```{r module_centrality}
+```{r module-centrality}
 module_centrality <- getCentrality(wave1_me)
 head(module_centrality)
 ```
@@ -423,7 +441,7 @@ This indicates the correlation of each feature with the corresponding
 module "eigengene". We can also 
 identify the genes that are highly aligned with each factor, as follows:
 
-```{r factor_alignments}
+```{r factor-alignments}
 aligned_features <- getAlignedFeatures(wave1_fe, format = "data.frame")
 head(aligned_features[, c("component", "feature", "value")])
 ```
@@ -439,7 +457,7 @@ overrepresentation tests for the factors and modules, respectively. For
 the purposes of this vignette, we'll just do an overrepresentation analysis
 for factor 5 and module 1.
 
-```{r run_enrich, message=FALSE, warning=FALSE}
+```{r run-enrich, message=FALSE, warning=FALSE}
 
 TERM2GENE <- get_msigdb_t2g()
 
@@ -461,7 +479,7 @@ module_1_enrich <- runEnrich(
 Factor 5 is enriched for the pathway
 "WP_NETWORK_MAP_OF_SARSCOV2_SIGNALING_PATHWAY".
 
-```{r example_factor_enrichment}
+```{r example-factor-enrichment}
 rownames(factor_5_enrich) <- NULL
 factor_5_enrich[, c("ID", "pvalue", "p.adjust", "geneID")]
 ```
@@ -469,15 +487,16 @@ factor_5_enrich[, c("ID", "pvalue", "p.adjust", "geneID")]
 Module 1 was upregulated in COVID-19 patients, and we see that it is
 primarily enriched for pathways related to complement.
 
-```{r example_module_enrichment}
+```{r example-module-enrichment}
+#| fig.cap = "Top 15 enriched pathways for module 1."
 
 ggplot(
     module_1_enrich[1:15, ],
     aes(-log10(p.adjust), reorder(substr(ID, 1, 45), -log10(p.adjust)))
 ) +
     geom_point(pch = 21, size = 3) +
-    xlab("-log10(p-value)") +
-    ylab("Pathway name (ordered by p-value)") +
+    xlab("-log10(adjusted p-value)") +
+    ylab("Pathway name (ordered by adjusted p-value)") +
     expand_limits(x = 0) +
     geom_vline(xintercept = -log10(0.05))
 ```
@@ -510,7 +529,7 @@ projected data are on the same scale as the original data.
 With all that in mind, we can apply projection as follows. These datasets were
 processed and normalised in the same way.
 
-```{r project_data}
+```{r project-data}
 wave2_fe <- projectData(wave1_fe, wave2_se)
 wave2_fe
 ```
@@ -520,7 +539,7 @@ has the same genes (2184) and factors (34) as the original
 `FactorisedExperiment` (below),
 but with different samples (83 vs. 65). 
 
-```{r reprint_original}
+```{r reprint-original}
 wave1_fe
 ```
 
@@ -531,7 +550,7 @@ there are multiple samples for each patient, so we use a linear mixed model
 (`method = "lmer"`) rather than a standard linear model (`method = "lm"`). We
 also add a random intercept for the patient ID in the model formula.
 
-```{r replicating_associations}
+```{r replicating-associations}
 replication_fe <- associate_components(
     wave2_fe, 
     method = "lmer", 
@@ -542,7 +561,9 @@ replication_fe <- associate_components(
 While there are differences in the most significantly associated modules
 between the wave 1 and 2 cohorts, the results are broadly similar. 
 
-```{r plotting_replicated_associations}
+```{r plotting-replicated-associations}
+#| fig.cap = "Associations between modules and COVID-19 status in the wave 2 dataset."
+
 ggplot(
     replication_fe$summaries[
         replication_fe$summaries$term == "case_controlPOSITIVE",
@@ -554,8 +575,8 @@ ggplot(
     )
 ) +
     geom_point(pch = 21, size = 3) +
-    xlab("-log10(p-value)") +
-    ylab("Module nafe (ordered by p-value)") +
+    xlab("-log10(adjusted p-value)") +
+    ylab("Module nafe (ordered by adjusted p-value)") +
     geom_vline(xintercept = -log10(0.05)) +
     scale_fill_gradient2(low = "#3A3A98", high = "#832424") +
     expand_limits(x = 0)
@@ -570,7 +591,7 @@ may be explained by differences in the cohorts. For instance, different
 SARS-CoV-2 variants were in prevalent at the time the cohorts were sampled, and 
 there were more treatments available for the 2021 (wave 2) cohort.
 
-```{r correlation_with_projection}
+```{r correlation-with-projection}
 original_estimates <- associations_fe$summaries$estimate[
     associations_fe$summaries$term == "case_controlPOSITIVE"
 ]
@@ -588,7 +609,7 @@ we use `calcEigengenes` to do so, and we look at whether the modules behave
 similarly with respect to COVID-19 status. As we saw for factors, there is a 
 reasonable concordance between the modules in the two datasets.
 
-```{r calc_eigengenes_new_data}
+```{r calc-eigengenes-new-data}
 wave2_me <- calcEigengenes(wave1_me, wave2_se)
 
 replication_me <- associate_components(
@@ -623,7 +644,9 @@ that modules 1 and 2 have relatively high preservation in the Wave 2 dataset,
 whereas modules 5 and 0 (our unclustered genes) display relatively low 
 preservation. 
 
-```{r module_preservation}
+```{r module-preservation}
+#| fig.cap = "Module preservation between the Wave 1 and Wave 2 datasets."
+
 # Using a low number of permutations for the vignette
 mod_pres_res <- module_preservation(
     wave1_me, 
@@ -640,7 +663,7 @@ plot_module_preservation(mod_pres_res)
 The `SummarizedExperiment` package includes a detailed vignette explaining
 how to derive new containers from the SummarizedExperiment class.
 
-```{r extension_vignette, eval=FALSE}
+```{r extension-vignette, eval=FALSE}
 vignette("Extensions", package = "SummarizedExperiment")
 ```
 
@@ -654,6 +677,7 @@ components and methods.
 For instance, we could define a `PCAExperiment` class for storing the output
 of `stats::prcomp` (i.e., Principal Components Analysis, or PCA). 
 The function produces the following:
+
 * `x`: The reduced data, which we will store in the existing `ReducedExperiment`
 `reduced` slot.
 * `rotation`: The feature loadings, for which we will create a new slot,
@@ -662,7 +686,7 @@ we will create a new slot.
 * `center` and `scale`: The centering and scaling used, which we will store
 in their existing `ReducedExperiment` slots.
 
-```{r extend_class}
+```{r extend-class}
 PCAExperiment <- setClass(
     "PCAExperiment",
     contains = "ReducedExperiment",
@@ -679,7 +703,7 @@ as an argument, and we also supply the outputs of `stats::prcomp` to the
 slots defined for `ReducedExperiment` and the new slots defined above for
 `PCAExperiment`.
 
-```{r}
+```{r create-pca-experiment}
 prcomp_res <- stats::prcomp(t(assay(wave1_se)), center = TRUE, scale. = TRUE)
 
 my_pca_experiment <- PCAExperiment(
@@ -696,13 +720,13 @@ my_pca_experiment
 
 We can retrieve the principal components.
 
-```{r}
+```{r get-pca-reduced}
 reduced(my_pca_experiment)[1:5, 1:5]
 ```
 
 But to retrieve our new `rotation` matrix we need to define a "getter" method.
 
-```{r}
+```{r get-rotation}
 setGeneric("rotation", function(x, ...) standardGeneric("rotation"))
 
 setMethod("rotation", "PCAExperiment", function(x, withDimnames = TRUE) {
@@ -713,7 +737,7 @@ rotation(my_pca_experiment)[1:5, 1:5]
 ```
 
 And to change the values of the `rotation` matrix we must also define a setter:
-```{r}
+```{r set-rotation}
 setGeneric("rotation<-", function(x, ..., value) standardGeneric("rotation<-"))
 
 setReplaceMethod("rotation", "PCAExperiment", function(x, value) {
@@ -728,6 +752,7 @@ rotation(my_pca_experiment)[1:5, 1:5]
 ```
 
 To fully flesh out our class we would also need to consider:
+
 * Defining getters and setters for the `sdev` slot
 * Implementing a constructor method to make creating `PCAExperiment` simpler and
 add sensible defaults
@@ -760,7 +785,7 @@ We then pass the results of `stats::prcomp` to the object's slots. This object
 is now ready to work with as described in the section above 
 ("Introducing `ReducedExperiment` containers with a case study").
 
-```{r make_fe_from_pca}
+```{r make-fe-from-pca}
 # Construct a SummarizedExperiment (if you don't already have one)
 expr_mat <- assay(wave1_se)
 pheno_data <- colData(wave1_se)
@@ -830,9 +855,9 @@ Weighted Gene Correlation Network Analysis (WGCNA) framework
 
 # Session Information
 
-Here is the output of sessionInfo() on the system on which this document was 
+Here is the output of `sessionInfo()` on the system on which this document was 
 compiled:
 
-```{r session_info, echo=FALSE}
+```{r session-info, echo=FALSE}
 sessionInfo()
 ```
